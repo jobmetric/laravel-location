@@ -44,13 +44,13 @@ return [
     */
 
     "models" => [
-        'country' => \JobMatric\Location\Models\Country::class,
-        'province' => \JobMatric\Location\Models\Province::class,
-        'city' => \JobMatric\Location\Models\City::class,
-        'district' => \JobMatric\Location\Models\District::class,
-        'geo_area' => \JobMatric\Location\Models\GeoArea::class,
-        'geo_area_zone' => \JobMatric\Location\Models\GeoAreaZone::class,
-        'address' => \JobMatric\Location\Models\Address::class,
+        'country' => \JobMatric\Location\Models\LocationCountry::class,
+        'province' => \JobMatric\Location\Models\LocationProvince::class,
+        'city' => \JobMatric\Location\Models\LocationCity::class,
+        'district' => \JobMatric\Location\Models\LocationDistrict::class,
+        'geo_area' => \JobMatric\Location\Models\LocationGeoArea::class,
+        'geo_area_zone' => \JobMatric\Location\Models\LocationGeoAreaZone::class,
+        'address' => \JobMatric\Location\Models\LocationAddress::class,
     ],
 
     /*
