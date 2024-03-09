@@ -1,0 +1,61 @@
+{
+    "name": "jobmetric/laravel-location",
+    "description": "This is a website location management package for Laravel that you can use in your projects.",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "laravel",
+        "jobmetric",
+        "package",
+        "location",
+        "country",
+        "province",
+        "city",
+        "quartier",
+        "lat lng",
+        "address"
+    ],
+    "homepage": "https://doc.jobmetric.net/package/laravel-location",
+    "authors": [
+        {
+            "name": "Majid Mohammadian",
+            "email": "majeedmohammadian@gmail.com",
+            "homepage": "https://www.linkedin.com/in/majidmohammadian/",
+            "role": "Full Stack Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.0.1",
+        "laravel/framework": ">=9.19",
+        "jobmetric/laravel-package-core": "^1.7",
+        "spatie/laravel-query-builder": "^5.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.1"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "JobMetric\\Location\\": "src/",
+            "JobMetric\\Location\\Factories\\": "database/factories/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JobMetric\\Location\\LocationServiceProvider"
+            ],
+            "aliases": {
+                "Location": "JobMetric\\Location\\Facades\\Location"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "support": {
+        "issues": "https://github.com/jobmetric/laravel-location/issues",
+        "forum": "https://twitter.com/jobmetric",
+        "source": "https://github.com/jobmetric/laravel-location"
+    }
+}
