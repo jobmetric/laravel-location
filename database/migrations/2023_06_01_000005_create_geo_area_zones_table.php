@@ -23,15 +23,15 @@ return new class extends Migration {
             /**
              * The location_country_id field is used to store the location country id of the geo area zone.
              */
-            $table->foreignId(config('location.foreign_key.province'))->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId(config('location.foreign_key.province'))->nullable()->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_province_id field is used to store the location province id of the geo area zone.
              */
-            $table->foreignId(config('location.foreign_key.city'))->index()->constrained(config('location.tables.city'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId(config('location.foreign_key.city'))->nullable()->index()->constrained(config('location.tables.city'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_city_id field is used to store the location city id of the geo area zone.
              */
-            $table->foreignId(config('location.foreign_key.district'))->index()->constrained(config('location.tables.district'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId(config('location.foreign_key.district'))->nullable()->index()->constrained(config('location.tables.district'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_district_id field is used to store the location district id of the geo area zone.
              */
