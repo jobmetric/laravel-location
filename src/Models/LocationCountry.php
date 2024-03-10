@@ -4,6 +4,7 @@ namespace JobMetric\Location\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use JobMetric\PackageCore\Models\HasBooleanStatus;
 
@@ -38,5 +39,40 @@ class LocationCountry extends Model
     public function getTable()
     {
         return config('location.tables.country', parent::getTable());
+    }
+
+    public function provinces(): HasMany
+    {
+        return $this->hasMany(LocationProvince::class);
+    }
+
+    public function cities(): HasMany
+    {
+        return $this->hasMany(LocationCity::class);
+    }
+
+    public function districts(): HasMany
+    {
+        return $this->hasMany(LocationDistrict::class);
+    }
+
+    public function geoAreaZones(): HasMany
+    {
+        return $this->hasMany(LocationGeoAreaZone::class);
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(LocationAddress::class);
+    }
+
+    public function getMobilePrefixAttribute($value): ?string
+    {
+        return $value ? '+' . $value : null;
+    }
+
+    public function setMobilePrefixAttribute($value): void
+    {
+        $this->attributes['mobile_prefix'] = $value ? str_replace('+', '', $value) : null;
     }
 }
