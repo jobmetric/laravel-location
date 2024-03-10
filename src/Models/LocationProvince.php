@@ -4,14 +4,24 @@ namespace JobMetric\Location\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use JobMetric\PackageCore\Models\HasBooleanStatus;
 
 /**
+ * table properties
  * @property int id
  * @property int location_country_id
  * @property string name
  * @property boolean status
+ *
+ * relationships properties
+ * @property string country_name
+ * @property string country_mobile_prefix
+ * @property string country_flag
+ * @property string country_validation
+ * @property boolean country_status
  */
 class LocationProvince extends Model
 {
@@ -32,5 +42,60 @@ class LocationProvince extends Model
     public function getTable()
     {
         return config('location.tables.province', parent::getTable());
+    }
+
+    public function country(): BelongsTo
+    {
+        return $this->belongsTo(LocationCountry::class);
+    }
+
+    public function cities(): HasMany
+    {
+        return $this->hasMany(LocationCity::class);
+    }
+
+    public function districts(): HasMany
+    {
+        return $this->hasMany(LocationDistrict::class);
+    }
+
+    public function geoAreaZones(): HasMany
+    {
+        return $this->hasMany(LocationGeoAreaZone::class);
+    }
+
+    public function geoAreaZonesWithGeoArea(): HasMany
+    {
+        return $this->hasMany(LocationGeoAreaZone::class)->with('geoArea');
+    }
+
+    public function addresses(): HasMany
+    {
+        return $this->hasMany(LocationAddress::class);
+    }
+
+    public function getCountryNameAttribute()
+    {
+        return $this->country->name;
+    }
+
+    public function getCountryMobilePrefixAttribute()
+    {
+        return $this->country->mobile_prefix;
+    }
+
+    public function getCountryFlagAttribute()
+    {
+        return $this->country->flag;
+    }
+
+    public function getCountryValidationAttribute()
+    {
+        return $this->country->validation;
+    }
+
+    public function getCountryStatusAttribute()
+    {
+        return $this->country->status;
     }
 }
