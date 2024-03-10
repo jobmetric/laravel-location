@@ -4,6 +4,7 @@ namespace JobMetric\Location\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use JobMetric\PackageCore\Models\HasBooleanStatus;
 
 /**
@@ -16,7 +17,7 @@ use JobMetric\PackageCore\Models\HasBooleanStatus;
  */
 class LocationCountry extends Model
 {
-    use HasFactory, HasBooleanStatus;
+    use HasFactory, SoftDeletes, HasBooleanStatus;
 
     protected $fillable = [
         'name',
