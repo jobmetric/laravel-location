@@ -3,14 +3,14 @@
 namespace JobMetric\BanIp\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobMetric\Location\Models\LocationDistrict;
+use JobMetric\Location\Models\LocationAddress;
 
 /**
- * @extends Factory<LocationDistrict>
+ * @extends Factory<LocationAddress>
  */
-class DistrictFactory extends Factory
+class AddressFactory extends Factory
 {
-    protected $model = LocationDistrict::class;
+    protected $model = LocationAddress::class;
 
     /**
      * Define the model's default state.
