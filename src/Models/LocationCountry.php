@@ -9,12 +9,20 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use JobMetric\PackageCore\Models\HasBooleanStatus;
 
 /**
+ * table properties
  * @property int id
  * @property string name
  * @property string flag
  * @property string mobile_prefix
  * @property array validation
  * @property boolean status
+ *
+ * relationships properties
+ * @property LocationProvince[] provinces
+ * @property LocationCity[] cities
+ * @property LocationDistrict[] districts
+ * @property LocationGeoAreaZone[] geoAreaZones
+ * @property LocationAddress[] addresses
  */
 class LocationCountry extends Model
 {

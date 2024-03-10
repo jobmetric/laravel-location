@@ -17,6 +17,13 @@ use JobMetric\PackageCore\Models\HasBooleanStatus;
  * @property boolean status
  *
  * relationships properties
+ * @property LocationCountry country
+ * @property LocationCity[] cities
+ * @property LocationDistrict[] districts
+ * @property LocationGeoAreaZone[] geoAreaZones
+ * @property LocationGeoAreaZone[] geoAreaZonesWithGeoArea
+ * @property LocationAddress[] addresses
+ *
  * @property string country_name
  * @property string country_mobile_prefix
  * @property string country_flag
