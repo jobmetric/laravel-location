@@ -30,9 +30,14 @@ return new class extends Migration {
              * The status field is used to store the status of the district.
              */
 
+            $table->softDeletes();
+            /**
+             * The deleted_at field is used to store the deleted at of the province.
+             */
+
             $table->timestamps();
             /**
-             * The created_at and updated_at fields are used to store the timestamps of the district.
+             * The created_at and updated_at fields are used to store the timestamps of the province.
              */
         });
 
