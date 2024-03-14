@@ -42,13 +42,18 @@
             "JobMetric\\Location\\Factories\\": "database/factories/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "JobMetric\\Location\\Tests\\": "tests/"
+        }
+    },
     "extra": {
         "laravel": {
             "providers": [
                 "JobMetric\\Location\\LocationServiceProvider"
             ],
             "aliases": {
-                "Location": "JobMetric\\Location\\Facades\\Location"
+                "LocationCountry": "JobMetric\\Location\\Facades\\LocationCountry"
             }
         }
     },
