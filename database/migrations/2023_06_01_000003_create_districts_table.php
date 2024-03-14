@@ -1,9 +1,10 @@
 <?php
 
+namespace JobMetric\Location\Database\Migrations;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use JobMetric\BanIp\Enums\TableBanIpFieldTypeEnum;
 
 return new class extends Migration {
     /**

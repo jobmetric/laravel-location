@@ -1,9 +1,10 @@
 <?php
 
+namespace JobMetric\Location\Database\Migrations;
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use JobMetric\BanIp\Enums\TableBanIpFieldTypeEnum;
 
 return new class extends Migration {
     /**
@@ -16,7 +17,7 @@ return new class extends Migration {
         Schema::create(config('location.tables.country'), function (Blueprint $table) {
             $table->id();
 
-            $table->string('name', 150)->nullable()->index();
+            $table->string('name', 150)->index();
             /**
              * The name field is used to store the name of the country.
              */
