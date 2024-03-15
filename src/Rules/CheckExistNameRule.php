@@ -14,7 +14,8 @@ class CheckExistNameRule implements ValidationRule
      * @return void
      */
     public function __construct(
-        private readonly string $model
+        private readonly string $model,
+        private int|null $object_id = null,
     )
     {
     }
@@ -26,6 +27,14 @@ class CheckExistNameRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
+        if ($this->object_id) {
+            if ($this->model::where('name', $value)->where('id', '!=', $this->object_id)->exists()) {
+                $fail(__('location::base.validation.check_exist_name'));
+            }
+
+            return;
+        }
+
         if ($this->model::where('name', $value)->exists()) {
             $fail(__('location::base.validation.check_exist_name'));
         }
