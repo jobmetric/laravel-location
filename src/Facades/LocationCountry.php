@@ -5,7 +5,8 @@ namespace JobMetric\Location\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static \JobMetric\Location\Models\LocationCountry store(array $data)
+ * @method static array store(array $data)
+ * @method static array update(int $location_country_id, array $data)
  *
  * @see \JobMetric\Location\Services\CountryManager
  */

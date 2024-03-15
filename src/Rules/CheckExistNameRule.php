@@ -15,7 +15,7 @@ class CheckExistNameRule implements ValidationRule
      */
     public function __construct(
         private readonly string $model,
-        private int|null $object_id = null,
+        private int|null $object_id = null
     )
     {
     }

@@ -6,7 +6,9 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use JobMetric\Location\Events\Country\CountryStoreEvent;
+use JobMetric\Location\Events\Country\CountryUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreCountryRequest;
+use JobMetric\Location\Http\Requests\UpdateCountryRequest;
 use JobMetric\Location\Models\LocationCountry;
 use Throwable;
 
@@ -68,6 +70,76 @@ class CountryManager
                 'ok' => true,
                 'message' => trans('location::base.messages.created', ['name' => trans('location::base.model_name.country')]),
                 'data' => $country
+            ];
+        });
+    }
+
+    /**
+     * Update the specified country.
+     *
+     * @param int $location_country_id
+     * @param array $data
+     * @return array
+     */
+    public function update(int $location_country_id, array $data): array
+    {
+        $validator = Validator::make($data, (new UpdateCountryRequest)->setLocationCountryId($location_country_id)->rules());
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+
+            return [
+                'ok' => false,
+                'message' => trans('location::base.validation.errors'),
+                'errors' => $errors
+            ];
+        } else {
+            $data = $validator->validated();
+        }
+
+        return DB::transaction(function () use ($location_country_id, $data) {
+            /**
+             * @var LocationCountry $location_country
+             */
+            $location_country = LocationCountry::query()->where('id', $location_country_id)->first();
+
+            if (!$location_country) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
+                    ]
+                ];
+            }
+
+            if (array_key_exists('name', $data)) {
+                $location_country->name = $data['name'];
+            }
+
+            if (array_key_exists('flag', $data)) {
+                $location_country->flag = $data['flag'];
+            }
+
+            if (array_key_exists('mobile_prefix', $data)) {
+                $location_country->mobile_prefix = $data['mobile_prefix'];
+            }
+
+            if (array_key_exists('validation', $data)) {
+                $location_country->validation = $data['validation'];
+            }
+
+            if (array_key_exists('status', $data)) {
+                $location_country->status = $data['status'];
+            }
+
+            $location_country->save();
+
+            event(new CountryUpdateEvent($location_country, $data));
+
+            return [
+                'ok' => true,
+                'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.country')]),
+                'data' => $location_country
             ];
         });
     }
