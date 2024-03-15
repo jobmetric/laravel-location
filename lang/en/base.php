@@ -14,6 +14,7 @@ return [
 
     'validation' => [
         'errors' => 'Validation errors occurred.',
+        'check_exist_name' => 'The :attribute has already been taken.',
     ],
 
     'messages' => [
