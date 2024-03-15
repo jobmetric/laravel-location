@@ -7,11 +7,9 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationCountryTest extends BaseTestCase
 {
-    /**
-     * A basic test example.
-     */
     public function testStoreCountry(): void
     {
+        // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
             'name' => 'Iran',
         ]);
@@ -25,6 +23,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertNull($locationCountry['data']->validation);
         $this->assertTrue($locationCountry['data']->status);
 
+        // Store a country duplicate
         $locationCountry = LocationCountry::store([
             'name' => 'Iran',
         ]);
@@ -33,6 +32,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($locationCountry['ok']);
         $this->assertIsArray($locationCountry['errors']);
 
+        // Store another country by filling all fields
         $locationCountry = LocationCountry::store([
             'name' => 'Turkey',
             'flag' => 'tr',
@@ -52,5 +52,58 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(90, $locationCountry['data']->mobile_prefix);
         $this->assertIsArray($locationCountry['data']->validation);
         $this->assertFalse($locationCountry['data']->status);
+    }
+
+    public function testUpdateCountry(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Update the country
+        $updateLocationCountry = LocationCountry::update($locationCountry['data']->id, [
+            'name' => 'Iran',
+        ]);
+
+        $this->assertIsArray($updateLocationCountry);
+        $this->assertTrue($updateLocationCountry['ok']);
+        $this->assertEquals($locationCountry['data']->id, $updateLocationCountry['data']->id);
+        $this->assertEquals('Iran', $updateLocationCountry['data']->name);
+
+        // Store another country
+        $storeLocationCountry = LocationCountry::store([
+            'name' => 'Turkey'
+        ]);
+
+        // Update the country with a duplicate name
+        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
+            'name' => 'Iran'
+        ]);
+
+        $this->assertIsArray($updateLocationCountry);
+        $this->assertFalse($updateLocationCountry['ok']);
+        $this->assertIsArray($updateLocationCountry['errors']);
+
+        // Update the country with all fields
+        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
+            'name' => 'Iraq',
+            'flag' => 'iq',
+            'mobile_prefix' => 964,
+            'validation' => [
+                'phone' => '01',
+                'mobile' => '07',
+            ],
+            'status' => false,
+        ]);
+
+        $this->assertIsArray($updateLocationCountry);
+        $this->assertTrue($updateLocationCountry['ok']);
+        $this->assertEquals($storeLocationCountry['data']->id, $updateLocationCountry['data']->id);
+        $this->assertEquals('Iraq', $updateLocationCountry['data']->name);
+        $this->assertEquals('iq', $updateLocationCountry['data']->flag);
+        $this->assertEquals(964, $updateLocationCountry['data']->mobile_prefix);
+        $this->assertIsArray($updateLocationCountry['data']->validation);
+        $this->assertFalse($updateLocationCountry['data']->status);
     }
 }
