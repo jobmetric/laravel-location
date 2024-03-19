@@ -17,6 +17,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($locationCountry);
         $this->assertTrue($locationCountry['ok']);
+        $this->assertEquals(201, $locationCountry['status']);
         $this->assertInstanceOf(LocationCountryResource::class, $locationCountry['data']);
         $this->assertIsInt($locationCountry['data']->id);
         $this->assertEquals('Iran', $locationCountry['data']->name);
@@ -33,6 +34,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertIsArray($locationCountry);
         $this->assertFalse($locationCountry['ok']);
         $this->assertIsArray($locationCountry['errors']);
+        $this->assertEquals(422, $locationCountry['status']);
 
         // Store another country by filling all fields
         $locationCountry = LocationCountry::store([
@@ -48,6 +50,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($locationCountry);
         $this->assertTrue($locationCountry['ok']);
+        $this->assertEquals(201, $locationCountry['status']);
         $this->assertIsInt($locationCountry['data']->id);
         $this->assertEquals('Turkey', $locationCountry['data']->name);
         $this->assertEquals('tr', $locationCountry['data']->flag);
@@ -70,6 +73,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($updateLocationCountry);
         $this->assertTrue($updateLocationCountry['ok']);
+        $this->assertEquals(200, $updateLocationCountry['status']);
         $this->assertInstanceOf(LocationCountryResource::class, $updateLocationCountry['data']);
         $this->assertEquals($locationCountry['data']->id, $updateLocationCountry['data']->id);
         $this->assertEquals('Iran', $updateLocationCountry['data']->name);
@@ -87,6 +91,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertIsArray($updateLocationCountry);
         $this->assertFalse($updateLocationCountry['ok']);
         $this->assertIsArray($updateLocationCountry['errors']);
+        $this->assertEquals(422, $updateLocationCountry['status']);
 
         // Update the country with all fields
         $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
@@ -102,6 +107,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($updateLocationCountry);
         $this->assertTrue($updateLocationCountry['ok']);
+        $this->assertEquals(200, $updateLocationCountry['status']);
         $this->assertEquals($storeLocationCountry['data']->id, $updateLocationCountry['data']->id);
         $this->assertEquals('Iraq', $updateLocationCountry['data']->name);
         $this->assertEquals('iq', $updateLocationCountry['data']->flag);
@@ -122,6 +128,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($deleteLocationCountry);
         $this->assertTrue($deleteLocationCountry['ok']);
+        $this->assertEquals(200, $deleteLocationCountry['status']);
         $this->assertInstanceOf(LocationCountryResource::class, $deleteLocationCountry['data']);
 
         // Delete the country again
@@ -130,6 +137,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertIsArray($deleteLocationCountry);
         $this->assertFalse($deleteLocationCountry['ok']);
         $this->assertIsArray($deleteLocationCountry['errors']);
+        $this->assertEquals(404, $deleteLocationCountry['status']);
     }
 
     public function testGetCountry(): void
