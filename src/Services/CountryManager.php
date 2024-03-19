@@ -95,7 +95,8 @@ class CountryManager
             return [
                 'ok' => false,
                 'message' => trans('location::base.validation.errors'),
-                'errors' => $errors
+                'errors' => $errors,
+                'status' => 422
             ];
         } else {
             $data = $validator->validated();
@@ -115,7 +116,8 @@ class CountryManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.created', ['name' => trans('location::base.model_name.country')]),
-                'data' => LocationCountryResource::make($country)
+                'data' => LocationCountryResource::make($country),
+                'status' => 201
             ];
         });
     }
@@ -136,7 +138,8 @@ class CountryManager
             return [
                 'ok' => false,
                 'message' => trans('location::base.validation.errors'),
-                'errors' => $errors
+                'errors' => $errors,
+                'status' => 422
             ];
         } else {
             $data = $validator->validated();
@@ -154,7 +157,8 @@ class CountryManager
                     'message' => trans('location::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
-                    ]
+                    ],
+                    'status' => 404
                 ];
             }
 
@@ -185,7 +189,8 @@ class CountryManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.country')]),
-                'data' => LocationCountryResource::make($location_country)
+                'data' => LocationCountryResource::make($location_country),
+                'status' => 200
             ];
         });
     }
@@ -210,7 +215,8 @@ class CountryManager
                     'message' => trans('location::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
-                    ]
+                    ],
+                    'status' => 404
                 ];
             }
 
@@ -223,7 +229,8 @@ class CountryManager
             return [
                 'ok' => true,
                 'data' => $data,
-                'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.country')])
+                'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.country')]),
+                'status' => 200
             ];
         });
     }
