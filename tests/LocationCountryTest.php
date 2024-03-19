@@ -3,6 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationCountry;
+use JobMetric\Location\Http\Resources\LocationCountryResource;
 use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationCountryTest extends BaseTestCase
@@ -16,6 +17,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($locationCountry);
         $this->assertTrue($locationCountry['ok']);
+        $this->assertInstanceOf(LocationCountryResource::class, $locationCountry['data']);
         $this->assertIsInt($locationCountry['data']->id);
         $this->assertEquals('Iran', $locationCountry['data']->name);
         $this->assertNull($locationCountry['data']->flag);
@@ -68,6 +70,7 @@ class LocationCountryTest extends BaseTestCase
 
         $this->assertIsArray($updateLocationCountry);
         $this->assertTrue($updateLocationCountry['ok']);
+        $this->assertInstanceOf(LocationCountryResource::class, $updateLocationCountry['data']);
         $this->assertEquals($locationCountry['data']->id, $updateLocationCountry['data']->id);
         $this->assertEquals('Iran', $updateLocationCountry['data']->name);
 
@@ -105,5 +108,27 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(964, $updateLocationCountry['data']->mobile_prefix);
         $this->assertIsArray($updateLocationCountry['data']->validation);
         $this->assertFalse($updateLocationCountry['data']->status);
+    }
+
+    public function testDeleteCountry(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Delete the country
+        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+
+        $this->assertIsArray($deleteLocationCountry);
+        $this->assertTrue($deleteLocationCountry['ok']);
+        $this->assertInstanceOf(LocationCountryResource::class, $deleteLocationCountry['data']);
+
+        // Delete the country again
+        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+
+        $this->assertIsArray($deleteLocationCountry);
+        $this->assertFalse($deleteLocationCountry['ok']);
+        $this->assertIsArray($deleteLocationCountry['errors']);
     }
 }
