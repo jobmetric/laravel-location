@@ -3,6 +3,8 @@
 namespace JobMetric\Location\Services;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use JobMetric\Location\Events\Country\CountryDeleteEvent;
@@ -12,6 +14,7 @@ use JobMetric\Location\Http\Requests\StoreCountryRequest;
 use JobMetric\Location\Http\Requests\UpdateCountryRequest;
 use JobMetric\Location\Http\Resources\LocationCountryResource;
 use JobMetric\Location\Models\LocationCountry;
+use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
 
 class CountryManager
@@ -33,6 +36,47 @@ class CountryManager
     public function __construct(Application $app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Get the specified location country.
+     *
+     * @param array $filter
+     * @return QueryBuilder
+     */
+    public function query(array $filter = []): QueryBuilder
+    {
+        $fields = ['id', 'name', 'flag', 'mobile_prefix', 'validation', 'status'];
+
+        return QueryBuilder::for(LocationCountry::class)
+            ->allowedFields($fields)
+            ->allowedSorts($fields)
+            ->allowedFilters($fields)
+            ->defaultSort('-id')
+            ->where($filter);
+    }
+
+    /**
+     * Paginate the specified location countries.
+     *
+     * @param array $filter
+     * @param int $page_limit
+     * @return LengthAwarePaginator
+     */
+    public function paginate(array $filter = [], int $page_limit = 15): LengthAwarePaginator
+    {
+        return $this->query($filter)->paginate($page_limit);
+    }
+
+    /**
+     * Get all location countries.
+     *
+     * @param array $filter
+     * @return Collection
+     */
+    public function all(array $filter = []): Collection
+    {
+        return $this->query($filter)->get();
     }
 
     /**
