@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array store(array $data)
  * @method static array update(int $location_country_id, array $data)
+ * @method static array delete(int $location_country_id)
  *
  * @see \JobMetric\Location\Services\CountryManager
  */
