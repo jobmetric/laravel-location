@@ -35,12 +35,13 @@ class UpdateCountryRequest extends FormRequest
         return [
             'name' => [
                 'string',
+                'sometimes',
                 new CheckExistNameRule(LocationCountry::class, $location_country_id)
             ],
-            'flag' => 'string|nullable',
-            'mobile_prefix' => 'integer|nullable',
-            'validation' => 'array|nullable',
-            'status' => 'boolean',
+            'flag' => 'string|nullable|sometimes',
+            'mobile_prefix' => 'integer|nullable|sometimes',
+            'validation' => 'array|nullable|sometimes',
+            'status' => 'boolean|sometimes',
         ];
     }
 
