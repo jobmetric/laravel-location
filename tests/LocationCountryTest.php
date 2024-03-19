@@ -131,4 +131,44 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($deleteLocationCountry['ok']);
         $this->assertIsArray($deleteLocationCountry['errors']);
     }
+
+    public function testGetCountry(): void
+    {
+        // Store a country
+        LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Get the country
+        $getCountries = LocationCountry::all();
+
+        $getCountries->each(function ($country) {
+            $this->assertInstanceOf(\JobMetric\Location\Models\LocationCountry::class, $country);
+
+            $this->assertIsInt($country->id);
+            $this->assertIsString($country->name);
+            $this->assertNull($country->flag);
+            $this->assertNull($country->mobile_prefix);
+            $this->assertNull($country->validation);
+            $this->assertIsBool($country->status);
+        });
+    }
+
+    public function testPaginateCountry(): void
+    {
+        // Store a country
+        LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Paginate the country
+        $paginateCountries = LocationCountry::paginate();
+
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateCountries);
+        $this->assertIsInt($paginateCountries->total());
+        $this->assertIsInt($paginateCountries->perPage());
+        $this->assertIsInt($paginateCountries->currentPage());
+        $this->assertIsInt($paginateCountries->lastPage());
+        $this->assertIsArray($paginateCountries->items());
+    }
 }
