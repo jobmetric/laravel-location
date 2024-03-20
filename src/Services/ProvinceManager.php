@@ -218,8 +218,8 @@ class ProvinceManager
 
             return [
                 'ok' => true,
-                'data' => $data,
                 'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.province')]),
+                'data' => $data,
                 'status' => 200
             ];
         });

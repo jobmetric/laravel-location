@@ -131,28 +131,34 @@ class LocationProvinceTest extends BaseTestCase
         ]);
     }
 
-    public function testDeleteCountry(): void
+    public function testDelete(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
             'name' => 'Iran',
         ]);
 
-        // Delete the country
-        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
 
-        $this->assertIsArray($deleteLocationCountry);
-        $this->assertTrue($deleteLocationCountry['ok']);
-        $this->assertEquals(200, $deleteLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $deleteLocationCountry['data']);
+        // Delete the province
+        $deleteLocationProvince = LocationProvince::delete($locationProvince['data']->id);
 
-        // Delete the country again
-        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+        $this->assertIsArray($deleteLocationProvince);
+        $this->assertTrue($deleteLocationProvince['ok']);
+        $this->assertEquals(200, $deleteLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $deleteLocationProvince['data']);
 
-        $this->assertIsArray($deleteLocationCountry);
-        $this->assertFalse($deleteLocationCountry['ok']);
-        $this->assertIsArray($deleteLocationCountry['errors']);
-        $this->assertEquals(404, $deleteLocationCountry['status']);
+        // Delete the province again
+        $deleteLocationProvince = LocationProvince::delete($locationProvince['data']->id);
+
+        $this->assertIsArray($deleteLocationProvince);
+        $this->assertFalse($deleteLocationProvince['ok']);
+        $this->assertIsArray($deleteLocationProvince['errors']);
+        $this->assertEquals(404, $deleteLocationProvince['status']);
     }
 
     public function testGetCountry(): void
