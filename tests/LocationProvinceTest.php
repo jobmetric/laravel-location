@@ -10,7 +10,7 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationProvinceTest extends BaseTestCase
 {
-    public function testStoreCountry(): void
+    public function testStore(): void
     {
         // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
@@ -28,8 +28,12 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(201, $locationProvince['status']);
         $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
         $this->assertIsInt($locationProvince['data']->id);
-        $this->assertEquals('Tehran', $locationProvince['data']->name);
-        $this->assertTrue($locationProvince['data']->status);
+        $this->assertDatabaseHas(config('location.tables.province'), [
+            'id' => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'name' => 'Tehran',
+            'status' => true,
+        ]);
 
         // Store a province duplicate
         $locationProvince = LocationProvince::store([
@@ -43,7 +47,7 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(422, $locationProvince['status']);
 
         // Store another province by filling all fields
-        $locationProvince = LocationCountry::store([
+        $locationProvince = LocationProvince::store([
             config('location.foreign_key.country') => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi',
             'status' => false,
@@ -52,12 +56,16 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertIsArray($locationProvince);
         $this->assertTrue($locationProvince['ok']);
         $this->assertEquals(201, $locationProvince['status']);
-        $this->assertIsInt($locationProvince['data']->id);
-        $this->assertEquals('Khorasan Razavi', $locationProvince['data']->name);
-        $this->assertFalse($locationProvince['data']->status);
+        $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
+        $this->assertDatabaseHas(config('location.tables.province'), [
+            'id' => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'name' => 'Khorasan Razavi',
+            'status' => false,
+        ]);
     }
 
-    public function testUpdateCountry(): void
+    public function testUpdate(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([

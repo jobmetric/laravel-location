@@ -104,7 +104,7 @@ class ProvinceManager
 
         return DB::transaction(function () use ($data) {
             $province = new LocationProvince;
-            $province->{config('location.foreign_key.country')} = $data['location_country_id'];
+            $province->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
             $province->name = $data['name'];
             $province->status = $data['status'] ?? true;
             $province->save();
