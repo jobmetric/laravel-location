@@ -161,43 +161,52 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(404, $deleteLocationProvince['status']);
     }
 
-    public function testGetCountry(): void
+    public function testGet(): void
     {
         // Store a country
-        LocationCountry::store([
+        $locationCountry = LocationCountry::store([
             'name' => 'Iran',
         ]);
 
-        // Get the country
-        $getCountries = LocationCountry::all();
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
 
-        $getCountries->each(function ($country) {
-            $this->assertInstanceOf(\JobMetric\Location\Models\LocationCountry::class, $country);
+        // Get the province
+        $getLocationProvinces = LocationProvince::all();
 
-            $this->assertIsInt($country->id);
-            $this->assertIsString($country->name);
-            $this->assertNull($country->flag);
-            $this->assertNull($country->mobile_prefix);
-            $this->assertNull($country->validation);
-            $this->assertIsBool($country->status);
+        $getLocationProvinces->each(function ($province) {
+            $this->assertInstanceOf(\JobMetric\Location\Models\LocationProvince::class, $province);
+
+            $this->assertIsInt($province->id);
+            $this->assertIsString($province->name);
+            $this->assertIsBool($province->status);
         });
     }
 
-    public function testPaginateCountry(): void
+    public function testPaginate(): void
     {
         // Store a country
-        LocationCountry::store([
+        $locationCountry = LocationCountry::store([
             'name' => 'Iran',
         ]);
 
-        // Paginate the country
-        $paginateCountries = LocationCountry::paginate();
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
 
-        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateCountries);
-        $this->assertIsInt($paginateCountries->total());
-        $this->assertIsInt($paginateCountries->perPage());
-        $this->assertIsInt($paginateCountries->currentPage());
-        $this->assertIsInt($paginateCountries->lastPage());
-        $this->assertIsArray($paginateCountries->items());
+        // Paginate the provinces
+        $paginateProvinces = LocationProvince::paginate();
+
+        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateProvinces);
+        $this->assertIsInt($paginateProvinces->total());
+        $this->assertIsInt($paginateProvinces->perPage());
+        $this->assertIsInt($paginateProvinces->currentPage());
+        $this->assertIsInt($paginateProvinces->lastPage());
+        $this->assertIsArray($paginateProvinces->items());
     }
 }
