@@ -129,14 +129,15 @@ class ProvinceManager
      */
     public function update(int $location_province_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->rules());
+        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->setLocationCountryId($data[config('location.foreign_key.country')])->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
             return [
                 'ok' => false,
                 'message' => trans('location::base.validation.errors'),
-                'errors' => $errors
+                'errors' => $errors,
+                'status' => 422
             ];
         } else {
             $data = $validator->validated();
@@ -154,8 +155,13 @@ class ProvinceManager
                     'message' => trans('location::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
-                    ]
+                    ],
+                    'status' => 404
                 ];
+            }
+
+            if (array_key_exists(config('location.foreign_key.country'), $data)) {
+                $location_province->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
             }
 
             if (array_key_exists('name', $data)) {
@@ -173,7 +179,8 @@ class ProvinceManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.province')]),
-                'data' => LocationProvinceResource::make($location_province)
+                'data' => LocationProvinceResource::make($location_province),
+                'status' => 200
             ];
         });
     }
@@ -198,7 +205,8 @@ class ProvinceManager
                     'message' => trans('location::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
-                    ]
+                    ],
+                    'status' => 404
                 ];
             }
 
@@ -211,7 +219,8 @@ class ProvinceManager
             return [
                 'ok' => true,
                 'data' => $data,
-                'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.province')])
+                'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.province')]),
+                'status' => 200
             ];
         });
     }

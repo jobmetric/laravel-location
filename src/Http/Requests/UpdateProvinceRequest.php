@@ -9,6 +9,9 @@ use JobMetric\Location\Rules\CheckExistNameRule;
 
 class UpdateProvinceRequest extends FormRequest
 {
+    public int|null $location_country_id = null;
+    public int|null $location_province_id = null;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,13 +27,52 @@ class UpdateProvinceRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (is_null($this->location_province_id)) {
+            $location_province_id = $this->route()->parameter('location_province')->id;
+        } else {
+            $location_province_id = $this->location_province_id;
+        }
+
+        if (is_null($this->location_country_id)) {
+            $location_country_id = $this->input('location_country_id');
+        } else {
+            $location_country_id = $this->location_country_id;
+        }
+
         return [
-            config('location.foreign_key.country') => 'required|exists:'. config('location.tables.country') .',id',
+            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
             'name' => [
                 'string',
-                new CheckExistNameRule(LocationProvince::class)
+                'sometimes',
+                new CheckExistNameRule(LocationProvince::class, $location_province_id, $location_country_id)
             ],
-            'status' => 'boolean',
+            'status' => 'boolean|sometimes',
         ];
+    }
+
+    /**
+     * Set country id for validation
+     *
+     * @param int $location_country_id
+     * @return static
+     */
+    public function setLocationCountryId(int $location_country_id): static
+    {
+        $this->location_country_id = $location_country_id;
+
+        return $this;
+    }
+
+    /**
+     * Set province id for validation
+     *
+     * @param int $location_province_id
+     * @return static
+     */
+    public function setLocationProvinceId(int $location_province_id): static
+    {
+        $this->location_province_id = $location_province_id;
+
+        return $this;
     }
 }

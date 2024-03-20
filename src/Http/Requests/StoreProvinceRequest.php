@@ -25,7 +25,7 @@ class StoreProvinceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            config('location.foreign_key.country') => 'required|exists:'. config('location.tables.country') .',id',
+            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
             'name' => [
                 'string',
                 new CheckExistNameRule(LocationProvince::class)
