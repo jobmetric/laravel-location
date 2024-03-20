@@ -72,54 +72,63 @@ class LocationProvinceTest extends BaseTestCase
             'name' => 'Iran',
         ]);
 
-        // Update the country
-        $updateLocationCountry = LocationCountry::update($locationCountry['data']->id, [
-            'name' => 'Iran',
+        // Store a province by filling only the name field
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
         ]);
 
-        $this->assertIsArray($updateLocationCountry);
-        $this->assertTrue($updateLocationCountry['ok']);
-        $this->assertEquals(200, $updateLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $updateLocationCountry['data']);
-        $this->assertEquals($locationCountry['data']->id, $updateLocationCountry['data']->id);
-        $this->assertEquals('Iran', $updateLocationCountry['data']->name);
-
-        // Store another country
-        $storeLocationCountry = LocationCountry::store([
-            'name' => 'Turkey'
+        // Update the province by filling only the name field
+        $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Mazandaran',
         ]);
 
-        // Update the country with a duplicate name
-        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
-            'name' => 'Iran'
+        $this->assertIsArray($updateLocationProvince);
+        $this->assertTrue($updateLocationProvince['ok']);
+        $this->assertEquals(200, $updateLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
+        $this->assertDatabaseHas(config('location.tables.province'), [
+            'id' => $updateLocationProvince['data']->id,
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Mazandaran',
+            'status' => true,
         ]);
 
-        $this->assertIsArray($updateLocationCountry);
-        $this->assertFalse($updateLocationCountry['ok']);
-        $this->assertIsArray($updateLocationCountry['errors']);
-        $this->assertEquals(422, $updateLocationCountry['status']);
+        // Store another province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Khorasan Razavi',
+        ]);
 
-        // Update the country with all fields
-        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
-            'name' => 'Iraq',
-            'flag' => 'iq',
-            'mobile_prefix' => 964,
-            'validation' => [
-                'phone' => '01',
-                'mobile' => '07',
-            ],
+        // Update the province with a duplicate name
+        $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Mazandaran',
+        ]);
+
+        $this->assertIsArray($updateLocationProvince);
+        $this->assertFalse($updateLocationProvince['ok']);
+        $this->assertIsArray($updateLocationProvince['errors']);
+        $this->assertEquals(422, $updateLocationProvince['status']);
+
+        // Update the province with all fields
+        $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Khorasan Razavi',
             'status' => false,
         ]);
 
-        $this->assertIsArray($updateLocationCountry);
-        $this->assertTrue($updateLocationCountry['ok']);
-        $this->assertEquals(200, $updateLocationCountry['status']);
-        $this->assertEquals($storeLocationCountry['data']->id, $updateLocationCountry['data']->id);
-        $this->assertEquals('Iraq', $updateLocationCountry['data']->name);
-        $this->assertEquals('iq', $updateLocationCountry['data']->flag);
-        $this->assertEquals(964, $updateLocationCountry['data']->mobile_prefix);
-        $this->assertIsArray($updateLocationCountry['data']->validation);
-        $this->assertFalse($updateLocationCountry['data']->status);
+        $this->assertIsArray($updateLocationProvince);
+        $this->assertTrue($updateLocationProvince['ok']);
+        $this->assertEquals(200, $updateLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
+        $this->assertDatabaseHas(config('location.tables.province'), [
+            'id' => $updateLocationProvince['data']->id,
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Khorasan Razavi',
+            'status' => false,
+        ]);
     }
 
     public function testDeleteCountry(): void
