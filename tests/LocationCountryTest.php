@@ -8,7 +8,7 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationCountryTest extends BaseTestCase
 {
-    public function testStoreCountry(): void
+    public function testStore(): void
     {
         // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
@@ -59,7 +59,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($locationCountry['data']->status);
     }
 
-    public function testUpdateCountry(): void
+    public function testUpdate(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -116,7 +116,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($updateLocationCountry['data']->status);
     }
 
-    public function testDeleteCountry(): void
+    public function testDelete(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -140,7 +140,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(404, $deleteLocationCountry['status']);
     }
 
-    public function testGetCountry(): void
+    public function testGet(): void
     {
         // Store a country
         LocationCountry::store([
@@ -162,7 +162,7 @@ class LocationCountryTest extends BaseTestCase
         });
     }
 
-    public function testPaginateCountry(): void
+    public function testPaginate(): void
     {
         // Store a country
         LocationCountry::store([
