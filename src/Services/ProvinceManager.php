@@ -88,7 +88,7 @@ class ProvinceManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreProvinceRequest)->rules());
+        $validator = Validator::make($data, (new StoreProvinceRequest)->setLocationCountryId($data[config('location.foreign_key.country')])->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 

@@ -63,6 +63,40 @@ class LocationProvinceTest extends BaseTestCase
             'name' => 'Khorasan Razavi',
             'status' => false,
         ]);
+
+        // store another country
+        $anotherLocationCountry = LocationCountry::store([
+            'name' => 'Iraq',
+        ]);
+
+        // Store a province by filling only the name field
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $anotherLocationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        $this->assertIsArray($locationProvince);
+        $this->assertTrue($locationProvince['ok']);
+        $this->assertEquals(201, $locationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
+        $this->assertIsInt($locationProvince['data']->id);
+        $this->assertDatabaseHas(config('location.tables.province'), [
+            'id' => $locationProvince['data']->id,
+            'location_country_id' => $anotherLocationCountry['data']->id,
+            'name' => 'Tehran',
+            'status' => true,
+        ]);
+
+        // Store a duplicate province in Iraq
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $anotherLocationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        $this->assertIsArray($locationProvince);
+        $this->assertFalse($locationProvince['ok']);
+        $this->assertIsArray($locationProvince['errors']);
+        $this->assertEquals(422, $locationProvince['status']);
     }
 
     public function testUpdate(): void
