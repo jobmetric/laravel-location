@@ -28,10 +28,13 @@ class CheckExistNameRule implements ValidationRule
      */
     public function validate(string $attribute, mixed $value, Closure $fail): void
     {
-        // Check if the object_id and parent_id are set
-        if($this->object_id && $this->parent_id) {
-            $query = $this->model::where('name', $value)->where('id', '!=', $this->object_id);
+        $query = $this->model::where('name', $value);
 
+        if ($this->object_id) {
+            $query->where('id', '!=', $this->object_id);
+        }
+
+        if ($this->parent_id) {
             if ($this->model === 'JobMetric\Location\Models\LocationProvince') {
                 $query->where(config('location.foreign_key.country'), $this->parent_id);
             }
@@ -43,24 +46,9 @@ class CheckExistNameRule implements ValidationRule
             if($this->model === 'JobMetric\Location\Models\LocationDistrict') {
                 $query->where(config('location.foreign_key.city'), $this->parent_id);
             }
-
-            if ($query->exists()) {
-                $fail(__('location::base.validation.check_exist_name'));
-            }
-
-            return;
         }
 
-        // Check if the object_id is set
-        if ($this->object_id) {
-            if ($this->model::where('name', $value)->where('id', '!=', $this->object_id)->exists()) {
-                $fail(__('location::base.validation.check_exist_name'));
-            }
-
-            return;
-        }
-
-        if ($this->model::where('name', $value)->exists()) {
+        if ($query->exists()) {
             $fail(__('location::base.validation.check_exist_name'));
         }
     }
