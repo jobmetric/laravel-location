@@ -42,8 +42,6 @@ class StoreProvinceRequest extends FormRequest
         ];
     }
 
-
-
     /**
      * Set country id for validation
      *
