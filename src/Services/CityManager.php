@@ -46,7 +46,7 @@ class CityManager
      */
     public function query(array $filter = []): QueryBuilder
     {
-        $fields = ['id', 'name', 'location_province_id', 'status'];
+        $fields = ['id', 'name', config('location.foreign_key.country'), config('location.foreign_key.province'), 'status'];
 
         return QueryBuilder::for(LocationCity::class)
             ->allowedFields($fields)
@@ -57,7 +57,7 @@ class CityManager
     }
 
     /**
-     * Paginate the specified location citys.
+     * Paginate the specified location cities.
      *
      * @param array $filter
      * @param int $page_limit
@@ -69,7 +69,7 @@ class CityManager
     }
 
     /**
-     * Get all location citys.
+     * Get all location cities.
      *
      * @param array $filter
      * @return Collection
@@ -88,7 +88,7 @@ class CityManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreCityRequest)->rules());
+        $validator = Validator::make($data, (new StoreCityRequest)->setLocationProvinceId($data[config('location.foreign_key.province')] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -104,6 +104,7 @@ class CityManager
 
         return DB::transaction(function () use ($data) {
             $city = new LocationCity;
+            $city->{config('location.foreign_key.country')} = $data[config('location.foreign_key.province')];
             $city->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
             $city->name = $data['name'];
             $city->status = $data['status'] ?? true;
@@ -129,7 +130,7 @@ class CityManager
      */
     public function update(int $location_city_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateCityRequest)->setLocationCityId($location_city_id)->setLocationProvinceId($data[config('location.foreign_key.province')])->rules());
+        $validator = Validator::make($data, (new UpdateCityRequest)->setLocationCityId($location_city_id)->setLocationProvinceId($data[config('location.foreign_key.province')] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 

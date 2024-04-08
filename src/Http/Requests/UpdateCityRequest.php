@@ -53,10 +53,10 @@ class UpdateCityRequest extends FormRequest
     /**
      * Set province id for validation
      *
-     * @param int $location_province_id
+     * @param int|null $location_province_id
      * @return static
      */
-    public function setLocationProvinceId(int $location_province_id): static
+    public function setLocationProvinceId(int $location_province_id = null): static
     {
         $this->location_province_id = $location_province_id;
 

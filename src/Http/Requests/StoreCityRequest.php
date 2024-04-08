@@ -9,6 +9,8 @@ use JobMetric\Location\Rules\CheckExistNameRule;
 
 class StoreCityRequest extends FormRequest
 {
+    public int|null $location_province_id = null;
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -24,13 +26,32 @@ class StoreCityRequest extends FormRequest
      */
     public function rules(): array
     {
+        if (is_null($this->location_province_id)) {
+            $location_province_id = $this->input('location_province_id');
+        } else {
+            $location_province_id = $this->location_province_id;
+        }
+
         return [
             config('location.foreign_key.province') => 'required|exists:' . config('location.tables.province') . ',id',
             'name' => [
                 'string',
-                new CheckExistNameRule(LocationCity::class)
+                new CheckExistNameRule(LocationCity::class, parent_id: $location_province_id)
             ],
             'status' => 'boolean',
         ];
+    }
+
+    /**
+     * Set province id for validation
+     *
+     * @param int|null $location_province_id
+     * @return static
+     */
+    public function setLocationProvinceId(int $location_province_id = null): static
+    {
+        $this->location_province_id = $location_province_id;
+
+        return $this;
     }
 }
