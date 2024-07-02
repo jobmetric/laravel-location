@@ -3,11 +3,12 @@
 namespace JobMetric\Location\Services;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use JobMetric\Location\Events\Country\CountryDeleteEvent;
+use JobMetric\Location\Events\Country\CountryForceDeleteEvent;
+use JobMetric\Location\Events\Country\CountryRestoreEvent;
 use JobMetric\Location\Events\Country\CountryStoreEvent;
 use JobMetric\Location\Events\Country\CountryUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreCountryRequest;
@@ -42,18 +43,36 @@ class CountryManager
      * Get the specified location country.
      *
      * @param array $filter
+     * @param array $with
+     * @param string|null $mode
+     *
      * @return QueryBuilder
      */
-    public function query(array $filter = []): QueryBuilder
+    public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
     {
         $fields = ['id', 'name', 'flag', 'mobile_prefix', 'validation', 'status'];
 
-        return QueryBuilder::for(LocationCountry::class)
-            ->allowedFields($fields)
+        $query = QueryBuilder::for(LocationCountry::class);
+
+        if ($mode === 'withTrashed') {
+            $query->withTrashed();
+        }
+
+        if ($mode === 'onlyTrashed') {
+            $query->onlyTrashed();
+        }
+
+        $query->allowedFields($fields)
             ->allowedSorts($fields)
             ->allowedFilters($fields)
             ->defaultSort('-id')
             ->where($filter);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        return $query;
     }
 
     /**
@@ -61,28 +80,103 @@ class CountryManager
      *
      * @param array $filter
      * @param int $page_limit
-     * @return LengthAwarePaginator
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
      */
-    public function paginate(array $filter = [], int $page_limit = 15): LengthAwarePaginator
+    public function paginate(array $filter = [], int $page_limit = 15, array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return $this->query($filter)->paginate($page_limit);
+        return LocationCountryResource::collection(
+            $this->query($filter, $with, $mode)->paginate($page_limit)
+        );
     }
 
     /**
      * Get all location countries.
      *
      * @param array $filter
-     * @return Collection
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
      */
-    public function all(array $filter = []): Collection
+    public function all(array $filter = [], array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return $this->query($filter)->get();
+        return LocationCountryResource::collection(
+            $this->query($filter, $with, $mode)->get()
+        );
+    }
+
+    /**
+     * Get the specified location country.
+     *
+     * @param int $location_country_id
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return array
+     */
+    public function get(int $location_country_id, array $with = [], string $mode = null): array
+    {
+        if ($mode === 'withTrashed') {
+            $query = LocationCountry::withTrashed();
+        } else if ($mode === 'onlyTrashed') {
+            $query = LocationCountry::onlyTrashed();
+        } else {
+            $query = LocationCountry::query();
+        }
+
+        $query->where('id', $location_country_id);
+
+        if (!empty($with)) {
+            if (isset($with['locationProvinces'])) {
+                $with['locationProvinces'] = function ($query) {
+                    $query->where('status', true);
+                };
+            }
+
+            if (isset($with['locationCities'])) {
+                $with['locationCities'] = function ($query) {
+                    $query->where('status', true);
+                };
+            }
+
+            if (isset($with['locationDistricts'])) {
+                $with['locationDistricts'] = function ($query) {
+                    $query->where('status', true);
+                };
+            }
+
+            $query->with($with);
+        }
+
+        $location_country = $query->first();
+
+        if (!$location_country) {
+            return [
+                'ok' => false,
+                'message' => trans('location::base.validation.errors'),
+                'errors' => [
+                    trans('location::base.validation.object_not_found')
+                ],
+                'status' => 404
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'message' => trans('location::base.messages.found', ['name' => trans('location::base.model_name.country')]),
+            'data' => LocationCountryResource::make($location_country),
+            'status' => 200
+        ];
     }
 
     /**
      * Store the specified location country.
      *
      * @param array $data
+     *
      * @return array
      * @throws Throwable
      */
@@ -108,7 +202,7 @@ class CountryManager
             $country->flag = $data['flag'] ?? null;
             $country->mobile_prefix = $data['mobile_prefix'] ?? null;
             $country->validation = $data['validation'] ?? null;
-            $country->status = $data['status'];
+            $country->status = $data['status'] ?? true;
             $country->save();
 
             event(new CountryStoreEvent($country, $data));
@@ -127,6 +221,7 @@ class CountryManager
      *
      * @param int $location_country_id
      * @param array $data
+     *
      * @return array
      */
     public function update(int $location_country_id, array $data): array
@@ -199,6 +294,7 @@ class CountryManager
      * Delete the specified location country.
      *
      * @param int $location_country_id
+     *
      * @return array
      */
     public function delete(int $location_country_id): array
@@ -230,6 +326,88 @@ class CountryManager
                 'ok' => true,
                 'data' => $data,
                 'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.country')]),
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Restore the specified location country.
+     *
+     * @param int $location_country_id
+     *
+     * @return array
+     */
+    public function restore(int $location_country_id): array
+    {
+        return DB::transaction(function () use ($location_country_id) {
+            /**
+             * @var LocationCountry $location_country
+             */
+            $location_country = LocationCountry::onlyTrashed()->where('id', $location_country_id)->first();
+
+            if (!$location_country) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new CountryRestoreEvent($location_country));
+
+            $data = LocationCountryResource::make($location_country);
+
+            $location_country->restore();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.restored', ['name' => trans('location::base.model_name.country')]),
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Force delete the specified location country.
+     *
+     * @param int $location_country_id
+     *
+     * @return array
+     */
+    public function forceDelete(int $location_country_id): array
+    {
+        return DB::transaction(function () use ($location_country_id) {
+            /**
+             * @var LocationCountry $location_country
+             */
+            $location_country = LocationCountry::onlyTrashed()->where('id', $location_country_id)->first();
+
+            if (!$location_country) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new CountryForceDeleteEvent($location_country));
+
+            $data = LocationCountryResource::make($location_country);
+
+            $location_country->forceDelete();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.permanently_deleted', ['name' => trans('location::base.model_name.country')]),
                 'status' => 200
             ];
         });

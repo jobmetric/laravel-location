@@ -26,7 +26,7 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        if(is_null($this->location_country_id)) {
+        if (is_null($this->location_country_id)) {
             $location_country_id = $this->route()->parameter('location_country')->id;
         } else {
             $location_country_id = $this->location_country_id;

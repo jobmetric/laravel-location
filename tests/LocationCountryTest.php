@@ -8,7 +8,7 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationCountryTest extends BaseTestCase
 {
-    public function testStore(): void
+    public function test_store(): void
     {
         // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
@@ -59,7 +59,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($locationCountry['data']->status);
     }
 
-    public function testUpdate(): void
+    public function test_update(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -116,7 +116,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertFalse($updateLocationCountry['data']->status);
     }
 
-    public function testDelete(): void
+    public function test_delete(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -131,6 +131,10 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(200, $deleteLocationCountry['status']);
         $this->assertInstanceOf(LocationCountryResource::class, $deleteLocationCountry['data']);
 
+        $this->assertSoftDeleted('location_countries', [
+            'name' => 'Iran',
+        ]);
+
         // Delete the country again
         $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
 
@@ -140,7 +144,87 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(404, $deleteLocationCountry['status']);
     }
 
-    public function testGet(): void
+    public function test_restore(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Delete the country
+        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+
+        // Restore the country
+        $restoreLocationCountry = LocationCountry::restore($locationCountry['data']->id);
+
+        $this->assertIsArray($restoreLocationCountry);
+        $this->assertTrue($restoreLocationCountry['ok']);
+        $this->assertEquals(200, $restoreLocationCountry['status']);
+        $this->assertInstanceOf(LocationCountryResource::class, $restoreLocationCountry['data']);
+
+        $this->assertDatabaseHas('location_countries', [
+            'name' => 'Iran',
+        ]);
+
+        // Restore the country again
+        $restoreLocationCountry = LocationCountry::restore($locationCountry['data']->id);
+
+        $this->assertIsArray($restoreLocationCountry);
+        $this->assertFalse($restoreLocationCountry['ok']);
+        $this->assertIsArray($restoreLocationCountry['errors']);
+        $this->assertEquals(404, $restoreLocationCountry['status']);
+    }
+
+    public function test_force_delete(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Delete the country
+        LocationCountry::delete($locationCountry['data']->id);
+
+        // Force delete the country
+        $forceDeleteLocationCountry = LocationCountry::forceDelete($locationCountry['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationCountry);
+        $this->assertTrue($forceDeleteLocationCountry['ok']);
+        $this->assertEquals(200, $forceDeleteLocationCountry['status']);
+        $this->assertInstanceOf(LocationCountryResource::class, $forceDeleteLocationCountry['data']);
+
+        $this->assertDatabaseMissing('location_countries', [
+            'name' => 'Iran',
+        ]);
+
+        // Force delete the country again
+        $forceDeleteLocationCountry = LocationCountry::forceDelete($locationCountry['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationCountry);
+        $this->assertFalse($forceDeleteLocationCountry['ok']);
+        $this->assertIsArray($forceDeleteLocationCountry['errors']);
+        $this->assertEquals(404, $forceDeleteLocationCountry['status']);
+    }
+
+    public function test_get(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Get the country
+        $getLocationCountry = LocationCountry::get($locationCountry['data']->id);
+
+        $this->assertIsArray($getLocationCountry);
+        $this->assertTrue($getLocationCountry['ok']);
+        $this->assertEquals(200, $getLocationCountry['status']);
+        $this->assertInstanceOf(LocationCountryResource::class, $getLocationCountry['data']);
+        $this->assertEquals($locationCountry['data']->id, $getLocationCountry['data']->id);
+        $this->assertEquals('Iran', $getLocationCountry['data']->name);
+    }
+
+    public function test_all(): void
     {
         // Store a country
         LocationCountry::store([
@@ -150,19 +234,14 @@ class LocationCountryTest extends BaseTestCase
         // Get the country
         $getCountries = LocationCountry::all();
 
-        $getCountries->each(function ($country) {
-            $this->assertInstanceOf(\JobMetric\Location\Models\LocationCountry::class, $country);
+        $this->assertCount(1, $getCountries);
 
-            $this->assertIsInt($country->id);
-            $this->assertIsString($country->name);
-            $this->assertNull($country->flag);
-            $this->assertNull($country->mobile_prefix);
-            $this->assertNull($country->validation);
-            $this->assertIsBool($country->status);
+        $getCountries->each(function ($country) {
+            $this->assertInstanceOf(LocationCountryResource::class, $country);
         });
     }
 
-    public function testPaginate(): void
+    public function test_paginate(): void
     {
         // Store a country
         LocationCountry::store([
@@ -172,7 +251,12 @@ class LocationCountryTest extends BaseTestCase
         // Paginate the country
         $paginateCountries = LocationCountry::paginate();
 
-        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateCountries);
+        $this->assertCount(1, $paginateCountries);
+
+        $paginateCountries->each(function ($country) {
+            $this->assertInstanceOf(LocationCountryResource::class, $country);
+        });
+
         $this->assertIsInt($paginateCountries->total());
         $this->assertIsInt($paginateCountries->perPage());
         $this->assertIsInt($paginateCountries->currentPage());

@@ -47,7 +47,7 @@ class LocationCityTest extends BaseTestCase
         $locationCity = LocationCity::store([
             config('location.foreign_key.country') => $locationCountry['data']->id,
             config('location.foreign_key.province') => $locationProvince['data']->id,
-            'name' => 'Mashhad',
+            'name' => 'Mashhad'
         ]);
 
         $this->assertIsArray($locationCity);

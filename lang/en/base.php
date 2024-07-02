@@ -19,9 +19,12 @@ return [
     ],
 
     'messages' => [
+        'found' => 'The :name was found successfully.',
         'created' => 'The :name was created successfully.',
         'updated' => 'The :name was updated successfully.',
         'deleted' => 'The :name was deleted successfully.',
+        'restored' => 'The :name was restored successfully.',
+        'permanently_deleted' => 'The :name was permanently deleted successfully.',
     ],
 
     'model_name' => [
