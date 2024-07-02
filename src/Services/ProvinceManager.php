@@ -3,11 +3,12 @@
 namespace JobMetric\Location\Services;
 
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use JobMetric\Location\Events\Province\ProvinceDeleteEvent;
+use JobMetric\Location\Events\Province\ProvinceForceDeleteEvent;
+use JobMetric\Location\Events\Province\ProvinceRestoreEvent;
 use JobMetric\Location\Events\Province\ProvinceStoreEvent;
 use JobMetric\Location\Events\Province\ProvinceUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreProvinceRequest;
@@ -42,18 +43,36 @@ class ProvinceManager
      * Get the specified location province.
      *
      * @param array $filter
+     * @param array $with
+     * @param string|null $mode
+     *
      * @return QueryBuilder
      */
-    public function query(array $filter = []): QueryBuilder
+    public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
     {
-        $fields = ['id', 'name', 'location_country_id', 'status'];
+        $fields = ['id', 'name', config('location.foreign_key.country'), 'status'];
 
-        return QueryBuilder::for(LocationProvince::class)
-            ->allowedFields($fields)
+        $query = QueryBuilder::for(LocationProvince::class);
+
+        if ($mode === 'withTrashed') {
+            $query->withTrashed();
+        }
+
+        if ($mode === 'onlyTrashed') {
+            $query->onlyTrashed();
+        }
+
+        $query->allowedFields($fields)
             ->allowedSorts($fields)
             ->allowedFilters($fields)
             ->defaultSort('-id')
             ->where($filter);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        return $query;
     }
 
     /**
@@ -61,22 +80,90 @@ class ProvinceManager
      *
      * @param array $filter
      * @param int $page_limit
-     * @return LengthAwarePaginator
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
      */
-    public function paginate(array $filter = [], int $page_limit = 15): LengthAwarePaginator
+    public function paginate(array $filter = [], int $page_limit = 15, array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return $this->query($filter)->paginate($page_limit);
+        return LocationProvinceResource::collection(
+            $this->query($filter, $with, $mode)->paginate($page_limit)
+        );
     }
 
     /**
      * Get all location provinces.
      *
      * @param array $filter
-     * @return Collection
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
      */
-    public function all(array $filter = []): Collection
+    public function all(array $filter = [], array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return $this->query($filter)->get();
+        return LocationProvinceResource::collection(
+            $this->query($filter, $with, $mode)->get()
+        );
+    }
+
+    /**
+     * Get the specified location province.
+     *
+     * @param int $location_province_id
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return array
+     */
+    public function get(int $location_province_id, array $with = [], string $mode = null): array
+    {
+        if ($mode === 'withTrashed') {
+            $query = LocationProvince::withTrashed();
+        } else if ($mode === 'onlyTrashed') {
+            $query = LocationProvince::onlyTrashed();
+        } else {
+            $query = LocationProvince::query();
+        }
+
+        $query->where('id', $location_province_id);
+
+        if (!empty($with)) {
+            if (isset($with['locationCities'])) {
+                $with['locationCities'] = function ($query) {
+                    $query->where('status', true);
+                };
+            }
+
+            if (isset($with['locationDistricts'])) {
+                $with['locationDistricts'] = function ($query) {
+                    $query->where('status', true);
+                };
+            }
+
+            $query->with($with);
+        }
+
+        $location_province = $query->first();
+
+        if (!$location_province) {
+            return [
+                'ok' => false,
+                'message' => trans('location::base.validation.errors'),
+                'errors' => [
+                    trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
+                ],
+                'status' => 404
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'message' => trans('location::base.messages.found', ['name' => trans('location::base.model_name.province')]),
+            'data' => LocationProvinceResource::make($location_province),
+            'status' => 200
+        ];
     }
 
     /**
@@ -220,6 +307,88 @@ class ProvinceManager
                 'ok' => true,
                 'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.province')]),
                 'data' => $data,
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Restore the specified location province.
+     *
+     * @param int $location_province_id
+     *
+     * @return array
+     */
+    public function restore(int $location_province_id): array
+    {
+        return DB::transaction(function () use ($location_province_id) {
+            /**
+             * @var LocationProvince $location_province
+             */
+            $location_province = LocationProvince::onlyTrashed()->where('id', $location_province_id)->first();
+
+            if (!$location_province) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new ProvinceRestoreEvent($location_province));
+
+            $data = LocationProvinceResource::make($location_province);
+
+            $location_province->restore();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.restored', ['name' => trans('location::base.model_name.province')]),
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Force delete the specified location province.
+     *
+     * @param int $location_province_id
+     *
+     * @return array
+     */
+    public function forceDelete(int $location_province_id): array
+    {
+        return DB::transaction(function () use ($location_province_id) {
+            /**
+             * @var LocationProvince $location_province
+             */
+            $location_province = LocationProvince::onlyTrashed()->where('id', $location_province_id)->first();
+
+            if (!$location_province) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new ProvinceForceDeleteEvent($location_province));
+
+            $data = LocationProvinceResource::make($location_province);
+
+            $location_province->forceDelete();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.permanently_deleted', ['name' => trans('location::base.model_name.province')]),
                 'status' => 200
             ];
         });

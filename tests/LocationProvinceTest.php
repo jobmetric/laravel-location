@@ -10,7 +10,7 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationProvinceTest extends BaseTestCase
 {
-    public function testStore(): void
+    public function test_store(): void
     {
         // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
@@ -99,7 +99,7 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(422, $locationProvince['status']);
     }
 
-    public function testUpdate(): void
+    public function test_update(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -165,7 +165,7 @@ class LocationProvinceTest extends BaseTestCase
         ]);
     }
 
-    public function testDelete(): void
+    public function test_delete(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -186,6 +186,10 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(200, $deleteLocationProvince['status']);
         $this->assertInstanceOf(LocationProvinceResource::class, $deleteLocationProvince['data']);
 
+        $this->assertSoftDeleted(config('location.tables.province'), [
+            'name' => 'Tehran',
+        ]);
+
         // Delete the province again
         $deleteLocationProvince = LocationProvince::delete($locationProvince['data']->id);
 
@@ -195,7 +199,80 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertEquals(404, $deleteLocationProvince['status']);
     }
 
-    public function testGet(): void
+    public function test_restore(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Delete the province
+        LocationProvince::delete($locationProvince['data']->id);
+
+        // Restore the province
+        $restoreLocationProvince = LocationProvince::restore($locationProvince['data']->id);
+
+        $this->assertIsArray($restoreLocationProvince);
+        $this->assertTrue($restoreLocationProvince['ok']);
+        $this->assertEquals(200, $restoreLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $restoreLocationProvince['data']);
+
+        $this->assertNotSoftDeleted(config('location.tables.province'), [
+            'name' => 'Tehran',
+        ]);
+
+        // Restore the province again
+        $restoreLocationProvince = LocationProvince::restore($locationProvince['data']->id);
+
+        $this->assertIsArray($restoreLocationProvince);
+        $this->assertFalse($restoreLocationProvince['ok']);
+        $this->assertIsArray($restoreLocationProvince['errors']);
+        $this->assertEquals(404, $restoreLocationProvince['status']);
+    }
+
+    public function test_force_delete(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        LocationProvince::delete($locationProvince['data']->id);
+
+        // Force delete the province
+        $forceDeleteLocationProvince = LocationProvince::forceDelete($locationProvince['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationProvince);
+        $this->assertTrue($forceDeleteLocationProvince['ok']);
+        $this->assertEquals(200, $forceDeleteLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $forceDeleteLocationProvince['data']);
+
+        $this->assertDatabaseMissing(config('location.tables.province'), [
+            'name' => 'Tehran',
+        ]);
+
+        // Force delete the province again
+        $forceDeleteLocationProvince = LocationProvince::forceDelete($locationProvince['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationProvince);
+        $this->assertFalse($forceDeleteLocationProvince['ok']);
+        $this->assertIsArray($forceDeleteLocationProvince['errors']);
+        $this->assertEquals(404, $forceDeleteLocationProvince['status']);
+    }
+
+    public function test_get(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -209,18 +286,25 @@ class LocationProvinceTest extends BaseTestCase
         ]);
 
         // Get the province
-        $getLocationProvinces = LocationProvince::all();
+        $getLocationProvince = LocationProvince::get($locationProvince['data']->id);
 
-        $getLocationProvinces->each(function ($province) {
-            $this->assertInstanceOf(\JobMetric\Location\Models\LocationProvince::class, $province);
+        $this->assertIsArray($getLocationProvince);
+        $this->assertTrue($getLocationProvince['ok']);
+        $this->assertEquals(200, $getLocationProvince['status']);
+        $this->assertInstanceOf(LocationProvinceResource::class, $getLocationProvince['data']);
+        $this->assertEquals($locationProvince['data']->id, $getLocationProvince['data']->id);
+        $this->assertEquals('Tehran', $getLocationProvince['data']->name);
 
-            $this->assertIsInt($province->id);
-            $this->assertIsString($province->name);
-            $this->assertIsBool($province->status);
-        });
+        // Get the province with a wrong id
+        $getLocationProvince = LocationProvince::get(1000);
+
+        $this->assertIsArray($getLocationProvince);
+        $this->assertFalse($getLocationProvince['ok']);
+        $this->assertIsArray($getLocationProvince['errors']);
+        $this->assertEquals(404, $getLocationProvince['status']);
     }
 
-    public function testPaginate(): void
+    public function test_all(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -228,7 +312,30 @@ class LocationProvinceTest extends BaseTestCase
         ]);
 
         // Store a province
-        $locationProvince = LocationProvince::store([
+        LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Get the province
+        $getLocationProvinces = LocationProvince::all();
+
+        $this->assertCount(1, $getLocationProvinces);
+
+        $getLocationProvinces->each(function ($province) {
+            $this->assertInstanceOf(LocationProvinceResource::class, $province);
+        });
+    }
+
+    public function test_paginate(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        LocationProvince::store([
             config('location.foreign_key.country') => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
@@ -236,7 +343,12 @@ class LocationProvinceTest extends BaseTestCase
         // Paginate the provinces
         $paginateProvinces = LocationProvince::paginate();
 
-        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateProvinces);
+        $this->assertCount(1, $paginateProvinces);
+
+        $paginateProvinces->each(function ($province) {
+            $this->assertInstanceOf(LocationProvinceResource::class, $province);
+        });
+
         $this->assertIsInt($paginateProvinces->total());
         $this->assertIsInt($paginateProvinces->perPage());
         $this->assertIsInt($paginateProvinces->currentPage());
