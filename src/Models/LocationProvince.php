@@ -81,27 +81,27 @@ class LocationProvince extends Model
         return $this->hasMany(LocationAddress::class);
     }
 
-    public function getCountryNameAttribute()
+    public function getCountryNameAttribute(): string
     {
         return $this->country->name;
     }
 
-    public function getCountryMobilePrefixAttribute()
+    public function getCountryMobilePrefixAttribute(): string
     {
         return $this->country->mobile_prefix;
     }
 
-    public function getCountryFlagAttribute()
+    public function getCountryFlagAttribute(): string
     {
         return $this->country->flag;
     }
 
-    public function getCountryValidationAttribute()
+    public function getCountryValidationAttribute(): array
     {
         return $this->country->validation;
     }
 
-    public function getCountryStatusAttribute()
+    public function getCountryStatusAttribute(): bool
     {
         return $this->country->status;
     }
