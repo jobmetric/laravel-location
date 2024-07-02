@@ -28,18 +28,22 @@ class UpdateCityRequest extends FormRequest
     public function rules(): array
     {
         if (is_null($this->location_city_id)) {
-            $location_city_id = $this->route()->parameter('location_city')->id;
+            $location_city_id = $this->route()->parameter('location_city')?->id;
         } else {
             $location_city_id = $this->location_city_id;
         }
 
         if (is_null($this->location_province_id)) {
-            $location_province_id = $this->input('location_province_id');
+            $location_province_id = $this->route()->parameter('location_city')?->{config('location.foreign_key.province')};
+            if(is_null($location_province_id)) {
+                $location_province_id = $this->input('location_province_id');
+            }
         } else {
             $location_province_id = $this->location_province_id;
         }
 
         return [
+            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
             config('location.foreign_key.province') => 'required|exists:' . config('location.tables.province') . ',id',
             'name' => [
                 'string',

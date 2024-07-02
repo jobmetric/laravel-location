@@ -10,7 +10,7 @@ use Tests\BaseDatabaseTestCase as BaseTestCase;
 
 class LocationCityTest extends BaseTestCase
 {
-    public function testStore(): void
+    public function test_store(): void
     {
         // Store a country by filling only the name field
         $locationCountry = LocationCountry::store([
@@ -35,6 +35,7 @@ class LocationCityTest extends BaseTestCase
         $this->assertEquals(201, $locationCity['status']);
         $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
         $this->assertIsInt($locationCity['data']->id);
+
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $locationCity['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -54,9 +55,69 @@ class LocationCityTest extends BaseTestCase
         $this->assertFalse($locationCity['ok']);
         $this->assertIsArray($locationCity['errors']);
         $this->assertEquals(422, $locationCity['status']);
+
+        // Store another city by filling all fields
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Neishabour',
+            'status' => false,
+        ]);
+
+        $this->assertIsArray($locationCity);
+        $this->assertTrue($locationCity['ok']);
+        $this->assertEquals(201, $locationCity['status']);
+        $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
+        $this->assertIsInt($locationCity['data']->id);
+
+        $this->assertDatabaseHas(config('location.tables.city'), [
+            'id' => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'name' => 'Neishabour',
+            'status' => false,
+        ]);
+
+        // store another province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Mazandaran'
+        ]);
+
+        // Store a city by filling only the name field
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Mashhad'
+        ]);
+
+        $this->assertIsArray($locationCity);
+        $this->assertTrue($locationCity['ok']);
+        $this->assertEquals(201, $locationCity['status']);
+        $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
+        $this->assertIsInt($locationCity['data']->id);
+        $this->assertDatabaseHas(config('location.tables.city'), [
+            'id' => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'name' => 'Mashhad',
+            'status' => true,
+        ]);
+
+        // Store a duplicate city in Mazandaran
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Mashhad'
+        ]);
+
+        $this->assertIsArray($locationCity);
+        $this->assertFalse($locationCity['ok']);
+        $this->assertIsArray($locationCity['errors']);
+        $this->assertEquals(422, $locationCity['status']);
     }
 
-    public function testUpdate(): void
+    public function test_update(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -135,7 +196,7 @@ class LocationCityTest extends BaseTestCase
         ]);
     }
 
-    public function testDelete(): void
+    public function test_delete(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -163,6 +224,10 @@ class LocationCityTest extends BaseTestCase
         $this->assertEquals(200, $deleteLocationCity['status']);
         $this->assertInstanceOf(LocationCityResource::class, $deleteLocationCity['data']);
 
+        $this->assertSoftDeleted(config('location.tables.city'), [
+            'name' => 'Tehran',
+        ]);
+
         // Delete the city again
         $deleteLocationCity = LocationCity::delete($locationCity['data']->id);
 
@@ -172,7 +237,137 @@ class LocationCityTest extends BaseTestCase
         $this->assertEquals(404, $deleteLocationCity['status']);
     }
 
-    public function testGet(): void
+    public function test_restore(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Store a city
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Delete the city
+        LocationCity::delete($locationCity['data']->id);
+
+        // Restore the city
+        $restoreLocationCity = LocationCity::restore($locationCity['data']->id);
+
+        $this->assertIsArray($restoreLocationCity);
+        $this->assertTrue($restoreLocationCity['ok']);
+        $this->assertEquals(200, $restoreLocationCity['status']);
+        $this->assertInstanceOf(LocationCityResource::class, $restoreLocationCity['data']);
+
+        $this->assertDatabaseHas(config('location.tables.city'), [
+            'id' => $locationCity['data']->id,
+            'name' => 'Tehran',
+            'status' => true,
+        ]);
+
+        // Restore the city again
+        $restoreLocationCity = LocationCity::restore($locationCity['data']->id);
+
+        $this->assertIsArray($restoreLocationCity);
+        $this->assertFalse($restoreLocationCity['ok']);
+        $this->assertIsArray($restoreLocationCity['errors']);
+        $this->assertEquals(404, $restoreLocationCity['status']);
+    }
+
+    public function test_force_delete(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Store a city
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Delete the city
+        LocationCity::delete($locationCity['data']->id);
+
+        // Force delete the city
+        $forceDeleteLocationCity = LocationCity::forceDelete($locationCity['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationCity);
+        $this->assertTrue($forceDeleteLocationCity['ok']);
+        $this->assertEquals(200, $forceDeleteLocationCity['status']);
+        $this->assertInstanceOf(LocationCityResource::class, $forceDeleteLocationCity['data']);
+
+        $this->assertDatabaseMissing(config('location.tables.city'), [
+            'name' => 'Tehran',
+        ]);
+
+        // Force delete the city again
+        $forceDeleteLocationCity = LocationCity::forceDelete($locationCity['data']->id);
+
+        $this->assertIsArray($forceDeleteLocationCity);
+        $this->assertFalse($forceDeleteLocationCity['ok']);
+        $this->assertIsArray($forceDeleteLocationCity['errors']);
+        $this->assertEquals(404, $forceDeleteLocationCity['status']);
+    }
+
+    public function test_get(): void
+    {
+        // Store a country
+        $locationCountry = LocationCountry::store([
+            'name' => 'Iran',
+        ]);
+
+        // Store a province
+        $locationProvince = LocationProvince::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Store a city
+        $locationCity = LocationCity::store([
+            config('location.foreign_key.country') => $locationCountry['data']->id,
+            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'name' => 'Tehran',
+        ]);
+
+        // Get the city
+        $getLocationCity = LocationCity::get($locationCity['data']->id);
+
+        $this->assertIsArray($getLocationCity);
+        $this->assertTrue($getLocationCity['ok']);
+        $this->assertEquals(200, $getLocationCity['status']);
+        $this->assertInstanceOf(LocationCityResource::class, $getLocationCity['data']);
+        $this->assertIsInt($getLocationCity['data']->id);
+        $this->assertEquals('Tehran', $getLocationCity['data']->name);
+        $this->assertTrue($getLocationCity['data']->status);
+
+        // Get the city with a wrong id
+        $getLocationCity = LocationCity::get(1000);
+
+        $this->assertIsArray($getLocationCity);
+        $this->assertFalse($getLocationCity['ok']);
+        $this->assertIsArray($getLocationCity['errors']);
+        $this->assertEquals(404, $getLocationCity['status']);
+    }
+
+    public function test_all(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -195,16 +390,14 @@ class LocationCityTest extends BaseTestCase
         // Get the city
         $getLocationCity = LocationCity::all();
 
-        $getLocationCity->each(function ($city) {
-            $this->assertInstanceOf(\JobMetric\Location\Models\LocationCity::class, $city);
+        $this->assertCount(1, $getLocationCity);
 
-            $this->assertIsInt($city->id);
-            $this->assertIsString($city->name);
-            $this->assertIsBool($city->status);
+        $getLocationCity->each(function ($city) {
+            $this->assertInstanceOf(LocationCityResource::class, $city);
         });
     }
 
-    public function testPaginate(): void
+    public function test_paginate(): void
     {
         // Store a country
         $locationCountry = LocationCountry::store([
@@ -227,7 +420,12 @@ class LocationCityTest extends BaseTestCase
         // Paginate the cities
         $paginateCities = LocationCity::paginate();
 
-        $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $paginateCities);
+        $this->assertCount(1, $paginateCities);
+
+        $paginateCities->each(function ($city) {
+            $this->assertInstanceOf(LocationCityResource::class, $city);
+        });
+
         $this->assertIsInt($paginateCities->total());
         $this->assertIsInt($paginateCities->perPage());
         $this->assertIsInt($paginateCities->currentPage());
