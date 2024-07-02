@@ -162,7 +162,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals(200, $restoreLocationCountry['status']);
         $this->assertInstanceOf(LocationCountryResource::class, $restoreLocationCountry['data']);
 
-        $this->assertDatabaseHas('location_countries', [
+        $this->assertNotSoftDeleted('location_countries', [
             'name' => 'Iran',
         ]);
 
@@ -222,6 +222,14 @@ class LocationCountryTest extends BaseTestCase
         $this->assertInstanceOf(LocationCountryResource::class, $getLocationCountry['data']);
         $this->assertEquals($locationCountry['data']->id, $getLocationCountry['data']->id);
         $this->assertEquals('Iran', $getLocationCountry['data']->name);
+
+        // Get the country with a wrong id
+        $getLocationCountry = LocationCountry::get(1000);
+
+        $this->assertIsArray($getLocationCountry);
+        $this->assertFalse($getLocationCountry['ok']);
+        $this->assertIsArray($getLocationCountry['errors']);
+        $this->assertEquals(404, $getLocationCountry['status']);
     }
 
     public function test_all(): void
