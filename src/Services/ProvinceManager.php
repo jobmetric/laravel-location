@@ -175,7 +175,7 @@ class ProvinceManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreProvinceRequest)->setLocationCountryId($data[config('location.foreign_key.country')])->rules());
+        $validator = Validator::make($data, (new StoreProvinceRequest)->setLocationCountryId($data[config('location.foreign_key.country')] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -216,7 +216,7 @@ class ProvinceManager
      */
     public function update(int $location_province_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->setLocationCountryId($data[config('location.foreign_key.country')])->rules());
+        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->setLocationCountryId($data[config('location.foreign_key.country')] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 

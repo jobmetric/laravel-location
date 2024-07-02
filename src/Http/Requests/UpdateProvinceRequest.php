@@ -28,13 +28,16 @@ class UpdateProvinceRequest extends FormRequest
     public function rules(): array
     {
         if (is_null($this->location_province_id)) {
-            $location_province_id = $this->route()->parameter('location_province')->id;
+            $location_province_id = $this->route()->parameter('location_province')?->id;
         } else {
             $location_province_id = $this->location_province_id;
         }
 
         if (is_null($this->location_country_id)) {
-            $location_country_id = $this->input('location_country_id');
+            $location_country_id = $this->route()->parameter('location_province')?->{config('location.foreign_key.country')};
+            if(is_null($location_country_id)) {
+                $location_country_id = $this->input('location_country_id');
+            }
         } else {
             $location_country_id = $this->location_country_id;
         }

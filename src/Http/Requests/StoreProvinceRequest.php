@@ -27,7 +27,10 @@ class StoreProvinceRequest extends FormRequest
     public function rules(): array
     {
         if (is_null($this->location_country_id)) {
-            $location_country_id = $this->input('location_country_id');
+            $location_country_id = $this->route()->parameter('location_province')?->{config('location.foreign_key.country')};
+            if (is_null($location_country_id)) {
+                $location_country_id = $this->input(config('location.foreign_key.country'));
+            }
         } else {
             $location_country_id = $this->location_country_id;
         }
