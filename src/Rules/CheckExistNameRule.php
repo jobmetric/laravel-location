@@ -15,8 +15,8 @@ class CheckExistNameRule implements ValidationRule
      */
     public function __construct(
         private readonly string $model,
-        private int|null $object_id = null,
-        private int|null $parent_id = null,
+        private int|null        $object_id = null,
+        private int|null        $parent_id = null,
     )
     {
     }
@@ -39,11 +39,11 @@ class CheckExistNameRule implements ValidationRule
                 $query->where(config('location.foreign_key.country'), $this->parent_id);
             }
 
-            if($this->model === 'JobMetric\Location\Models\LocationCity') {
+            if ($this->model === 'JobMetric\Location\Models\LocationCity') {
                 $query->where(config('location.foreign_key.province'), $this->parent_id);
             }
 
-            if($this->model === 'JobMetric\Location\Models\LocationDistrict') {
+            if ($this->model === 'JobMetric\Location\Models\LocationDistrict') {
                 $query->where(config('location.foreign_key.city'), $this->parent_id);
             }
         }
