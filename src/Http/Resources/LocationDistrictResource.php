@@ -32,7 +32,7 @@ class LocationDistrictResource extends JsonResource
             'status' => $this->status,
 
             'country' => $this->whenLoaded('country', LocationCountryResource::make($this->country)),
-            'province' => $this->whenLoaded('province', LocationCountryResource::make($this->province)),
+            'province' => $this->whenLoaded('province', LocationProvinceResource::make($this->province)),
             'city' => $this->whenLoaded('city', LocationCityResource::make($this->city)),
         ];
     }
