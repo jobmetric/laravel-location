@@ -108,7 +108,7 @@ class CountryManager
             $country->flag = $data['flag'] ?? null;
             $country->mobile_prefix = $data['mobile_prefix'] ?? null;
             $country->validation = $data['validation'] ?? null;
-            $country->status = $data['status'] ?? true;
+            $country->status = $data['status'];
             $country->save();
 
             event(new CountryStoreEvent($country, $data));
