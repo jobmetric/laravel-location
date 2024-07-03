@@ -244,6 +244,10 @@ class CityManager
                 ];
             }
 
+            if (array_key_exists(config('location.foreign_key.country'), $data)) {
+                $location_city->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
+            }
+
             if (array_key_exists(config('location.foreign_key.province'), $data)) {
                 $location_city->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
             }

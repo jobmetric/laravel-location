@@ -96,6 +96,7 @@ class LocationCityTest extends BaseTestCase
         $this->assertEquals(201, $locationCity['status']);
         $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
         $this->assertIsInt($locationCity['data']->id);
+
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $locationCity['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -148,6 +149,7 @@ class LocationCityTest extends BaseTestCase
         $this->assertTrue($updateLocationCity['ok']);
         $this->assertEquals(200, $updateLocationCity['status']);
         $this->assertInstanceOf(LocationCityResource::class, $updateLocationCity['data']);
+
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $updateLocationCity['data']->id,
             config('location.foreign_key.country') => $locationCountry['data']->id,
