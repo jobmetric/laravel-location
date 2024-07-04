@@ -65,17 +65,17 @@ class LocationDistrict extends Model
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(LocationCountry::class);
+        return $this->belongsTo(LocationCountry::class, 'id');
     }
 
     public function province(): BelongsTo
     {
-        return $this->belongsTo(LocationProvince::class);
+        return $this->belongsTo(LocationProvince::class, 'id');
     }
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(LocationCity::class);
+        return $this->belongsTo(LocationCity::class, 'id');
     }
 
     public function geoAreaZones(): HasMany

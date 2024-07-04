@@ -59,12 +59,12 @@ class LocationCity extends Model
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(LocationCountry::class);
+        return $this->belongsTo(LocationCountry::class, 'id');
     }
 
     public function province(): BelongsTo
     {
-        return $this->belongsTo(LocationProvince::class);
+        return $this->belongsTo(LocationProvince::class, 'id');
     }
 
     public function districts(): HasMany
