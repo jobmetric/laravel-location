@@ -13,7 +13,6 @@ use JobMetric\Location\Events\GeoArea\GeoAreaStoreEvent;
 use JobMetric\Location\Events\GeoArea\GeoAreaUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreGeoAreaRequest;
 use JobMetric\Location\Http\Requests\UpdateGeoAreaRequest;
-use JobMetric\Location\Http\Resources\LocationCityResource;
 use JobMetric\Location\Http\Resources\LocationGeoAreaResource;
 use JobMetric\Location\Models\LocationGeoArea;
 use Spatie\QueryBuilder\QueryBuilder;
@@ -185,7 +184,7 @@ class GeoAreaManager
         return DB::transaction(function () use ($data) {
             $geo_area = new LocationGeoArea;
             $geo_area->title = $data['title'];
-            $geo_area->description = $data['description'];
+            $geo_area->description = $data['description'] ?? null;
             $geo_area->status = $data['status'] ?? true;
             $geo_area->save();
 
@@ -277,7 +276,7 @@ class GeoAreaManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.geo_area')]),
-                'data' => LocationCityResource::make($location_geo_area),
+                'data' => LocationGeoAreaResource::make($location_geo_area),
                 'status' => 200
             ];
         });
@@ -352,7 +351,7 @@ class GeoAreaManager
 
             event(new GeoAreaRestoreEvent($location_geo_area));
 
-            $data = LocationCityResource::make($location_geo_area);
+            $data = LocationGeoAreaResource::make($location_geo_area);
 
             $location_geo_area->restore();
 
@@ -393,7 +392,7 @@ class GeoAreaManager
 
             event(new GeoAreaForceDeleteEvent($location_geo_area));
 
-            $data = LocationCityResource::make($location_geo_area);
+            $data = LocationGeoAreaResource::make($location_geo_area);
 
             $location_geo_area->forceDelete();
 

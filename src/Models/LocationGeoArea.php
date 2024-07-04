@@ -41,6 +41,6 @@ class LocationGeoArea extends Model
 
     public function geoAreaZones(): HasMany
     {
-        return $this->hasMany(LocationGeoAreaZone::class);
+        return $this->hasMany(LocationGeoAreaZone::class, 'location_geo_area_id');
     }
 }

@@ -3,12 +3,12 @@
 namespace JobMetric\Location\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
 /**
  * table properties
- * @property int geo_area_id
+ * @property int location_geo_area_id
  * @property int location_country_id
  * @property int location_province_id
  * @property int location_city_id
@@ -39,12 +39,14 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string geo_area_name
  * @property boolean geo_area_status
  */
-class LocationGeoAreaZone extends Model
+class LocationGeoAreaZone extends Pivot
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
-        'geo_area_id',
+        'location_geo_area_id',
         'location_country_id',
         'location_province_id',
         'location_city_id',
@@ -52,7 +54,7 @@ class LocationGeoAreaZone extends Model
     ];
 
     protected $casts = [
-        'geo_area_id' => 'integer',
+        'location_geo_area_id' => 'integer',
         'location_country_id' => 'integer',
         'location_province_id' => 'integer',
         'location_city_id' => 'integer',
@@ -66,7 +68,7 @@ class LocationGeoAreaZone extends Model
 
     public function geoArea(): BelongsTo
     {
-        return $this->belongsTo(LocationGeoArea::class);
+        return $this->belongsTo(LocationGeoArea::class, 'id');
     }
 
     public function country(): BelongsTo

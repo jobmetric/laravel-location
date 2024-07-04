@@ -37,10 +37,10 @@ class UpdateGeoAreaRequest extends FormRequest
 
             'geo_area_zones' => 'array|nullable|sometimes',
             'geo_area_zones.*' => 'array',
-            'geo_area_zones.*.' . config('location.foreign_key.country') => 'integer|exists:' . config('location.tables.country') . ',id',
-            'geo_area_zones.*.' . config('location.foreign_key.province') => 'integer|exists:' . config('location.tables.province') . ',id|nullable',
-            'geo_area_zones.*.' . config('location.foreign_key.city') => 'integer|exists:' . config('location.tables.city') . ',id|nullable',
-            'geo_area_zones.*.' . config('location.foreign_key.district') => 'integer|exists:' . config('location.tables.district') . ',id|nullable',
+            'geo_area_zones.*.location_country_id' => 'integer|exists:' . config('location.tables.country') . ',id',
+            'geo_area_zones.*.location_province_id' => 'integer|exists:' . config('location.tables.province') . ',id|nullable',
+            'geo_area_zones.*.location_city_id' => 'integer|exists:' . config('location.tables.city') . ',id|nullable',
+            'geo_area_zones.*.location_district_id' => 'integer|exists:' . config('location.tables.district') . ',id|nullable',
         ];
     }
 
