@@ -1,6 +1,6 @@
 <?php
 
-namespace JobMetric\BanIp\Factories;
+namespace JobMetric\Location\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use JobMetric\Location\Models\LocationGeoArea;
