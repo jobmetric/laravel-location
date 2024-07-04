@@ -16,6 +16,7 @@ return [
         'errors' => 'Validation errors occurred.',
         'check_exist_name' => 'The :attribute has already been taken.',
         'object_not_found' => 'The :name not found.',
+        'model_not_use_trait' => 'The :model does not use the trait.',
     ],
 
     'messages' => [
