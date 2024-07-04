@@ -2,15 +2,10 @@
 
 namespace JobMetric\Location\Events\District;
 
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 use JobMetric\Location\Models\LocationDistrict;
 
 class DistrictUpdateEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
     /**
      * Create a new event instance.
      */

@@ -2,15 +2,10 @@
 
 namespace JobMetric\Location\Events\Province;
 
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Foundation\Events\Dispatchable;
-use Illuminate\Queue\SerializesModels;
 use JobMetric\Location\Models\LocationProvince;
 
 class ProvinceUpdateEvent
 {
-    use Dispatchable, InteractsWithSockets, SerializesModels;
-
     /**
      * Create a new event instance.
      */
