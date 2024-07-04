@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use JobMetric\PackageCore\Models\HasBooleanStatus;
 
 /**
  * table properties
@@ -24,6 +23,7 @@ use JobMetric\PackageCore\Models\HasBooleanStatus;
  * @property string postcode
  * @property string lat
  * @property string lng
+ * @property array info
  *
  * relationships properties
  * @property LocationCountry country
@@ -40,7 +40,7 @@ use JobMetric\PackageCore\Models\HasBooleanStatus;
  */
 class LocationAddress extends Model
 {
-    use HasFactory, SoftDeletes, HasBooleanStatus;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'addressable_type',
@@ -54,7 +54,8 @@ class LocationAddress extends Model
         'unit',
         'postcode',
         'lat',
-        'lng'
+        'lng',
+        'info'
     ];
 
     protected $casts = [
@@ -69,7 +70,8 @@ class LocationAddress extends Model
         'unit' => 'string',
         'postcode' => 'string',
         'lat' => 'string',
-        'lng' => 'string'
+        'lng' => 'string',
+        'info' => 'array'
     ];
 
     public function getTable()
@@ -84,45 +86,45 @@ class LocationAddress extends Model
 
     public function country(): BelongsTo
     {
-        return $this->belongsTo(LocationCountry::class);
+        return $this->belongsTo(LocationCountry::class, 'id');
     }
 
     public function province(): BelongsTo
     {
-        return $this->belongsTo(LocationProvince::class);
+        return $this->belongsTo(LocationProvince::class, 'id');
     }
 
     public function city(): BelongsTo
     {
-        return $this->belongsTo(LocationCity::class);
+        return $this->belongsTo(LocationCity::class, 'id');
     }
 
     public function district(): BelongsTo
     {
-        return $this->belongsTo(LocationDistrict::class);
+        return $this->belongsTo(LocationDistrict::class, 'id');
     }
 
-    public function getCountryNameAttribute()
+    public function getCountryNameAttribute(): string
     {
         return $this->country->name;
     }
 
-    public function getProvinceNameAttribute()
+    public function getProvinceNameAttribute(): string
     {
         return $this->province->name;
     }
 
-    public function getCityNameAttribute()
+    public function getCityNameAttribute(): string
     {
         return $this->city->name;
     }
 
-    public function getDistrictNameAttribute()
+    public function getDistrictNameAttribute(): string
     {
         return $this->district->name;
     }
 
-    public function getFullAddressAttribute()
+    public function getFullAddressAttribute(): string
     {
         return $this->pluck . ' ' . $this->unit . ' ' . $this->address . ' ' . $this->district->name . ' ' . $this->city->name . ' ' . $this->province->name . ' ' . $this->country->name . ' ' . $this->postcode;
     }
