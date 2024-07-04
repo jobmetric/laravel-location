@@ -35,21 +35,4 @@ return [
         'address' => 'location_addresses',
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Foreign Key
-    |--------------------------------------------------------------------------
-    |
-    | Foreign key in database
-    */
-
-    "foreign_key" => [
-        'country' => 'location_country_id',
-        'province' => 'location_province_id',
-        'city' => 'location_city_id',
-        'district' => 'location_district_id',
-        'geo_area' => 'geo_area_id',
-        'address' => 'address_id',
-    ],
-
 ];

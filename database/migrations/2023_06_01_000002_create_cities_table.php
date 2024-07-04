@@ -17,12 +17,12 @@ return new class extends Migration {
         Schema::create(config('location.tables.city'), function (Blueprint $table) {
             $table->id();
 
-            $table->foreignId(config('location.foreign_key.country'))->index()->constrained(config('location.tables.country'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_country_id')->index()->constrained(config('location.tables.country'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_country_id field is used to store the location country id of the city.
              */
 
-            $table->foreignId(config('location.foreign_key.province'))->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_province_id')->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_province_id field is used to store the location province id of the city.
              */

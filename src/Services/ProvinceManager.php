@@ -50,7 +50,7 @@ class ProvinceManager
      */
     public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
     {
-        $fields = ['id', 'name', config('location.foreign_key.country'), 'status'];
+        $fields = ['id', 'name', 'location_country_id', 'status'];
 
         $query = QueryBuilder::for(LocationProvince::class);
 
@@ -175,7 +175,7 @@ class ProvinceManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreProvinceRequest)->setLocationCountryId($data[config('location.foreign_key.country')] ?? null)->rules());
+        $validator = Validator::make($data, (new StoreProvinceRequest)->setLocationCountryId($data['location_country_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -191,7 +191,7 @@ class ProvinceManager
 
         return DB::transaction(function () use ($data) {
             $province = new LocationProvince;
-            $province->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
+            $province->location_country_id = $data['location_country_id'];
             $province->name = $data['name'];
             $province->status = $data['status'] ?? true;
             $province->save();
@@ -216,7 +216,7 @@ class ProvinceManager
      */
     public function update(int $location_province_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->setLocationCountryId($data[config('location.foreign_key.country')] ?? null)->rules());
+        $validator = Validator::make($data, (new UpdateProvinceRequest)->setLocationProvinceId($location_province_id)->setLocationCountryId($data['location_country_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -247,8 +247,8 @@ class ProvinceManager
                 ];
             }
 
-            if (array_key_exists(config('location.foreign_key.country'), $data)) {
-                $location_province->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
+            if (array_key_exists('location_country_id', $data)) {
+                $location_province->location_country_id = $data['location_country_id'];
             }
 
             if (array_key_exists('name', $data)) {

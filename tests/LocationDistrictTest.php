@@ -6,7 +6,6 @@ use JobMetric\Location\Facades\LocationCity;
 use JobMetric\Location\Facades\LocationCountry;
 use JobMetric\Location\Facades\LocationDistrict;
 use JobMetric\Location\Facades\LocationProvince;
-use JobMetric\Location\Http\Resources\LocationCityResource;
 use JobMetric\Location\Http\Resources\LocationDistrictResource;
 use Tests\BaseDatabaseTestCase as BaseTestCase;
 
@@ -21,22 +20,22 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -57,9 +56,9 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a district duplicate
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -70,9 +69,9 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store another district by filling all fields
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 2',
             'status' => false
         ]);
@@ -94,16 +93,16 @@ class LocationDistrictTest extends BaseTestCase
 
         // store another city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 3'
         ]);
 
@@ -124,9 +123,9 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a duplicate district in Tehran city
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 3'
         ]);
 
@@ -145,30 +144,30 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
         // Update the district by filling only the name field
         $locationDistrict = LocationDistrict::update($locationDistrict['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 2'
         ]);
 
@@ -189,17 +188,17 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store another district
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 3'
         ]);
 
         // Update the district with a duplicate name
         $updateLocationDistrict = LocationDistrict::update($locationDistrict['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 2'
         ]);
 
@@ -210,9 +209,9 @@ class LocationDistrictTest extends BaseTestCase
 
         // Update the district with all fields
         $locationDistrict = LocationDistrict::update($locationDistrict['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 4',
             'status' => false
         ]);
@@ -242,22 +241,22 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -291,22 +290,22 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -345,22 +344,22 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -397,22 +396,22 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         $locationDistrict = LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
@@ -443,30 +442,30 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
         // Store another district by filling only the name field
         LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 2'
         ]);
 
@@ -489,30 +488,30 @@ class LocationDistrictTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
         // Store a district by filling only the name field
         LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 1'
         ]);
 
         // Store another district by filling only the name field
         LocationDistrict::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
-            config('location.foreign_key.city') => $locationCity['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
+            'location_city_id' => $locationCity['data']->id,
             'name' => 'District 2'
         ]);
 

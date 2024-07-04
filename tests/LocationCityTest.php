@@ -19,14 +19,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
@@ -46,8 +46,8 @@ class LocationCityTest extends BaseTestCase
 
         // Store a city duplicate
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
@@ -58,8 +58,8 @@ class LocationCityTest extends BaseTestCase
 
         // Store another city by filling all fields
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Neishabour',
             'status' => false,
         ]);
@@ -80,14 +80,14 @@ class LocationCityTest extends BaseTestCase
 
         // store another province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Mazandaran'
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
@@ -107,8 +107,8 @@ class LocationCityTest extends BaseTestCase
 
         // Store a duplicate city in Mazandaran
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad'
         ]);
 
@@ -127,21 +127,21 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khoraasan Razavi',
         ]);
 
         // Store a city by filling only the name field
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad',
         ]);
 
         // Update the city by filling only the name field
         $updateLocationCity = LocationCity::update($locationCity['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Neishabour',
         ]);
 
@@ -152,23 +152,23 @@ class LocationCityTest extends BaseTestCase
 
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $updateLocationCity['data']->id,
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Neishabour',
             'status' => true,
         ]);
 
         // Store another city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad',
         ]);
 
         // Update the city with a duplicate name
         $updateLocationCity = LocationCity::update($locationCity['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Neishabour',
         ]);
 
@@ -179,8 +179,8 @@ class LocationCityTest extends BaseTestCase
 
         // Update the city with all fields
         $updateLocationCity = LocationCity::update($locationCity['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad',
             'status' => false,
         ]);
@@ -191,8 +191,8 @@ class LocationCityTest extends BaseTestCase
         $this->assertInstanceOf(LocationCityResource::class, $updateLocationCity['data']);
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $updateLocationCity['data']->id,
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad',
             'status' => false,
         ]);
@@ -207,14 +207,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -248,14 +248,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -294,14 +294,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -338,14 +338,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -378,14 +378,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         $locationCity = LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -408,14 +408,14 @@ class LocationCityTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Store a city
         LocationCity::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
-            config('location.foreign_key.province') => $locationProvince['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
+            'location_province_id' => $locationProvince['data']->id,
             'name' => 'Tehran',
         ]);
 

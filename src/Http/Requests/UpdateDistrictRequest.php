@@ -34,7 +34,7 @@ class UpdateDistrictRequest extends FormRequest
         }
 
         if (is_null($this->location_city_id)) {
-            $location_city_id = $this->route()->parameter('location_district')?->{config('location.foreign_key.city')};
+            $location_city_id = $this->route()->parameter('location_district')?->location_city_id;
             if (is_null($location_city_id)) {
                 $location_city_id = $this->input('location_city_id');
             }
@@ -43,9 +43,9 @@ class UpdateDistrictRequest extends FormRequest
         }
 
         return [
-            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
-            config('location.foreign_key.province') => 'required|exists:' . config('location.tables.province') . ',id',
-            config('location.foreign_key.city') => 'required|exists:' . config('location.tables.city') . ',id',
+            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
+            'location_province_id' => 'required|exists:' . config('location.tables.province') . ',id',
+            'location_city_id' => 'required|exists:' . config('location.tables.city') . ',id',
             'name' => [
                 'string',
                 'sometimes',

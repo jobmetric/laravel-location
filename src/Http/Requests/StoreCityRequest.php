@@ -27,7 +27,7 @@ class StoreCityRequest extends FormRequest
     public function rules(): array
     {
         if (is_null($this->location_province_id)) {
-            $location_province_id = $this->route()->parameter('location_city')?->{config('location.foreign_key.province')};
+            $location_province_id = $this->route()->parameter('location_city')?->location_province_id;
             if (is_null($location_province_id)) {
                 $location_province_id = $this->input('location_province_id');
             }
@@ -36,8 +36,8 @@ class StoreCityRequest extends FormRequest
         }
 
         return [
-            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
-            config('location.foreign_key.province') => 'required|exists:' . config('location.tables.province') . ',id',
+            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
+            'location_province_id' => 'required|exists:' . config('location.tables.province') . ',id',
             'name' => [
                 'string',
                 new CheckExistNameRule(LocationCity::class, parent_id: $location_province_id)

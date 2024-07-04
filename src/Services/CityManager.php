@@ -50,7 +50,7 @@ class CityManager
      */
     public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
     {
-        $fields = ['id', 'name', config('location.foreign_key.country'), config('location.foreign_key.province'), 'status'];
+        $fields = ['id', 'name', 'location_country_id', 'location_province_id', 'status'];
 
         $query = QueryBuilder::for(LocationCity::class);
 
@@ -170,7 +170,7 @@ class CityManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreCityRequest)->setLocationProvinceId($data[config('location.foreign_key.province')] ?? null)->rules());
+        $validator = Validator::make($data, (new StoreCityRequest)->setLocationProvinceId($data['location_province_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -186,8 +186,8 @@ class CityManager
 
         return DB::transaction(function () use ($data) {
             $city = new LocationCity;
-            $city->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
-            $city->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
+            $city->location_country_id = $data['location_country_id'];
+            $city->location_province_id = $data['location_province_id'];
             $city->name = $data['name'];
             $city->status = $data['status'] ?? true;
             $city->save();
@@ -213,7 +213,7 @@ class CityManager
      */
     public function update(int $location_city_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateCityRequest)->setLocationCityId($location_city_id)->setLocationProvinceId($data[config('location.foreign_key.province')] ?? null)->rules());
+        $validator = Validator::make($data, (new UpdateCityRequest)->setLocationCityId($location_city_id)->setLocationProvinceId($data['location_province_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -244,12 +244,12 @@ class CityManager
                 ];
             }
 
-            if (array_key_exists(config('location.foreign_key.country'), $data)) {
-                $location_city->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
+            if (array_key_exists('location_country_id', $data)) {
+                $location_city->location_country_id = $data['location_country_id'];
             }
 
-            if (array_key_exists(config('location.foreign_key.province'), $data)) {
-                $location_city->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
+            if (array_key_exists('location_province_id', $data)) {
+                $location_city->location_province_id = $data['location_province_id'];
             }
 
             if (array_key_exists('name', $data)) {

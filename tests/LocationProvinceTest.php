@@ -4,7 +4,6 @@ namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationCountry;
 use JobMetric\Location\Facades\LocationProvince;
-use JobMetric\Location\Http\Resources\LocationCountryResource;
 use JobMetric\Location\Http\Resources\LocationProvinceResource;
 use Tests\BaseDatabaseTestCase as BaseTestCase;
 
@@ -19,7 +18,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -37,7 +36,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province duplicate
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -48,7 +47,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store another province by filling all fields
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi',
             'status' => false,
         ]);
@@ -71,7 +70,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $anotherLocationCountry['data']->id,
+            'location_country_id' => $anotherLocationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -89,7 +88,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a duplicate province in Iraq
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $anotherLocationCountry['data']->id,
+            'location_country_id' => $anotherLocationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -108,13 +107,13 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province by filling only the name field
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
         // Update the province by filling only the name field
         $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Mazandaran',
         ]);
 
@@ -124,20 +123,20 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $updateLocationProvince['data']->id,
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Mazandaran',
             'status' => true,
         ]);
 
         // Store another province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi',
         ]);
 
         // Update the province with a duplicate name
         $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Mazandaran',
         ]);
 
@@ -148,7 +147,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Update the province with all fields
         $updateLocationProvince = LocationProvince::update($locationProvince['data']->id, [
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi',
             'status' => false,
         ]);
@@ -159,7 +158,7 @@ class LocationProvinceTest extends BaseTestCase
         $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $updateLocationProvince['data']->id,
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Khorasan Razavi',
             'status' => false,
         ]);
@@ -174,7 +173,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -208,7 +207,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -245,7 +244,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -281,7 +280,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         $locationProvince = LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -313,7 +312,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 
@@ -336,7 +335,7 @@ class LocationProvinceTest extends BaseTestCase
 
         // Store a province
         LocationProvince::store([
-            config('location.foreign_key.country') => $locationCountry['data']->id,
+            'location_country_id' => $locationCountry['data']->id,
             'name' => 'Tehran',
         ]);
 

@@ -22,22 +22,22 @@ return new class extends Migration {
              * The addressable field is used to store the addressable of the address.
              */
 
-            $table->foreignId(config('location.foreign_key.country'))->index()->constrained(config('location.tables.country'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_country_id')->index()->constrained(config('location.tables.country'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_country_id field is used to store the location country id of the address.
              */
 
-            $table->foreignId(config('location.foreign_key.province'))->nullable()->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_province_id')->nullable()->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_province_id field is used to store the location province id of the address.
              */
 
-            $table->foreignId(config('location.foreign_key.city'))->nullable()->index()->constrained(config('location.tables.city'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_city_id')->nullable()->index()->constrained(config('location.tables.city'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_city_id field is used to store the location city id of the address.
              */
 
-            $table->foreignId(config('location.foreign_key.district'))->nullable()->index()->constrained(config('location.tables.district'))->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignId('location_district_id')->nullable()->index()->constrained(config('location.tables.district'))->cascadeOnDelete()->cascadeOnUpdate();
             /**
              * The location_district_id field is used to store the location district id of the address.
              */

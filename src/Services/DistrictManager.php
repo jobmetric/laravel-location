@@ -6,21 +6,14 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use JobMetric\Location\Events\City\CityDeleteEvent;
-use JobMetric\Location\Events\City\CityForceDeleteEvent;
-use JobMetric\Location\Events\City\CityRestoreEvent;
-use JobMetric\Location\Events\City\CityUpdateEvent;
 use JobMetric\Location\Events\District\DistrictDeleteEvent;
 use JobMetric\Location\Events\District\DistrictForceDeleteEvent;
 use JobMetric\Location\Events\District\DistrictRestoreEvent;
 use JobMetric\Location\Events\District\DistrictStoreEvent;
 use JobMetric\Location\Events\District\DistrictUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreDistrictRequest;
-use JobMetric\Location\Http\Requests\UpdateCityRequest;
 use JobMetric\Location\Http\Requests\UpdateDistrictRequest;
-use JobMetric\Location\Http\Resources\LocationCityResource;
 use JobMetric\Location\Http\Resources\LocationDistrictResource;
-use JobMetric\Location\Models\LocationCity;
 use JobMetric\Location\Models\LocationDistrict;
 use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
@@ -57,7 +50,7 @@ class DistrictManager
      */
     public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
     {
-        $fields = ['id', 'name', config('location.foreign_key.country'), config('location.foreign_key.province'), config('location.foreign_key.city'), 'status'];
+        $fields = ['id', 'name', 'location_country_id', 'location_province_id', 'location_city_id', 'status'];
 
         $query = QueryBuilder::for(LocationDistrict::class);
 
@@ -171,7 +164,7 @@ class DistrictManager
      */
     public function store(array $data): array
     {
-        $validator = Validator::make($data, (new StoreDistrictRequest)->setLocationCityId($data[config('location.foreign_key.city')] ?? null)->rules());
+        $validator = Validator::make($data, (new StoreDistrictRequest)->setLocationCityId($data['location_city_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -187,9 +180,9 @@ class DistrictManager
 
         return DB::transaction(function () use ($data) {
             $district = new LocationDistrict;
-            $district->{config('location.foreign_key.country')} = $data[config('location.foreign_key.province')];
-            $district->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
-            $district->{config('location.foreign_key.city')} = $data[config('location.foreign_key.city')];
+            $district->location_country_id = $data['location_province_id'];
+            $district->location_province_id = $data['location_province_id'];
+            $district->location_city_id = $data['location_city_id'];
             $district->name = $data['name'];
             $district->status = $data['status'] ?? true;
             $district->save();
@@ -215,7 +208,7 @@ class DistrictManager
      */
     public function update(int $location_district_id, array $data): array
     {
-        $validator = Validator::make($data, (new UpdateDistrictRequest)->setLocationDistrictId($location_district_id)->setLocationCityId($data[config('location.foreign_key.city')] ?? null)->rules());
+        $validator = Validator::make($data, (new UpdateDistrictRequest)->setLocationDistrictId($location_district_id)->setLocationCityId($data['location_city_id'] ?? null)->rules());
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
 
@@ -246,16 +239,16 @@ class DistrictManager
                 ];
             }
 
-            if (array_key_exists(config('location.foreign_key.country'), $data)) {
-                $location_district->{config('location.foreign_key.country')} = $data[config('location.foreign_key.country')];
+            if (array_key_exists('location_country_id', $data)) {
+                $location_district->location_country_id = $data['location_country_id'];
             }
 
-            if (array_key_exists(config('location.foreign_key.province'), $data)) {
-                $location_district->{config('location.foreign_key.province')} = $data[config('location.foreign_key.province')];
+            if (array_key_exists('location_province_id', $data)) {
+                $location_district->location_province_id = $data['location_province_id'];
             }
 
-            if (array_key_exists(config('location.foreign_key.city'), $data)) {
-                $location_district->{config('location.foreign_key.city')} = $data[config('location.foreign_key.city')];
+            if (array_key_exists('location_city_id', $data)) {
+                $location_district->location_city_id = $data['location_city_id'];
             }
 
             if (array_key_exists('name', $data)) {

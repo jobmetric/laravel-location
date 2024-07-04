@@ -34,8 +34,8 @@ class UpdateProvinceRequest extends FormRequest
         }
 
         if (is_null($this->location_country_id)) {
-            $location_country_id = $this->route()->parameter('location_province')?->{config('location.foreign_key.country')};
-            if(is_null($location_country_id)) {
+            $location_country_id = $this->route()->parameter('location_province')?->location_country_id;
+            if (is_null($location_country_id)) {
                 $location_country_id = $this->input('location_country_id');
             }
         } else {
@@ -43,7 +43,7 @@ class UpdateProvinceRequest extends FormRequest
         }
 
         return [
-            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
+            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
             'name' => [
                 'string',
                 'sometimes',

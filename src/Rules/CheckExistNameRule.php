@@ -36,15 +36,15 @@ class CheckExistNameRule implements ValidationRule
 
         if ($this->parent_id) {
             if ($this->model === 'JobMetric\Location\Models\LocationProvince') {
-                $query->where(config('location.foreign_key.country'), $this->parent_id);
+                $query->where('location_country_id', $this->parent_id);
             }
 
             if ($this->model === 'JobMetric\Location\Models\LocationCity') {
-                $query->where(config('location.foreign_key.province'), $this->parent_id);
+                $query->where('location_province_id', $this->parent_id);
             }
 
             if ($this->model === 'JobMetric\Location\Models\LocationDistrict') {
-                $query->where(config('location.foreign_key.city'), $this->parent_id);
+                $query->where('location_city_id', $this->parent_id);
             }
         }
 

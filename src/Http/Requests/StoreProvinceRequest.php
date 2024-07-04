@@ -27,16 +27,16 @@ class StoreProvinceRequest extends FormRequest
     public function rules(): array
     {
         if (is_null($this->location_country_id)) {
-            $location_country_id = $this->route()->parameter('location_province')?->{config('location.foreign_key.country')};
+            $location_country_id = $this->route()->parameter('location_province')?->location_country_id;
             if (is_null($location_country_id)) {
-                $location_country_id = $this->input(config('location.foreign_key.country'));
+                $location_country_id = $this->input('location_country_id');
             }
         } else {
             $location_country_id = $this->location_country_id;
         }
 
         return [
-            config('location.foreign_key.country') => 'required|exists:' . config('location.tables.country') . ',id',
+            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
             'name' => [
                 'string',
                 new CheckExistNameRule(LocationProvince::class, parent_id: $location_country_id)
