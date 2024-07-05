@@ -4,8 +4,12 @@ namespace JobMetric\Location\Services;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use JobMetric\Location\Events\Address\AddressDeleteEvent;
+use JobMetric\Location\Events\Address\AddressForceDeleteEvent;
+use JobMetric\Location\Events\Address\AddressRestoreEvent;
 use JobMetric\Location\Events\Address\AddressStoreEvent;
 use JobMetric\Location\Events\Address\AddressUpdateEvent;
 use JobMetric\Location\HasAddress;
@@ -13,6 +17,7 @@ use JobMetric\Location\Http\Requests\StoreAddressRequest;
 use JobMetric\Location\Http\Requests\UpdateAddressRequest;
 use JobMetric\Location\Http\Resources\LocationAddressResource;
 use JobMetric\Location\Models\LocationAddress;
+use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
 
 class AddressManager
@@ -34,6 +39,136 @@ class AddressManager
     public function __construct(Application $app)
     {
         $this->app = $app;
+    }
+
+    /**
+     * Get the specified location address.
+     *
+     * @param array $filter
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return QueryBuilder
+     */
+    public function query(array $filter = [], array $with = [], string $mode = null): QueryBuilder
+    {
+        $fields = [
+            'id',
+            'addressable_type',
+            'addressable_id',
+            'location_country_id',
+            'location_province_id',
+            'location_city_id',
+            'location_district_id',
+            'address',
+            'pluck',
+            'unit',
+            'postcode',
+            'lat',
+            'lng',
+            'info'
+        ];
+
+        $query = QueryBuilder::for(LocationAddress::class);
+
+        if ($mode === 'withTrashed') {
+            $query->withTrashed();
+        }
+
+        if ($mode === 'onlyTrashed') {
+            $query->onlyTrashed();
+        }
+
+        $query->allowedFields($fields)
+            ->allowedSorts($fields)
+            ->allowedFilters($fields)
+            ->defaultSort('-id')
+            ->where($filter);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        return $query;
+    }
+
+    /**
+     * Paginate the specified location addresses.
+     *
+     * @param array $filter
+     * @param int $page_limit
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
+     */
+    public function paginate(array $filter = [], int $page_limit = 15, array $with = [], string $mode = null): AnonymousResourceCollection
+    {
+        return LocationAddressResource::collection(
+            $this->query($filter, $with, $mode)->paginate($page_limit)
+        );
+    }
+
+    /**
+     * Get all location addresses.
+     *
+     * @param array $filter
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return AnonymousResourceCollection
+     */
+    public function all(array $filter = [], array $with = [], string $mode = null): AnonymousResourceCollection
+    {
+        return LocationAddressResource::collection(
+            $this->query($filter, $with, $mode)->get()
+        );
+    }
+
+    /**
+     * Get the specified location address.
+     *
+     * @param int $location_address_id
+     * @param array $with
+     * @param string|null $mode
+     *
+     * @return array
+     */
+    public function get(int $location_address_id, array $with = [], string $mode = null): array
+    {
+        if ($mode === 'withTrashed') {
+            $query = LocationAddress::withTrashed();
+        } else if ($mode === 'onlyTrashed') {
+            $query = LocationAddress::onlyTrashed();
+        } else {
+            $query = LocationAddress::query();
+        }
+
+        $query->where('id', $location_address_id);
+
+        if (!empty($with)) {
+            $query->with($with);
+        }
+
+        $location_address = $query->first();
+
+        if (!$location_address) {
+            return [
+                'ok' => false,
+                'message' => trans('location::base.validation.errors'),
+                'errors' => [
+                    trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')])
+                ],
+                'status' => 404
+            ];
+        }
+
+        return [
+            'ok' => true,
+            'message' => trans('location::base.messages.found', ['name' => trans('location::base.model_name.address')]),
+            'data' => LocationAddressResource::make($location_address),
+            'status' => 200
+        ];
     }
 
     /**
@@ -190,6 +325,129 @@ class AddressManager
                 'ok' => true,
                 'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.address')]),
                 'data' => LocationAddressResource::make($location_address),
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Delete the specified location address.
+     *
+     * @param int $location_address_id
+     *
+     * @return array
+     */
+    public function delete(int $location_address_id): array
+    {
+        return DB::transaction(function () use ($location_address_id) {
+            /**
+             * @var LocationAddress $location_address
+             */
+            $location_address = LocationAddress::query()->where('id', $location_address_id)->first();
+
+            if (!$location_address) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new AddressDeleteEvent($location_address));
+
+            $data = LocationAddressResource::make($location_address);
+
+            $location_address->delete();
+
+            return [
+                'ok' => true,
+                'message' => trans('location::base.messages.deleted', ['name' => trans('location::base.model_name.address')]),
+                'data' => $data,
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Restore the specified location address.
+     *
+     * @param int $location_address_id
+     *
+     * @return array
+     */
+    public function restore(int $location_address_id): array
+    {
+        return DB::transaction(function () use ($location_address_id) {
+            /**
+             * @var LocationAddress $location_address
+             */
+            $location_address = LocationAddress::onlyTrashed()->where('id', $location_address_id)->first();
+
+            if (!$location_address) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new AddressRestoreEvent($location_address));
+
+            $data = LocationAddressResource::make($location_address);
+
+            $location_address->restore();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.restored', ['name' => trans('location::base.model_name.address')]),
+                'status' => 200
+            ];
+        });
+    }
+
+    /**
+     * Force delete the specified location address.
+     *
+     * @param int $location_address_id
+     *
+     * @return array
+     */
+    public function forceDelete(int $location_address_id): array
+    {
+        return DB::transaction(function () use ($location_address_id) {
+            /**
+             * @var LocationAddress $location_address
+             */
+            $location_address = LocationAddress::onlyTrashed()->where('id', $location_address_id)->first();
+
+            if (!$location_address) {
+                return [
+                    'ok' => false,
+                    'message' => trans('location::base.validation.errors'),
+                    'errors' => [
+                        trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')])
+                    ],
+                    'status' => 404
+                ];
+            }
+
+            event(new AddressForceDeleteEvent($location_address));
+
+            $data = LocationAddressResource::make($location_address);
+
+            $location_address->forceDelete();
+
+            return [
+                'ok' => true,
+                'data' => $data,
+                'message' => trans('location::base.messages.permanently_deleted', ['name' => trans('location::base.model_name.address')]),
                 'status' => 200
             ];
         });
