@@ -2,42 +2,24 @@
 
 namespace JobMetric\Location\Tests;
 
-use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Facades\LocationCountry;
 use JobMetric\Location\Facades\LocationDistrict;
-use JobMetric\Location\Facades\LocationProvince;
 use JobMetric\Location\Http\Resources\LocationDistrictResource;
-use Tests\BaseDatabaseTestCase as BaseTestCase;
 
-class LocationDistrictTest extends BaseTestCase
+class LocationDistrictTest extends BaseLocation
 {
     public function test_store(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
@@ -55,12 +37,7 @@ class LocationDistrictTest extends BaseTestCase
         ]);
 
         // Store a district duplicate
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         $this->assertIsArray($locationDistrict);
         $this->assertFalse($locationDistrict['ok']);
@@ -68,13 +45,7 @@ class LocationDistrictTest extends BaseTestCase
         $this->assertEquals(422, $locationDistrict['status']);
 
         // Store another district by filling all fields
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 2',
-            'status' => false
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 2', false);
 
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
@@ -92,19 +63,10 @@ class LocationDistrictTest extends BaseTestCase
         ]);
 
         // store another city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 3'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 3');
 
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
@@ -122,12 +84,7 @@ class LocationDistrictTest extends BaseTestCase
         ]);
 
         // Store a duplicate district in Tehran city
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 3'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 3');
 
         $this->assertIsArray($locationDistrict);
         $this->assertFalse($locationDistrict['ok']);
@@ -138,30 +95,16 @@ class LocationDistrictTest extends BaseTestCase
     public function test_update(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         // Update the district by filling only the name field
         $locationDistrict = LocationDistrict::update($locationDistrict['data']->id, [
@@ -187,12 +130,7 @@ class LocationDistrictTest extends BaseTestCase
         ]);
 
         // Store another district
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 3'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 3');
 
         // Update the district with a duplicate name
         $updateLocationDistrict = LocationDistrict::update($locationDistrict['data']->id, [
@@ -235,30 +173,16 @@ class LocationDistrictTest extends BaseTestCase
     public function test_delete(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         // Delete the district
         $destroyLocationDistrict = LocationDistrict::delete($locationDistrict['data']->id);
@@ -284,30 +208,16 @@ class LocationDistrictTest extends BaseTestCase
     public function test_restore(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         // Delete the district
         LocationDistrict::delete($locationDistrict['data']->id);
@@ -338,30 +248,16 @@ class LocationDistrictTest extends BaseTestCase
     public function test_force_delete(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         // Delete the district
         LocationDistrict::delete($locationDistrict['data']->id);
@@ -390,30 +286,16 @@ class LocationDistrictTest extends BaseTestCase
     public function test_get(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
+        $locationDistrict = $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
 
         // Get the district
         $getLocationDistrict = LocationDistrict::get($locationDistrict['data']->id);
@@ -436,38 +318,17 @@ class LocationDistrictTest extends BaseTestCase
     public function test_all(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
-
-        // Store another district by filling only the name field
-        LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 2'
-        ]);
+        $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
+        $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 2');
 
         // Get all districts
         $allLocationDistricts = LocationDistrict::all();
@@ -482,38 +343,17 @@ class LocationDistrictTest extends BaseTestCase
     public function test_paginate(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Store a district by filling only the name field
-        LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1'
-        ]);
-
-        // Store another district by filling only the name field
-        LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 2'
-        ]);
+        $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity);
+        $this->addLocationDistrictByCity($locationCountry, $locationProvince, $locationCity, 'District 2');
 
         // Get all districts
         $paginateDistricts = LocationDistrict::paginate();

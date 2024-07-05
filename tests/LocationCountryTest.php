@@ -4,16 +4,13 @@ namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationCountry;
 use JobMetric\Location\Http\Resources\LocationCountryResource;
-use Tests\BaseDatabaseTestCase as BaseTestCase;
 
-class LocationCountryTest extends BaseTestCase
+class LocationCountryTest extends BaseLocation
 {
     public function test_store(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         $this->assertIsArray($locationCountry);
         $this->assertTrue($locationCountry['ok']);
@@ -27,9 +24,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertTrue($locationCountry['data']->status);
 
         // Store a country duplicate
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         $this->assertIsArray($locationCountry);
         $this->assertFalse($locationCountry['ok']);
@@ -62,9 +57,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_update(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Update the country
         $updateLocationCountry = LocationCountry::update($locationCountry['data']->id, [
@@ -79,9 +72,7 @@ class LocationCountryTest extends BaseTestCase
         $this->assertEquals('Iran', $updateLocationCountry['data']->name);
 
         // Store another country
-        $storeLocationCountry = LocationCountry::store([
-            'name' => 'Turkey'
-        ]);
+        $storeLocationCountry = $this->addLocationCountry('Turkey');
 
         // Update the country with a duplicate name
         $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
@@ -119,9 +110,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_delete(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Delete the country
         $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
@@ -147,12 +136,10 @@ class LocationCountryTest extends BaseTestCase
     public function test_restore(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Delete the country
-        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+        LocationCountry::delete($locationCountry['data']->id);
 
         // Restore the country
         $restoreLocationCountry = LocationCountry::restore($locationCountry['data']->id);
@@ -178,9 +165,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_force_delete(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Delete the country
         LocationCountry::delete($locationCountry['data']->id);
@@ -209,9 +194,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_get(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Get the country
         $getLocationCountry = LocationCountry::get($locationCountry['data']->id);
@@ -235,9 +218,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_all(): void
     {
         // Store a country
-        LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $this->addLocationCountry();
 
         // Get the country
         $getCountries = LocationCountry::all();
@@ -252,9 +233,7 @@ class LocationCountryTest extends BaseTestCase
     public function test_paginate(): void
     {
         // Store a country
-        LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $this->addLocationCountry();
 
         // Paginate the country
         $paginateCountries = LocationCountry::paginate();

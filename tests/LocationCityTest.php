@@ -3,32 +3,20 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Facades\LocationCountry;
-use JobMetric\Location\Facades\LocationProvince;
 use JobMetric\Location\Http\Resources\LocationCityResource;
-use Tests\BaseDatabaseTestCase as BaseTestCase;
 
-class LocationCityTest extends BaseTestCase
+class LocationCityTest extends BaseLocation
 {
     public function test_store(): void
     {
         // Store a country by filling only the name field
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran'
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
@@ -41,15 +29,11 @@ class LocationCityTest extends BaseTestCase
             'location_country_id' => $locationCountry['data']->id,
             'location_province_id' => $locationProvince['data']->id,
             'name' => 'Mashhad',
-            'status' => true,
+            'status' => 1,
         ]);
 
         // Store a city duplicate
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         $this->assertIsArray($locationCity);
         $this->assertFalse($locationCity['ok']);
@@ -57,12 +41,7 @@ class LocationCityTest extends BaseTestCase
         $this->assertEquals(422, $locationCity['status']);
 
         // Store another city by filling all fields
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Neishabour',
-            'status' => false,
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Neishabour', false);
 
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
@@ -79,17 +58,10 @@ class LocationCityTest extends BaseTestCase
         ]);
 
         // store another province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Mazandaran'
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Mazandaran');
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
@@ -106,11 +78,7 @@ class LocationCityTest extends BaseTestCase
         ]);
 
         // Store a duplicate city in Mazandaran
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad'
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         $this->assertIsArray($locationCity);
         $this->assertFalse($locationCity['ok']);
@@ -121,22 +89,13 @@ class LocationCityTest extends BaseTestCase
     public function test_update(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province by filling only the name field
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khoraasan Razavi',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry);
 
         // Store a city by filling only the name field
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Update the city by filling only the name field
         $updateLocationCity = LocationCity::update($locationCity['data']->id, [
@@ -159,11 +118,7 @@ class LocationCityTest extends BaseTestCase
         ]);
 
         // Store another city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mashhad',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince);
 
         // Update the city with a duplicate name
         $updateLocationCity = LocationCity::update($locationCity['data']->id, [
@@ -201,22 +156,13 @@ class LocationCityTest extends BaseTestCase
     public function test_delete(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Delete the city
         $deleteLocationCity = LocationCity::delete($locationCity['data']->id);
@@ -242,22 +188,13 @@ class LocationCityTest extends BaseTestCase
     public function test_restore(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Delete the city
         LocationCity::delete($locationCity['data']->id);
@@ -288,22 +225,13 @@ class LocationCityTest extends BaseTestCase
     public function test_force_delete(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Delete the city
         LocationCity::delete($locationCity['data']->id);
@@ -332,22 +260,13 @@ class LocationCityTest extends BaseTestCase
     public function test_get(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationCity = $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Get the city
         $getLocationCity = LocationCity::get($locationCity['data']->id);
@@ -372,22 +291,13 @@ class LocationCityTest extends BaseTestCase
     public function test_all(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Get the city
         $getLocationCity = LocationCity::all();
@@ -402,22 +312,13 @@ class LocationCityTest extends BaseTestCase
     public function test_paginate(): void
     {
         // Store a country
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
+        $locationCountry = $this->addLocationCountry();
 
         // Store a province
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $locationProvince = $this->addLocationProvinceByCountry($locationCountry, 'Tehran');
 
         // Store a city
-        LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Tehran',
-        ]);
+        $this->addLocationCityByProvince($locationCountry, $locationProvince, 'Tehran');
 
         // Paginate the cities
         $paginateCities = LocationCity::paginate();

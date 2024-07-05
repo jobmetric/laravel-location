@@ -2,15 +2,10 @@
 
 namespace JobMetric\Location\Tests;
 
-use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Facades\LocationCountry;
-use JobMetric\Location\Facades\LocationDistrict;
 use JobMetric\Location\Facades\LocationGeoArea;
-use JobMetric\Location\Facades\LocationProvince;
 use JobMetric\Location\Http\Resources\LocationGeoAreaResource;
-use Tests\BaseDatabaseTestCase as BaseTestCase;
 
-class LocationGeoAreaTest extends BaseTestCase
+class LocationGeoAreaTest extends BaseLocation
 {
     public function test_store(): void
     {
@@ -484,69 +479,5 @@ class LocationGeoAreaTest extends BaseTestCase
         $this->assertIsInt($locationGeoAreas->currentPage());
         $this->assertIsInt($locationGeoAreas->lastPage());
         $this->assertIsArray($locationGeoAreas->items());
-    }
-
-    private function createAssetIran(): array
-    {
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
-
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi',
-        ]);
-
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mahshad',
-        ]);
-
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1',
-        ]);
-
-        return [
-            'locationCountry' => $locationCountry,
-            'locationProvince' => $locationProvince,
-            'locationCity' => $locationCity,
-            'locationDistrict' => $locationDistrict,
-        ];
-    }
-
-    private function createAssetTurkey(): array
-    {
-        $locationCountry = LocationCountry::store([
-            'name' => 'Turkey',
-        ]);
-
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Istanbul',
-        ]);
-
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Istanbul',
-        ]);
-
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1',
-        ]);
-
-        return [
-            'locationCountry' => $locationCountry,
-            'locationProvince' => $locationProvince,
-            'locationCity' => $locationCity,
-            'locationDistrict' => $locationDistrict,
-        ];
     }
 }

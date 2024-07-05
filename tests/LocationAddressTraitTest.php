@@ -2,20 +2,12 @@
 
 namespace JobMetric\Location\Tests;
 
-use App\Models\Product;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use JobMetric\Layout\Exceptions\CollectionPropertyNotExistException;
-use JobMetric\Layout\Tests\BaseLayout;
-use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Facades\LocationCountry;
-use JobMetric\Location\Facades\LocationDistrict;
-use JobMetric\Location\Facades\LocationProvince;
 use JobMetric\Location\Http\Resources\LocationAddressResource;
-use JobMetric\Location\Http\Resources\LocationCityResource;
 use Throwable;
 
-class LocationAddressTraitTest extends BaseLayout
+class LocationAddressTraitTest extends BaseLocation
 {
     public function test_location_address_trait_relationship()
     {
@@ -218,42 +210,5 @@ class LocationAddressTraitTest extends BaseLayout
         $delete = $user->forgetAddress(1000);
 
         $this->assertFalse($delete);
-    }
-
-    private function addUser(): User
-    {
-        return User::factory()->create();
-    }
-
-    private function createLocation(): array
-    {
-        $locationCountry = LocationCountry::store([
-            'name' => 'Iran',
-        ]);
-
-        $locationProvince = LocationProvince::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'name' => 'Khorasan Razavi',
-        ]);
-
-        $locationCity = LocationCity::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'name' => 'Mahshad',
-        ]);
-
-        $locationDistrict = LocationDistrict::store([
-            'location_country_id' => $locationCountry['data']->id,
-            'location_province_id' => $locationProvince['data']->id,
-            'location_city_id' => $locationCity['data']->id,
-            'name' => 'District 1',
-        ]);
-
-        return [
-            'locationCountry' => $locationCountry,
-            'locationProvince' => $locationProvince,
-            'locationCity' => $locationCity,
-            'locationDistrict' => $locationDistrict,
-        ];
     }
 }
