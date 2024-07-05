@@ -7,12 +7,15 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed id
- * @property mixed address
- * @property mixed pluck
- * @property mixed unit
- * @property mixed postcode
- * @property mixed info
- * @property mixed full_address
+ * @property string addressable_type
+ * @property int addressable_id
+ * @property string address
+ * @property string pluck
+ * @property string unit
+ * @property string postcode
+ * @property array info
+ * @property string full_address
+ * @property mixed addressable_resource
  *
  * @property mixed country
  * @property mixed province
@@ -31,6 +34,9 @@ class LocationAddressResource extends JsonResource
         return [
             'id' => $this->id,
 
+            'addressable_type' => $this->addressable_type,
+            'addressable_id' => $this->addressable_id,
+
             'country' => $this->whenLoaded('country', LocationCountryResource::make($this->country)),
             'province' => $this->whenLoaded('province', LocationProvinceResource::make($this->province)),
             'city' => $this->whenLoaded('city', LocationCityResource::make($this->city)),
@@ -42,6 +48,8 @@ class LocationAddressResource extends JsonResource
             'postcode' => $this->postcode,
             'info' => $this->info,
             'full_address' => $this->full_address,
+
+            'addressable' => $this?->addressable_resource
         ];
     }
 }

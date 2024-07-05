@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use JobMetric\Barcode\Events\BarcodeableResourceEvent;
+use JobMetric\Location\Events\Address\AddressableResourceEvent;
 
 /**
  * table properties
@@ -102,6 +104,14 @@ class LocationAddress extends Model
     public function district(): BelongsTo
     {
         return $this->belongsTo(LocationDistrict::class, 'id');
+    }
+
+    public function getBarcodeableResourceAttribute()
+    {
+        $event = new AddressableResourceEvent($this->addressable);
+        event($event);
+
+        return $event->resource;
     }
 
     public function getCountryNameAttribute(): string
