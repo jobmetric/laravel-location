@@ -53,7 +53,12 @@
                 "JobMetric\\Location\\LocationServiceProvider"
             ],
             "aliases": {
-                "LocationCountry": "JobMetric\\Location\\Facades\\LocationCountry"
+                "LocationCountry": "JobMetric\\Location\\Facades\\LocationCountry",
+                "LocationProvince": "JobMetric\\Location\\Facades\\LocationProvince",
+                "LocationCity": "JobMetric\\Location\\Facades\\LocationCity",
+                "LocationDistrict": "JobMetric\\Location\\Facades\\LocationDistrict",
+                "LocationGeoArea": "JobMetric\\Location\\Facades\\LocationGeoArea",
+                "LocationAddress": "JobMetric\\Location\\Facades\\LocationAddress"
             }
         }
     },
