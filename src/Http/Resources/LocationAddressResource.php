@@ -37,10 +37,18 @@ class LocationAddressResource extends JsonResource
             'addressable_type' => $this->addressable_type,
             'addressable_id' => $this->addressable_id,
 
-            'country' => $this->whenLoaded('country', LocationCountryResource::make($this->country)),
-            'province' => $this->whenLoaded('province', LocationProvinceResource::make($this->province)),
-            'city' => $this->whenLoaded('city', LocationCityResource::make($this->city)),
-            'district' => $this->whenLoaded('district', LocationDistrictResource::make($this->district)),
+            'country' => $this->whenLoaded('country', function () {
+                return LocationCountryResource::make($this->country);
+            }),
+            'province' => $this->whenLoaded('province', function () {
+                return LocationProvinceResource::make($this->province);
+            }),
+            'city' => $this->whenLoaded('city', function () {
+                return LocationCityResource::make($this->city);
+            }),
+            'district' => $this->whenLoaded('district', function () {
+                return LocationDistrictResource::make($this->district);
+            }),
 
             'address' => $this->address,
             'pluck' => $this->pluck,

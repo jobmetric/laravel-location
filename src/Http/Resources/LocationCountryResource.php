@@ -34,9 +34,15 @@ class LocationCountryResource extends JsonResource
             'validation' => $this->validation,
             'status' => $this->status,
 
-            'provinces' => $this->whenLoaded('provinces', LocationProvinceResource::collection($this->provinces)),
-            'cities' => $this->whenLoaded('cities', LocationCityResource::collection($this->cities)),
-            'districts' => $this->whenLoaded('districts', LocationDistrictResource::collection($this->districts)),
+            'provinces' => $this->whenLoaded('provinces', function () {
+                return LocationAddressResource::collection($this->provinces);
+            }),
+            'cities' => $this->whenLoaded('cities', function () {
+                return LocationCityResource::collection($this->cities);
+            }),
+            'districts' => $this->whenLoaded('districts', function () {
+                return LocationDistrictResource::collection($this->districts);
+            }),
         ];
     }
 }

@@ -31,9 +31,15 @@ class LocationDistrictResource extends JsonResource
             'name' => $this->name,
             'status' => $this->status,
 
-            'country' => $this->whenLoaded('country', LocationCountryResource::make($this->country)),
-            'province' => $this->whenLoaded('province', LocationProvinceResource::make($this->province)),
-            'city' => $this->whenLoaded('city', LocationCityResource::make($this->city)),
+            'country' => $this->whenLoaded('country', function () {
+                return LocationCountryResource::make($this->country);
+            }),
+            'province' => $this->whenLoaded('province', function () {
+                return LocationProvinceResource::make($this->province);
+            }),
+            'city' => $this->whenLoaded('city', function () {
+                return LocationCityResource::make($this->city);
+            }),
         ];
     }
 }

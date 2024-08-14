@@ -28,7 +28,9 @@ class LocationGeoAreaResource extends JsonResource
             'description' => $this->description,
             'status' => $this->status,
 
-            'geo_area_zones' => $this->whenLoaded('geoAreaZones', LocationGeoAreaZoneResource::collection($this->geoAreaZones)),
+            'geo_area_zones' => $this->whenLoaded('geoAreaZones', function () {
+                return LocationGeoAreaZoneResource::collection($this->geoAreaZones);
+            }),
         ];
     }
 }

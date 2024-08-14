@@ -22,12 +22,22 @@ class LocationGeoAreaZoneResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'geo_area' => $this->whenLoaded('geoArea', LocationGeoAreaResource::make($this->geoArea)),
+            'geo_area' => $this->whenLoaded('geoArea', function () {
+                return LocationGeoAreaResource::make($this->geoArea);
+            }),
 
-            'country' => $this->whenLoaded('country', LocationCountryResource::make($this->country)),
-            'province' => $this->whenLoaded('province', LocationProvinceResource::make($this->province)),
-            'city' => $this->whenLoaded('city', LocationCityResource::make($this->city)),
-            'district' => $this->whenLoaded('district', LocationDistrictResource::make($this->district)),
+            'country' => $this->whenLoaded('country', function (){
+                return LocationCountryResource::make($this->country);
+            }),
+            'province' => $this->whenLoaded('province', function (){
+                return LocationProvinceResource::make($this->province);
+            }),
+            'city' => $this->whenLoaded('city', function (){
+                return LocationCityResource::make($this->city);
+            }),
+            'district' => $this->whenLoaded('district', function (){
+                return LocationDistrictResource::make($this->district);
+            })
         ];
     }
 }
