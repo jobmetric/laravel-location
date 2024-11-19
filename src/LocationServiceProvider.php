@@ -2,8 +2,10 @@
 
 namespace JobMetric\Location;
 
+use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
+use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
 use JobMetric\PackageCore\PackageCore;
 use JobMetric\PackageCore\PackageCoreServiceProvider;
 
@@ -15,11 +17,16 @@ class LocationServiceProvider extends PackageCoreServiceProvider
      * @return void
      * @throws MigrationFolderNotFoundException
      * @throws RegisterClassTypeNotFoundException
+     * @throws AssetFolderNotFoundException
+     * @throws ViewFolderNotFoundException
      */
     public function configuration(PackageCore $package): void
     {
         $package->name('laravel-location')
             ->hasConfig()
+            ->hasAsset()
+            ->hasView()
+            ->hasRoute()
             ->hasMigration()
             ->hasTranslation()
             ->registerClass('locationCountry', \JobMetric\Location\Services\CountryManager::class)
