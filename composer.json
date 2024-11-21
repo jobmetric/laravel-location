@@ -27,7 +27,7 @@
     "require": {
         "php": ">=8.0.1",
         "laravel/framework": ">=9.19",
-        "jobmetric/laravel-panelio": "^1.13",
+        "jobmetric/panelio": "^1.13",
         "jobmetric/laravel-language": "^1.11",
         "spatie/laravel-query-builder": "^5.7"
     },
