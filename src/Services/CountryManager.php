@@ -65,7 +65,7 @@ class CountryManager
         $query->allowedFields($fields)
             ->allowedSorts($fields)
             ->allowedFilters($fields)
-            ->defaultSort('-id')
+            ->defaultSort('id')
             ->where($filter);
 
         if (!empty($with)) {
