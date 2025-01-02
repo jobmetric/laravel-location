@@ -8,7 +8,7 @@ use JobMetric\Location\Models\LocationCountry;
 /**
  * @extends Factory<LocationCountry>
  */
-class CountryFactory extends Factory
+class LocationCountryFactory extends Factory
 {
     protected $model = LocationCountry::class;
 

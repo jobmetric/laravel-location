@@ -3,14 +3,14 @@
 namespace JobMetric\Location\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobMetric\Location\Models\LocationProvince;
+use JobMetric\Location\Models\LocationDistrict;
 
 /**
- * @extends Factory<LocationProvince>
+ * @extends Factory<LocationDistrict>
  */
-class ProvinceFactory extends Factory
+class LocationDistrictFactory extends Factory
 {
-    protected $model = LocationProvince::class;
+    protected $model = LocationDistrict::class;
 
     /**
      * Define the model's default state.
@@ -21,6 +21,8 @@ class ProvinceFactory extends Factory
     {
         return [
             'location_country_id' => null,
+            'location_province_id' => null,
+            'location_city_id' => null,
             'name' => $this->faker->name,
             'status' => $this->faker->boolean
         ];
@@ -37,6 +39,34 @@ class ProvinceFactory extends Factory
     {
         return $this->state(fn(array $attributes) => [
             'location_country_id' => $location_country_id
+        ]);
+    }
+
+    /**
+     * set location province id
+     *
+     * @param int $location_province_id
+     *
+     * @return static
+     */
+    public function setLocationProvinceId(int $location_province_id): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'location_province_id' => $location_province_id
+        ]);
+    }
+
+    /**
+     * set location city id
+     *
+     * @param int $location_city_id
+     *
+     * @return static
+     */
+    public function setLocationCityId(int $location_city_id): static
+    {
+        return $this->state(fn(array $attributes) => [
+            'location_city_id' => $location_city_id
         ]);
     }
 

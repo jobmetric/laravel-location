@@ -3,14 +3,14 @@
 namespace JobMetric\Location\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use JobMetric\Location\Models\LocationGeoArea;
+use JobMetric\Location\Models\LocationProvince;
 
 /**
- * @extends Factory<LocationGeoArea>
+ * @extends Factory<LocationProvince>
  */
-class GeoAreaFactory extends Factory
+class LocationProvinceFactory extends Factory
 {
-    protected $model = LocationGeoArea::class;
+    protected $model = LocationProvince::class;
 
     /**
      * Define the model's default state.
@@ -20,37 +20,37 @@ class GeoAreaFactory extends Factory
     public function definition(): array
     {
         return [
-            'title' => $this->faker->name,
-            'description' => $this->faker->text(100),
+            'location_country_id' => null,
+            'name' => $this->faker->name,
             'status' => $this->faker->boolean
         ];
     }
 
     /**
-     * set title
+     * set location country id
      *
-     * @param string $title
+     * @param int $location_country_id
      *
      * @return static
      */
-    public function setTitle(string $title): static
+    public function setLocationCountryId(int $location_country_id): static
     {
         return $this->state(fn(array $attributes) => [
-            'title' => $title
+            'location_country_id' => $location_country_id
         ]);
     }
 
     /**
-     * set description
+     * set name
      *
-     * @param string $description
+     * @param string $name
      *
      * @return static
      */
-    public function setDescription(string $description): static
+    public function setName(string $name): static
     {
         return $this->state(fn(array $attributes) => [
-            'description' => $description
+            'name' => $name
         ]);
     }
 

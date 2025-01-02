@@ -8,7 +8,7 @@ use JobMetric\Location\Models\LocationGeoAreaZone;
 /**
  * @extends Factory<LocationGeoAreaZone>
  */
-class GeoAreaZoneFactory extends Factory
+class LocationGeoAreaZoneFactory extends Factory
 {
     protected $model = LocationGeoAreaZone::class;
 
