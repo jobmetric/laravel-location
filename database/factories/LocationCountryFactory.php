@@ -73,11 +73,11 @@ class LocationCountryFactory extends Factory
     /**
      * set validation
      *
-     * @param string $validation
+     * @param array $validation
      *
      * @return static
      */
-    public function setValidation(string $validation): static
+    public function setValidation(array $validation): static
     {
         return $this->state(fn(array $attributes) => [
             'validation' => $validation
