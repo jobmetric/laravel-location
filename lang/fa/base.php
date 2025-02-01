@@ -13,7 +13,6 @@ return [
     */
 
     "validation" => [
-        "errors" => "خطای اعتبارسنجی رخ داده است.",
         "check_exist_name" => "ویژگی :attribute قبلا استفاده شده است.",
         "object_not_found" => ":name یافت نشد.",
         "model_not_use_trait" => ":model از ویژگی استفاده نمی کند.",

@@ -156,7 +156,7 @@ class CountryManager
         if (!$location_country) {
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => [
                     trans('location::base.validation.object_not_found')
                 ],
@@ -188,7 +188,7 @@ class CountryManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -232,7 +232,7 @@ class CountryManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -249,7 +249,7 @@ class CountryManager
             if (!$location_country) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
                     ],
@@ -308,7 +308,7 @@ class CountryManager
             if (!$location_country) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
                     ],
@@ -349,7 +349,7 @@ class CountryManager
             if (!$location_country) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
                     ],
@@ -390,7 +390,7 @@ class CountryManager
             if (!$location_country) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.country')])
                     ],

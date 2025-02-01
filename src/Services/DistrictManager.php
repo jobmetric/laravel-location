@@ -138,7 +138,7 @@ class DistrictManager
         if (!$location_district) {
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => [
                     trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.district')])
                 ],
@@ -170,7 +170,7 @@ class DistrictManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -214,7 +214,7 @@ class DistrictManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -231,7 +231,7 @@ class DistrictManager
             if (!$location_district) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.district')])
                     ],
@@ -290,7 +290,7 @@ class DistrictManager
             if (!$location_district) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.district')])
                     ],
@@ -331,7 +331,7 @@ class DistrictManager
             if (!$location_district) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.district')])
                     ],
@@ -372,7 +372,7 @@ class DistrictManager
             if (!$location_district) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.district')])
                     ],

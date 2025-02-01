@@ -144,7 +144,7 @@ class CityManager
         if (!$location_city) {
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => [
                     trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.city')])
                 ],
@@ -176,7 +176,7 @@ class CityManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -219,7 +219,7 @@ class CityManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -236,7 +236,7 @@ class CityManager
             if (!$location_city) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.city')])
                     ],
@@ -291,7 +291,7 @@ class CityManager
             if (!$location_city) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.city')])
                     ],
@@ -332,7 +332,7 @@ class CityManager
             if (!$location_city) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.city')])
                     ],
@@ -373,7 +373,7 @@ class CityManager
             if (!$location_city) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.city')])
                     ],

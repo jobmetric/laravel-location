@@ -141,7 +141,7 @@ class GeoAreaManager
         if (!$location_geo_area) {
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => [
                     trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.geo_area')])
                 ],
@@ -173,7 +173,7 @@ class GeoAreaManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -219,7 +219,7 @@ class GeoAreaManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -236,7 +236,7 @@ class GeoAreaManager
             if (!$location_geo_area) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.geo_area')])
                     ],
@@ -300,7 +300,7 @@ class GeoAreaManager
             if (!$location_geo_area) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.geo_area')])
                     ],
@@ -341,7 +341,7 @@ class GeoAreaManager
             if (!$location_geo_area) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.geo_area')])
                     ],
@@ -382,7 +382,7 @@ class GeoAreaManager
             if (!$location_geo_area) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.geo_area')])
                     ],

@@ -150,7 +150,7 @@ class ProvinceManager
         if (!$location_province) {
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => [
                     trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
                 ],
@@ -181,7 +181,7 @@ class ProvinceManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -222,7 +222,7 @@ class ProvinceManager
 
             return [
                 'ok' => false,
-                'message' => trans('location::base.validation.errors'),
+                'message' => trans('package-core::base.validation.errors'),
                 'errors' => $errors,
                 'status' => 422
             ];
@@ -239,7 +239,7 @@ class ProvinceManager
             if (!$location_province) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
                     ],
@@ -289,7 +289,7 @@ class ProvinceManager
             if (!$location_province) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
                     ],
@@ -330,7 +330,7 @@ class ProvinceManager
             if (!$location_province) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
                     ],
@@ -371,7 +371,7 @@ class ProvinceManager
             if (!$location_province) {
                 return [
                     'ok' => false,
-                    'message' => trans('location::base.validation.errors'),
+                    'message' => trans('package-core::base.validation.errors'),
                     'errors' => [
                         trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.province')])
                     ],
