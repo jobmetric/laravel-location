@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -24,36 +25,62 @@ return new class extends Migration {
 
             $table->string('flag')->nullable();
             /**
-             * The flag field is used to store the flag of the country.
+             * Must be selected from the list of flags available in the files.
              */
 
             $table->string('mobile_prefix', 20)->nullable()->index();
             /**
-             * The mobile_prefix field is used to store the mobile prefix of the country.
+             * The country code is defined in this field.
+             *
+             * e.g. iran +98
+             * e.g. USA  +1
+             * e.g. United Kingdom +44
+             * e.g. Israel +972
              */
 
             $table->json('validation')->nullable();
             /**
-             * The validation field is used to store the validation of the country.
+             * The validation field is used to store country number validation.
+             * regex type for this field per country.
+             */
+
+            $table->string('address_on_letter')->nullable();
+            /**
+             * In this field, the address on the letter with the following words is used
+             * with any format of a text to print the address in that country.
+             *
+             * {country}
+             * {province}
+             * {city}
+             * {district}
+             * {blvd}
+             * {street}
+             * {alley}
+             * {number}
+             * {floor}
+             * {unit}
+             * {receiver_number}
+             * {receiver_name}
+             * {postcode}
              */
 
             $table->boolean('status')->default(true)->index();
             /**
-             * The status field is used to store the status of the country.
+             * active status of this country.
+             *
+             * - true = active
+             * - false = inactive
              */
 
             $table->softDeletes();
-            /**
-             * The deleted_at field is used to store the deleted at of the country.
-             */
-
             $table->timestamps();
-            /**
-             * The created_at and updated_at fields are used to store the timestamps of the country.
-             */
-        });
 
-        cache()->forget('location-country');
+            $table->index([
+                'name',
+                'status',
+                'deleted_at',
+            ]);
+        });
     }
 
     /**
@@ -64,7 +91,5 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists(config('location.tables.country'));
-
-        cache()->forget('location-country');
     }
 };

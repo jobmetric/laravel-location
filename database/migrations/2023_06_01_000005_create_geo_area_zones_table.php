@@ -6,7 +6,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -15,30 +16,47 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create(config('location.tables.geo_area_zone'), function (Blueprint $table) {
-            $table->foreignId('location_geo_area_id')->constrained(config('location.tables.geo_area'))->cascadeOnDelete();
-            /**
-             * The geo_area_id field is used to store the geo area id of the geo area zone.
-             */
+            $table->foreignId('geo_area_id')
+                ->index()
+                ->constrained(config('location.tables.geo_area'))
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
 
-            $table->foreignId('location_country_id')->index()->constrained(config('location.tables.country'))->cascadeOnDelete()->cascadeOnUpdate();
-            /**
-             * The location_country_id field is used to store the location country id of the geo area zone.
-             */
-            $table->foreignId('location_province_id')->nullable()->index()->constrained(config('location.tables.province'))->cascadeOnDelete()->cascadeOnUpdate();
-            /**
-             * The location_province_id field is used to store the location province id of the geo area zone.
-             */
-            $table->foreignId('location_city_id')->nullable()->index()->constrained(config('location.tables.city'))->cascadeOnDelete()->cascadeOnUpdate();
-            /**
-             * The location_city_id field is used to store the location city id of the geo area zone.
-             */
-            $table->foreignId('location_district_id')->nullable()->index()->constrained(config('location.tables.district'))->cascadeOnDelete()->cascadeOnUpdate();
-            /**
-             * The location_district_id field is used to store the location district id of the geo area zone.
-             */
+            $table->foreignId('country_id')
+                ->index()
+                ->constrained(config('location.tables.country'))
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->foreignId('province_id')
+                ->nullable()
+                ->index()
+                ->constrained(config('location.tables.province'))
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->foreignId('city_id')
+                ->nullable()
+                ->index()
+                ->constrained(config('location.tables.city'))
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->foreignId('district_id')
+                ->nullable()
+                ->index()
+                ->constrained(config('location.tables.district'))
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->unique([
+                'geo_area_id',
+                'country_id',
+                'province_id',
+                'city_id',
+                'district_id',
+            ], 'UNIQUE_GEO_AREA_ZONE');
         });
-
-        cache()->forget('location-geo-area-zone');
     }
 
     /**
@@ -49,7 +67,5 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists(config('location.tables.geo_area_zone'));
-
-        cache()->forget('location-geo-area-zone');
     }
 };
