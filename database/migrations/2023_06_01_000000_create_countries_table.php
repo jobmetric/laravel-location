@@ -28,14 +28,14 @@ return new class extends Migration
              * Must be selected from the list of flags available in the files.
              */
 
-            $table->string('mobile_prefix', 20)->nullable()->index();
+            $table->unsignedInteger('mobile_prefix')->nullable()->index();
             /**
              * The country code is defined in this field.
              *
-             * e.g. iran +98
-             * e.g. USA  +1
-             * e.g. United Kingdom +44
-             * e.g. Israel +972
+             * e.g. iran 98
+             * e.g. USA  1
+             * e.g. United Kingdom 44
+             * e.g. Israel 972
              */
 
             $table->json('validation')->nullable();
