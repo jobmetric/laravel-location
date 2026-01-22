@@ -84,4 +84,156 @@ return [
         ],
     ],
 
+    "events" => [
+        "country_deleted" => [
+            "title" => "Country Deleted",
+            "description" => "This event is triggered when a Country is deleted.",
+        ],
+
+        "country_force_deleted" => [
+            "title" => "Country Force Deleted",
+            "description" => "This event is triggered when a Country is force deleted.",
+        ],
+
+        "country_restored" => [
+            "title" => "Country Restored",
+            "description" => "This event is triggered when a Country is restored.",
+        ],
+
+        "country_stored" => [
+            "title" => "Country Stored",
+            "description" => "This event is triggered when a Country is stored.",
+        ],
+
+        "country_updated" => [
+            "title" => "Country Updated",
+            "description" => "This event is triggered when a Country is updated.",
+        ],
+
+        "province_deleted" => [
+            "title" => "Province Deleted",
+            "description" => "This event is triggered when a Province is deleted.",
+        ],
+
+        "province_force_deleted" => [
+            "title" => "Province Force Deleted",
+            "description" => "This event is triggered when a Province is force deleted.",
+        ],
+
+        "province_restored" => [
+            "title" => "Province Restored",
+            "description" => "This event is triggered when a Province is restored.",
+        ],
+
+        "province_stored" => [
+            "title" => "Province Stored",
+            "description" => "This event is triggered when a Province is stored.",
+        ],
+
+        "province_updated" => [
+            "title" => "Province Updated",
+            "description" => "This event is triggered when a Province is updated.",
+        ],
+
+        "city_deleted" => [
+            "title" => "City Deleted",
+            "description" => "This event is triggered when a City is deleted.",
+        ],
+
+        "city_force_deleted" => [
+            "title" => "City Force Deleted",
+            "description" => "This event is triggered when a City is force deleted.",
+        ],
+
+        "city_restored" => [
+            "title" => "City Restored",
+            "description" => "This event is triggered when a City is restored.",
+        ],
+
+        "city_stored" => [
+            "title" => "City Stored",
+            "description" => "This event is triggered when a City is stored.",
+        ],
+
+        "city_updated" => [
+            "title" => "City Updated",
+            "description" => "This event is triggered when a City is updated.",
+        ],
+
+        "district_deleted" => [
+            "title" => "District Deleted",
+            "description" => "This event is triggered when a District is deleted.",
+        ],
+
+        "district_force_deleted" => [
+            "title" => "District Force Deleted",
+            "description" => "This event is triggered when a District is force deleted.",
+        ],
+
+        "district_restored" => [
+            "title" => "District Restored",
+            "description" => "This event is triggered when a District is restored.",
+        ],
+
+        "district_stored" => [
+            "title" => "District Stored",
+            "description" => "This event is triggered when a District is stored.",
+        ],
+
+        "district_updated" => [
+            "title" => "District Updated",
+            "description" => "This event is triggered when a District is updated.",
+        ],
+
+        "geo_area_deleted" => [
+            "title" => "Geo Area Deleted",
+            "description" => "This event is triggered when a Geo Area is deleted.",
+        ],
+
+        "geo_area_force_deleted" => [
+            "title" => "Geo Area Force Deleted",
+            "description" => "This event is triggered when a Geo Area is force deleted.",
+        ],
+
+        "geo_area_restored" => [
+            "title" => "Geo Area Restored",
+            "description" => "This event is triggered when a Geo Area is restored.",
+        ],
+
+        "geo_area_stored" => [
+            "title" => "Geo Area Stored",
+            "description" => "This event is triggered when a Geo Area is stored.",
+        ],
+
+        "geo_area_updated" => [
+            "title" => "Geo Area Updated",
+            "description" => "This event is triggered when a Geo Area is updated.",
+        ],
+
+        "address_deleted" => [
+            "title" => "Address Deleted",
+            "description" => "This event is triggered when an Address is deleted.",
+        ],
+
+        "address_force_deleted" => [
+            "title" => "Address Force Deleted",
+            "description" => "This event is triggered when an Address is force deleted.",
+        ],
+
+        "address_restored" => [
+            "title" => "Address Restored",
+            "description" => "This event is triggered when an Address is restored.",
+        ],
+
+        "address_stored" => [
+            "title" => "Address Stored",
+            "description" => "This event is triggered when an Address is stored.",
+        ],
+
+        "address_updated" => [
+            "title" => "Address Updated",
+            "description" => "This event is triggered when an Address is updated.",
+        ],
+    ],
+
 ];

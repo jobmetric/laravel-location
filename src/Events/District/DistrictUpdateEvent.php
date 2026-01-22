@@ -2,17 +2,42 @@
 
 namespace JobMetric\Location\Events\District;
 
-use JobMetric\Location\Models\LocationDistrict;
+use JobMetric\EventSystem\Contracts\DomainEvent;
+use JobMetric\EventSystem\Support\DomainEventDefinition;
+use JobMetric\Location\Models\District;
 
-class DistrictUpdateEvent
+readonly class DistrictUpdateEvent implements DomainEvent
 {
     /**
      * Create a new event instance.
      */
     public function __construct(
-        public readonly LocationDistrict $locationDistrict,
-        public readonly array            $data
-    )
+        public District $district,
+        public array $data
+    ) {
+    }
+
+    /**
+     * Returns the stable technical key for the domain event.
+     *
+     * @return string
+     */
+    public static function key(): string
     {
+        return 'district.updated';
+    }
+
+    /**
+     * Returns the full metadata definition for this domain event.
+     *
+     * @return DomainEventDefinition
+     */
+    public static function definition(): DomainEventDefinition
+    {
+        return new DomainEventDefinition(self::key(), 'location::base.model_name.district', 'location::base.events.district_updated.title', 'location::base.events.district_updated.description', 'fas fa-edit', [
+            'district',
+            'storage',
+            'management',
+        ]);
     }
 }
