@@ -26,15 +26,17 @@ return new class extends Migration
 
             $table->string('name', 150)->nullable()->index();
             /**
-             * The name field is used to store the name of the province.
+             * The name of the province.
+             *
+             * e.g. Tehran, Isfahan, Fars
              */
 
             $table->boolean('status')->default(true);
             /**
-             * active status of this province.
+             * Active status of this province.
              *
-             * - true = active
-             * - false = inactive
+             * - true = active (available for selection)
+             * - false = inactive (hidden from selection)
              */
 
             $table->softDeletes();

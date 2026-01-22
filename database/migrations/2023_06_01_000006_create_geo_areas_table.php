@@ -15,27 +15,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create(config('location.tables.city'), function (Blueprint $table) {
+        Schema::create(config('location.tables.geo_area'), function (Blueprint $table) {
             $table->id();
-
-            $table->foreignId('province_id')
-                ->index()
-                ->constrained(config('location.tables.province'))
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
-
-            $table->string('name', 150)->nullable()->index();
-            /**
-             * The name of the city.
-             *
-             * e.g. Tehran, Isfahan, Shiraz
-             */
 
             $table->boolean('status')->default(true);
             /**
-             * Active status of this city.
+             * Active status of this geo area.
              *
-             * - true = active (available for selection)
+             * - true = active (available for use)
              * - false = inactive (hidden from selection)
              */
 
@@ -43,8 +30,6 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index([
-                'province_id',
-                'name',
                 'status',
                 'deleted_at',
             ]);
@@ -58,6 +43,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('location.tables.city'));
+        Schema::dropIfExists(config('location.tables.geo_area'));
     }
 };

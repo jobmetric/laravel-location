@@ -26,15 +26,17 @@ return new class extends Migration
 
             $table->string('name', 150)->nullable()->index();
             /**
-             * The name field is used to store the name of the district.
+             * The name of the district.
+             *
+             * e.g. District 1, District 2, Central District
              */
 
             $table->boolean('status')->default(true);
             /**
-             * active status of this district.
+             * Active status of this district.
              *
-             * - true = active
-             * - false = inactive
+             * - true = active (available for selection)
+             * - false = inactive (hidden from selection)
              */
 
             $table->softDeletes();

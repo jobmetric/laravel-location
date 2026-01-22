@@ -20,56 +20,56 @@ return new class extends Migration
 
             $table->string('name', 150)->index();
             /**
-             * The name field is used to store the name of the country.
+             * The name of the country.
+             *
+             * e.g. Iran, United States, United Kingdom
              */
 
             $table->string('flag')->nullable();
             /**
+             * Flag identifier for the country.
+             *
              * Must be selected from the list of flags available in the files.
+             * Typically stored as filename (e.g., "iran.svg", "usa.svg")
              */
 
             $table->unsignedInteger('mobile_prefix')->nullable()->index();
             /**
-             * The country code is defined in this field.
+             * International mobile prefix (country calling code).
              *
-             * e.g. iran 98
-             * e.g. USA  1
-             * e.g. United Kingdom 44
-             * e.g. Israel 972
+             * e.g. Iran: 98
+             * e.g. USA: 1
+             * e.g. United Kingdom: 44
+             * e.g. Israel: 972
              */
 
             $table->json('validation')->nullable();
             /**
-             * The validation field is used to store country number validation.
-             * regex type for this field per country.
+             * Mobile number validation rules for this country.
+             *
+             * value: json
+             * use: array of regex patterns
+             * e.g. ["/^9\d{9}$/"] for Iran
              */
 
             $table->string('address_on_letter')->nullable();
             /**
-             * In this field, the address on the letter with the following words is used
-             * with any format of a text to print the address in that country.
+             * Address format template for printing addresses in this country.
              *
-             * {country}
-             * {province}
-             * {city}
-             * {district}
-             * {blvd}
-             * {street}
-             * {alley}
-             * {number}
-             * {floor}
-             * {unit}
-             * {receiver_number}
-             * {receiver_name}
-             * {postcode}
+             * Supports placeholders:
+             * {country}, {province}, {city}, {district}
+             * {blvd}, {street}, {alley}, {number}
+             * {floor}, {unit}, {receiver_number}, {receiver_name}, {postcode}
+             *
+             * e.g. "{country}, {province}, {city}\n{district}, {blvd}, {street}"
              */
 
             $table->boolean('status')->default(true)->index();
             /**
-             * active status of this country.
+             * Active status of this country.
              *
-             * - true = active
-             * - false = inactive
+             * - true = active (available for selection)
+             * - false = inactive (hidden from selection)
              */
 
             $table->softDeletes();
