@@ -60,7 +60,7 @@
                 "City": "JobMetric\\Location\\Facades\\City",
                 "District": "JobMetric\\Location\\Facades\\District",
                 "LocationGeoArea": "JobMetric\\Location\\Facades\\LocationGeoArea",
-                "LocationAddress": "JobMetric\\Location\\Facades\\LocationAddress"
+                "Address": "JobMetric\\Location\\Facades\\Address"
             }
         }
     },

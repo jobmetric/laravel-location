@@ -7,20 +7,24 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property mixed id
- * @property string addressable_type
- * @property int addressable_id
- * @property string address
- * @property string pluck
- * @property string unit
- * @property string postcode
- * @property array info
+ * @property int|null parent_id
+ * @property string owner_type
+ * @property int owner_id
+ * @property object|null address
+ * @property string|null postcode
+ * @property string|null lat
+ * @property string|null lng
+ * @property array|null info
  * @property string full_address
- * @property mixed addressable_resource
+ * @property string address_for_letter
+ * @property mixed owner_resource
  *
  * @property mixed country
  * @property mixed province
  * @property mixed city
  * @property mixed district
+ * @property mixed parent
+ * @property mixed child
  */
 class LocationAddressResource extends JsonResource
 {
@@ -33,9 +37,10 @@ class LocationAddressResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'parent_id' => $this->parent_id,
 
-            'addressable_type' => $this->addressable_type,
-            'addressable_id' => $this->addressable_id,
+            'owner_type' => $this->owner_type,
+            'owner_id' => $this->owner_id,
 
             'country' => $this->whenLoaded('country', function () {
                 return LocationCountryResource::make($this->country);
@@ -51,13 +56,21 @@ class LocationAddressResource extends JsonResource
             }),
 
             'address' => $this->address,
-            'pluck' => $this->pluck,
-            'unit' => $this->unit,
             'postcode' => $this->postcode,
+            'lat' => $this->lat,
+            'lng' => $this->lng,
             'info' => $this->info,
             'full_address' => $this->full_address,
+            'address_for_letter' => $this->address_for_letter,
 
-            'addressable' => $this?->addressable_resource
+            'parent' => $this->whenLoaded('parent', function () {
+                return LocationAddressResource::make($this->parent);
+            }),
+            'child' => $this->whenLoaded('child', function () {
+                return LocationAddressResource::make($this->child);
+            }),
+
+            'owner' => $this?->owner_resource,
         ];
     }
 }

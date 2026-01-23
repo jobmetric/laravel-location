@@ -5,10 +5,19 @@ namespace JobMetric\Location\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class StoreAddressRequest
+ *
+ * Validation request for storing a new Address.
+ *
+ * @package JobMetric\Location
+ */
 class StoreAddressRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -23,21 +32,65 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'country_id' => 'required|exists:' . config('location.tables.country') . ',id',
-            'province_id' => 'required|exists:' . config('location.tables.province') . ',id',
-            'city_id' => 'required|exists:' . config('location.tables.city') . ',id',
-            'district_id' => 'nullable|exists:' . config('location.tables.district') . ',id',
-            'address' => 'required|string|max:255',
-            'pluck' => 'nullable|string|max:10',
-            'unit' => 'nullable|string|max:20',
-            'postcode' => 'nullable|string|max:20',
-            'lat' => 'nullable|string|max:20',
-            'lng' => 'nullable|string|max:20',
+            'country_id'         => [
+                'required',
+                'integer',
+                'exists:' . config('location.tables.country') . ',id',
+            ],
+            'province_id'        => [
+                'required',
+                'integer',
+                'exists:' . config('location.tables.province') . ',id',
+            ],
+            'city_id'            => [
+                'required',
+                'integer',
+                'exists:' . config('location.tables.city') . ',id',
+            ],
+            'district_id'        => [
+                'nullable',
+                'integer',
+                'exists:' . config('location.tables.district') . ',id',
+            ],
+            'address'            => [
+                'required',
+                'array',
+            ],
+            'address.blvd'       => 'nullable|string|max:255',
+            'address.street'     => 'nullable|string|max:255',
+            'address.alley'      => 'nullable|string|max:255',
+            'address.number'     => 'nullable|string|max:50',
+            'address.floor'      => 'nullable|string|max:50',
+            'address.unit'       => 'nullable|string|max:50',
+            'postcode'           => 'nullable|string|max:20',
+            'lat'                => 'nullable|string|max:20',
+            'lng'                => 'nullable|string|max:20',
+            'info'               => 'nullable|array',
+            'info.mobile_prefix' => 'nullable|string|max:20',
+            'info.mobile'        => 'nullable|string|max:50',
+            'info.name'          => 'nullable|string|max:255',
+            'info.landline'      => 'nullable|string|max:50',
+            'info.notes'         => 'nullable|string',
+        ];
+    }
 
-            'info' => 'array|nullable',
-            'info.*.mobile_prefix' => 'required|string|max:20',
-            'info.*.mobile' => 'required|string|max:50',
-            'info.*.name' => 'required|string|max:255',
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'country_id'  => trans('location::base.model_name.country'),
+            'province_id' => trans('location::base.model_name.province'),
+            'city_id'     => trans('location::base.model_name.city'),
+            'district_id' => trans('location::base.model_name.district'),
+            'address'     => trans('location::base.model_name.address'),
+            'postcode'    => trans('location::base.model_name.address'),
+            'lat'         => trans('location::base.model_name.address'),
+            'lng'         => trans('location::base.model_name.address'),
+            'info'        => trans('location::base.model_name.address'),
         ];
     }
 }

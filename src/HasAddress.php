@@ -5,13 +5,13 @@ namespace JobMetric\Location;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use JobMetric\Location\Facades\LocationAddress as LocationAddressFacade;
+use JobMetric\Location\Facades\Address as AddressFacade;
 use JobMetric\Location\Http\Resources\LocationAddressResource;
-use JobMetric\Location\Models\LocationAddress;
-use JobMetric\Location\Models\LocationCity;
-use JobMetric\Location\Models\LocationCountry;
-use JobMetric\Location\Models\LocationDistrict;
-use JobMetric\Location\Models\LocationProvince;
+use JobMetric\Location\Models\Address;
+use JobMetric\Location\Models\City;
+use JobMetric\Location\Models\Country;
+use JobMetric\Location\Models\District;
+use JobMetric\Location\Models\Province;
 use Throwable;
 
 /**
@@ -19,11 +19,11 @@ use Throwable;
  *
  * @package JobMetric\Location
  *
- * @property LocationAddress addresses
- * @property LocationCountry addressLocationCountry
- * @property LocationProvince addressLocationProvince
- * @property LocationCity addressLocationCity
- * @property LocationDistrict addressLocationDistrict
+ * @property Address addresses
+ * @property Country addressLocationCountry
+ * @property Province addressLocationProvince
+ * @property City addressLocationCity
+ * @property District addressLocationDistrict
  *
  * @method morphMany(string $class, string $string)
  * @method belongsTo(string $class, string $string)
@@ -38,7 +38,7 @@ trait HasAddress
      */
     public function addresses(): MorphMany
     {
-        return $this->morphMany(LocationAddress::class, 'addressable');
+        return $this->morphMany(Address::class, 'owner');
     }
 
     /**
@@ -49,7 +49,7 @@ trait HasAddress
      */
     public function addressLocationCountry(): BelongsTo
     {
-        return $this->belongsTo(LocationCountry::class, 'id');
+        return $this->belongsTo(Country::class, 'id');
     }
 
     /**
@@ -60,7 +60,7 @@ trait HasAddress
      */
     public function addressLocationProvince(): BelongsTo
     {
-        return $this->belongsTo(LocationProvince::class, 'id');
+        return $this->belongsTo(Province::class, 'id');
     }
 
     /**
@@ -71,18 +71,19 @@ trait HasAddress
      */
     public function addressLocationCity(): BelongsTo
     {
-        return $this->belongsTo(LocationCity::class, 'id');
+        return $this->belongsTo(City::class, 'id');
     }
 
     /**
      * Location District relationship
      *
      * @return BelongsTo
+     *
      * @throws Throwable
      */
     public function addressLocationDistrict(): BelongsTo
     {
-        return $this->belongsTo(LocationDistrict::class, 'id');
+        return $this->belongsTo(District::class, 'id');
     }
 
     /**
@@ -95,7 +96,15 @@ trait HasAddress
      */
     public function storeAddress(array $data): array
     {
-        return LocationAddressFacade::store($this, $data);
+        $response = AddressFacade::store($this, $data);
+
+        return [
+            'ok'      => $response->isOk(),
+            'message' => $response->getMessage(),
+            'data'    => $response->getData(),
+            'errors'  => $response->getErrors(),
+            'status'  => $response->getStatus(),
+        ];
     }
 
     /**
@@ -107,29 +116,38 @@ trait HasAddress
      * @return array
      * @throws Throwable
      */
-    public function updateAddress(int $location_address_id, array $data): array
+    public function updateAddress(int $address_id, array $data): array
     {
         $flag = false;
 
-        $location_addresses = $this->addresses()->get();
+        $addresses = $this->addresses()->get();
 
-        foreach ($location_addresses as $location_address) {
-            if ($location_address->id === $location_address_id) {
+        foreach ($addresses as $address) {
+            if ($address->id === $address_id) {
                 $flag = true;
                 break;
             }
         }
 
         if ($flag) {
-            return LocationAddressFacade::update($location_address_id, $data);
-        } else {
+            $response = AddressFacade::update($address_id, $data);
+
             return [
-                'ok' => false,
+                'ok'      => $response->isOk(),
+                'message' => $response->getMessage(),
+                'data'    => $response->getData(),
+                'errors'  => $response->getErrors(),
+                'status'  => $response->getStatus(),
+            ];
+        }
+        else {
+            return [
+                'ok'      => false,
                 'message' => trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')]),
-                'error' => [
-                    'location_address_id' => trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')])
+                'error'   => [
+                    'address_id' => trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')]),
                 ],
-                'status' => 422
+                'status'  => 422,
             ];
         }
     }
@@ -141,9 +159,7 @@ trait HasAddress
      */
     public function getAddress(): AnonymousResourceCollection
     {
-        return LocationAddressResource::collection(
-            $this->addresses()->get()
-        );
+        return LocationAddressResource::collection($this->addresses()->get());
     }
 
     /**
@@ -154,21 +170,21 @@ trait HasAddress
      * @return bool
      * @throws Throwable
      */
-    public function forgetAddress(int $location_address_id): bool
+    public function forgetAddress(int $address_id): bool
     {
         $flag = false;
 
-        $location_addresses = $this->addresses()->get();
+        $addresses = $this->addresses()->get();
 
-        foreach ($location_addresses as $location_address) {
-            if ($location_address->id === $location_address_id) {
+        foreach ($addresses as $address) {
+            if ($address->id === $address_id) {
                 $flag = true;
                 break;
             }
         }
 
         if ($flag) {
-            LocationAddress::query()->where('id', $location_address_id)->delete();
+            Address::query()->where('id', $address_id)->delete();
 
             return true;
         }
