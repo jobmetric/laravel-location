@@ -33,6 +33,7 @@ class LocationServiceProvider extends PackageCoreServiceProvider
             ->registerClass('location-province', \JobMetric\Location\Services\Province::class)
             ->registerClass('location-city', \JobMetric\Location\Services\City::class)
             ->registerClass('location-district', \JobMetric\Location\Services\District::class)
+            ->registerClass('location-location', \JobMetric\Location\Services\Location::class)
             ->registerClass('locationGeoArea', \JobMetric\Location\Services\GeoAreaManager::class)
             ->registerClass('location-address', \JobMetric\Location\Services\Address::class);
     }

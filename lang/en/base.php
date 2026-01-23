@@ -32,6 +32,7 @@ return [
         "province" => "Province",
         "city" => "City",
         "district" => "District",
+        "location" => "Location",
         "geo_area" => "Geo Area",
         "address" => "Address",
     ],
@@ -233,6 +234,21 @@ return [
         "address_updated" => [
             "title" => "Address Updated",
             "description" => "This event is triggered when an Address is updated.",
+        ],
+
+        "location_deleted" => [
+            "title" => "Location Deleted",
+            "description" => "This event is triggered when a Location is deleted.",
+        ],
+
+        "location_stored" => [
+            "title" => "Location Stored",
+            "description" => "This event is triggered when a Location is stored.",
+        ],
+
+        "location_updated" => [
+            "title" => "Location Updated",
+            "description" => "This event is triggered when a Location is updated.",
         ],
     ],
 

@@ -59,6 +59,7 @@
                 "Province": "JobMetric\\Location\\Facades\\Province",
                 "City": "JobMetric\\Location\\Facades\\City",
                 "District": "JobMetric\\Location\\Facades\\District",
+                "Location": "JobMetric\\Location\\Facades\\Location",
                 "LocationGeoArea": "JobMetric\\Location\\Facades\\LocationGeoArea",
                 "Address": "JobMetric\\Location\\Facades\\Address"
             }
