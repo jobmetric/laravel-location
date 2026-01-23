@@ -3,22 +3,22 @@
 namespace JobMetric\Location\Services;
 
 use Illuminate\Database\Eloquent\Model;
-use JobMetric\Location\Events\Country\CountryDeleteEvent;
-use JobMetric\Location\Events\Country\CountryForceDeleteEvent;
-use JobMetric\Location\Events\Country\CountryRestoreEvent;
-use JobMetric\Location\Events\Country\CountryStoreEvent;
-use JobMetric\Location\Events\Country\CountryUpdateEvent;
-use JobMetric\Location\Http\Requests\StoreCountryRequest;
-use JobMetric\Location\Http\Requests\UpdateCountryRequest;
-use JobMetric\Location\Http\Resources\LocationCountryResource;
-use JobMetric\Location\Models\Country as CountryModel;
+use JobMetric\Location\Events\Province\ProvinceDeleteEvent;
+use JobMetric\Location\Events\Province\ProvinceForceDeleteEvent;
+use JobMetric\Location\Events\Province\ProvinceRestoreEvent;
+use JobMetric\Location\Events\Province\ProvinceStoreEvent;
+use JobMetric\Location\Events\Province\ProvinceUpdateEvent;
+use JobMetric\Location\Http\Requests\StoreProvinceRequest;
+use JobMetric\Location\Http\Requests\UpdateProvinceRequest;
+use JobMetric\Location\Http\Resources\LocationProvinceResource;
+use JobMetric\Location\Models\Province as ProvinceModel;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
 
 /**
- * Class Country
+ * Class Province
  *
- * CRUD and management service for Country entities.
+ * CRUD and management service for Province entities.
  * Responsibilities:
  * - Validate & normalize payloads via DTO helpers
  * - Fire domain events and invalidate caches on mutations
@@ -26,7 +26,7 @@ use Throwable;
  *
  * @package JobMetric\Location
  */
-class Country extends AbstractCrudService
+class Province extends AbstractCrudService
 {
     /**
      * Enable soft-deletes + restore/forceDelete APIs.
@@ -47,15 +47,15 @@ class Country extends AbstractCrudService
      *
      * @var string
      */
-    protected string $entityName = 'location::base.model_name.country';
+    protected string $entityName = 'location::base.model_name.province';
 
     /**
      * Bound model/resource classes for the base CRUD.
      *
      * @var class-string
      */
-    protected static string $modelClass = CountryModel::class;
-    protected static string $resourceClass = LocationCountryResource::class;
+    protected static string $modelClass = ProvinceModel::class;
+    protected static string $resourceClass = LocationProvinceResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.
@@ -64,11 +64,8 @@ class Country extends AbstractCrudService
      */
     protected static array $fields = [
         'id',
+        'country_id',
         'name',
-        'flag',
-        'mobile_prefix',
-        'validation',
-        'address_on_letter',
         'status',
         'deleted_at',
         'created_at',
@@ -87,11 +84,11 @@ class Country extends AbstractCrudService
      *
      * @var class-string|null
      */
-    protected static ?string $storeEventClass = CountryStoreEvent::class;
-    protected static ?string $updateEventClass = CountryUpdateEvent::class;
-    protected static ?string $deleteEventClass = CountryDeleteEvent::class;
-    protected static ?string $restoreEventClass = CountryRestoreEvent::class;
-    protected static ?string $forceDeleteEventClass = CountryForceDeleteEvent::class;
+    protected static ?string $storeEventClass = ProvinceStoreEvent::class;
+    protected static ?string $updateEventClass = ProvinceUpdateEvent::class;
+    protected static ?string $deleteEventClass = ProvinceDeleteEvent::class;
+    protected static ?string $restoreEventClass = ProvinceRestoreEvent::class;
+    protected static ?string $forceDeleteEventClass = ProvinceForceDeleteEvent::class;
 
     /**
      * Mutate/validate payload before create.
@@ -105,13 +102,13 @@ class Country extends AbstractCrudService
      */
     protected function changeFieldStore(array &$data): void
     {
-        $data = dto($data, StoreCountryRequest::class);
+        $data = dto($data, StoreProvinceRequest::class);
     }
 
     /**
      * Mutate/validate payload before update.
      *
-     * Role: aligns input with update rules for the specific Country.
+     * Role: aligns input with update rules for the specific Province.
      *
      * @param Model $model
      * @param array<string,mixed> $data
@@ -121,11 +118,12 @@ class Country extends AbstractCrudService
      */
     protected function changeFieldUpdate(Model $model, array &$data): void
     {
-        /** @var CountryModel $country */
-        $country = $model;
+        /** @var ProvinceModel $province */
+        $province = $model;
 
-        $data = dto($data, UpdateCountryRequest::class, [
-            'country_id' => $country->id,
+        $data = dto($data, UpdateProvinceRequest::class, [
+            'province_id' => $province->id,
+            'country_id'  => $data['country_id'] ?? $province->country_id,
         ]);
     }
 }

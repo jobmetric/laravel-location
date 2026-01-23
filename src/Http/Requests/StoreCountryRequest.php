@@ -12,7 +12,7 @@ use JobMetric\Location\Rules\CheckExistNameRule;
  *
  * Validation request for storing a new Country.
  *
- * @package JobMetric\Location\Http\Requests
+ * @package JobMetric\Location
  */
 class StoreCountryRequest extends FormRequest
 {
@@ -34,17 +34,17 @@ class StoreCountryRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => [
+            'name'              => [
                 'required',
                 'string',
                 'max:255',
                 new CheckExistNameRule(CountryModel::class),
             ],
-            'flag' => 'nullable|string|max:255',
-            'mobile_prefix' => 'nullable|integer|min:1|max:999',
-            'validation' => 'nullable|array',
+            'flag'              => 'nullable|string|max:255',
+            'mobile_prefix'     => 'nullable|integer|min:1|max:999',
+            'validation'        => 'nullable|array',
             'address_on_letter' => 'nullable|string',
-            'status' => 'sometimes|boolean',
+            'status'            => 'sometimes|boolean',
         ];
     }
 
@@ -56,12 +56,12 @@ class StoreCountryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => trans('location::base.model_name.country'),
-            'flag' => trans('location::base.model_name.country'),
-            'mobile_prefix' => trans('location::base.model_name.country'),
-            'validation' => trans('location::base.model_name.country'),
+            'name'              => trans('location::base.model_name.country'),
+            'flag'              => trans('location::base.model_name.country'),
+            'mobile_prefix'     => trans('location::base.model_name.country'),
+            'validation'        => trans('location::base.model_name.country'),
             'address_on_letter' => trans('location::base.model_name.country'),
-            'status' => trans('location::base.model_name.country'),
+            'status'            => trans('location::base.model_name.country'),
         ];
     }
 }

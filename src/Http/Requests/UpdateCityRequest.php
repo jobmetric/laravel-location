@@ -4,20 +4,76 @@ namespace JobMetric\Location\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\LocationCity;
+use JobMetric\Location\Models\City as CityModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
+/**
+ * Class UpdateCityRequest
+ *
+ * Validation request for updating an existing City.
+ *
+ * @package JobMetric\Location
+ */
 class UpdateCityRequest extends FormRequest
 {
-    public int|null $location_province_id = null;
-    public int|null $location_city_id = null;
+    /**
+     * External context (injected via dto()).
+     *
+     * @var array<string,mixed>
+     */
+    protected array $context = [];
+
+    /**
+     * Set context for validation.
+     *
+     * @param array<string,mixed> $context
+     *
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        $this->context = $context;
+    }
 
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Build validation rules dynamically.
+     *
+     * @param array<string,mixed> $input
+     * @param array<string,mixed> $context
+     *
+     * @return array<string,mixed>
+     */
+    public static function rulesFor(array $input, array $context = []): array
+    {
+        $cityId = (int) ($context['city_id'] ?? $input['city_id'] ?? null);
+        $provinceId = (int) ($context['province_id'] ?? $input['province_id'] ?? null);
+
+        return [
+            'province_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                'exists:' . config('location.tables.province') . ',id',
+            ],
+            'name'        => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                new CheckExistNameRule(CityModel::class, $cityId, $provinceId),
+            ],
+            'status'      => 'sometimes|boolean',
+        ];
     }
 
     /**
@@ -27,56 +83,26 @@ class UpdateCityRequest extends FormRequest
      */
     public function rules(): array
     {
-        if (is_null($this->location_city_id)) {
-            $location_city_id = $this->route()->parameter('location_city')?->id;
-        } else {
-            $location_city_id = $this->location_city_id;
-        }
+        $cityId = (int) ($this->context['city_id'] ?? $this->input('city_id') ?? null);
+        $provinceId = (int) ($this->context['province_id'] ?? $this->input('province_id') ?? null);
 
-        if (is_null($this->location_province_id)) {
-            $location_province_id = $this->route()->parameter('location_city')?->location_province_id;
-            if (is_null($location_province_id)) {
-                $location_province_id = $this->input('location_province_id');
-            }
-        } else {
-            $location_province_id = $this->location_province_id;
-        }
+        return self::rulesFor($this->all(), [
+            'city_id'     => $cityId,
+            'province_id' => $provinceId,
+        ]);
+    }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
         return [
-            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
-            'location_province_id' => 'required|exists:' . config('location.tables.province') . ',id',
-            'name' => [
-                'string',
-                'sometimes',
-                new CheckExistNameRule(LocationCity::class, $location_city_id, $location_province_id)
-            ],
-            'status' => 'boolean|sometimes',
+            'province_id' => trans('location::base.model_name.province'),
+            'name'        => trans('location::base.model_name.city'),
+            'status'      => trans('location::base.model_name.city'),
         ];
-    }
-
-    /**
-     * Set province id for validation
-     *
-     * @param int|null $location_province_id
-     * @return static
-     */
-    public function setLocationProvinceId(int $location_province_id = null): static
-    {
-        $this->location_province_id = $location_province_id;
-
-        return $this;
-    }
-
-    /**
-     * Set city id for validation
-     *
-     * @param int $location_city_id
-     * @return static
-     */
-    public function setLocationCityId(int $location_city_id): static
-    {
-        $this->location_city_id = $location_city_id;
-
-        return $this;
     }
 }

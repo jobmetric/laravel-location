@@ -4,20 +4,76 @@ namespace JobMetric\Location\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\LocationDistrict;
+use JobMetric\Location\Models\District as DistrictModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
+/**
+ * Class UpdateDistrictRequest
+ *
+ * Validation request for updating an existing District.
+ *
+ * @package JobMetric\Location
+ */
 class UpdateDistrictRequest extends FormRequest
 {
-    public int|null $location_city_id = null;
-    public int|null $location_district_id = null;
+    /**
+     * External context (injected via dto()).
+     *
+     * @var array<string,mixed>
+     */
+    protected array $context = [];
+
+    /**
+     * Set context for validation.
+     *
+     * @param array<string,mixed> $context
+     *
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        $this->context = $context;
+    }
 
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Build validation rules dynamically.
+     *
+     * @param array<string,mixed> $input
+     * @param array<string,mixed> $context
+     *
+     * @return array<string,mixed>
+     */
+    public static function rulesFor(array $input, array $context = []): array
+    {
+        $districtId = (int) ($context['district_id'] ?? $input['district_id'] ?? null);
+        $cityId = (int) ($context['city_id'] ?? $input['city_id'] ?? null);
+
+        return [
+            'city_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                'exists:' . config('location.tables.city') . ',id',
+            ],
+            'name'    => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                new CheckExistNameRule(DistrictModel::class, $districtId, $cityId),
+            ],
+            'status'  => 'sometimes|boolean',
+        ];
     }
 
     /**
@@ -27,57 +83,26 @@ class UpdateDistrictRequest extends FormRequest
      */
     public function rules(): array
     {
-        if (is_null($this->location_district_id)) {
-            $location_district_id = $this->route()->parameter('location_district')?->id;
-        } else {
-            $location_district_id = $this->location_district_id;
-        }
+        $districtId = (int) ($this->context['district_id'] ?? $this->input('district_id') ?? null);
+        $cityId = (int) ($this->context['city_id'] ?? $this->input('city_id') ?? null);
 
-        if (is_null($this->location_city_id)) {
-            $location_city_id = $this->route()->parameter('location_district')?->location_city_id;
-            if (is_null($location_city_id)) {
-                $location_city_id = $this->input('location_city_id');
-            }
-        } else {
-            $location_city_id = $this->location_city_id;
-        }
+        return self::rulesFor($this->all(), [
+            'district_id' => $districtId,
+            'city_id'     => $cityId,
+        ]);
+    }
 
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
         return [
-            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
-            'location_province_id' => 'required|exists:' . config('location.tables.province') . ',id',
-            'location_city_id' => 'required|exists:' . config('location.tables.city') . ',id',
-            'name' => [
-                'string',
-                'sometimes',
-                new CheckExistNameRule(LocationDistrict::class, $location_district_id, $location_city_id)
-            ],
-            'status' => 'boolean|sometimes',
+            'city_id' => trans('location::base.model_name.city'),
+            'name'    => trans('location::base.model_name.district'),
+            'status'  => trans('location::base.model_name.district'),
         ];
-    }
-
-    /**
-     * Set city id for validation
-     *
-     * @param int|null $location_city_id
-     * @return static
-     */
-    public function setLocationCityId(int $location_city_id = null): static
-    {
-        $this->location_city_id = $location_city_id;
-
-        return $this;
-    }
-
-    /**
-     * Set district id for validation
-     *
-     * @param int $location_district_id
-     * @return static
-     */
-    public function setLocationDistrictId(int $location_district_id): static
-    {
-        $this->location_district_id = $location_district_id;
-
-        return $this;
     }
 }

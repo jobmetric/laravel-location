@@ -30,9 +30,9 @@ class LocationServiceProvider extends PackageCoreServiceProvider
             ->hasMigration()
             ->hasTranslation()
             ->registerClass('location-country', \JobMetric\Location\Services\Country::class)
-            ->registerClass('locationProvince', \JobMetric\Location\Services\ProvinceManager::class)
-            ->registerClass('locationCity', \JobMetric\Location\Services\CityManager::class)
-            ->registerClass('locationDistrict', \JobMetric\Location\Services\DistrictManager::class)
+            ->registerClass('location-province', \JobMetric\Location\Services\Province::class)
+            ->registerClass('location-city', \JobMetric\Location\Services\City::class)
+            ->registerClass('location-district', \JobMetric\Location\Services\District::class)
             ->registerClass('locationGeoArea', \JobMetric\Location\Services\GeoAreaManager::class)
             ->registerClass('locationAddress', \JobMetric\Location\Services\AddressManager::class);
     }

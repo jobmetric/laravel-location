@@ -56,9 +56,9 @@
             ],
             "aliases": {
                 "Country": "JobMetric\\Location\\Facades\\Country",
-                "LocationProvince": "JobMetric\\Location\\Facades\\LocationProvince",
-                "LocationCity": "JobMetric\\Location\\Facades\\LocationCity",
-                "LocationDistrict": "JobMetric\\Location\\Facades\\LocationDistrict",
+                "Province": "JobMetric\\Location\\Facades\\Province",
+                "City": "JobMetric\\Location\\Facades\\City",
+                "District": "JobMetric\\Location\\Facades\\District",
                 "LocationGeoArea": "JobMetric\\Location\\Facades\\LocationGeoArea",
                 "LocationAddress": "JobMetric\\Location\\Facades\\LocationAddress"
             }

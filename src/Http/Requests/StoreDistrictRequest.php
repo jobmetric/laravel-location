@@ -4,15 +4,22 @@ namespace JobMetric\Location\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\LocationDistrict;
+use JobMetric\Location\Models\District as DistrictModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
+/**
+ * Class StoreDistrictRequest
+ *
+ * Validation request for storing a new District.
+ *
+ * @package JobMetric\Location
+ */
 class StoreDistrictRequest extends FormRequest
 {
-    public int|null $location_city_id = null;
-
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -26,37 +33,35 @@ class StoreDistrictRequest extends FormRequest
      */
     public function rules(): array
     {
-        if (is_null($this->location_city_id)) {
-            $location_city_id = $this->route()->parameter('location_city')?->location_city_id;
-            if (is_null($location_city_id)) {
-                $location_city_id = $this->input('location_city_id');
-            }
-        } else {
-            $location_city_id = $this->location_city_id;
-        }
+        $cityId = $this->input('city_id');
 
         return [
-            'location_country_id' => 'required|exists:' . config('location.tables.country') . ',id',
-            'location_province_id' => 'required|exists:' . config('location.tables.province') . ',id',
-            'location_city_id' => 'required|exists:' . config('location.tables.city') . ',id',
-            'name' => [
-                'string',
-                new CheckExistNameRule(LocationDistrict::class, parent_id: $location_city_id)
+            'city_id' => [
+                'required',
+                'integer',
+                'exists:' . config('location.tables.city') . ',id',
             ],
-            'status' => 'boolean',
+            'name'    => [
+                'required',
+                'string',
+                'max:255',
+                new CheckExistNameRule(DistrictModel::class, null, $cityId),
+            ],
+            'status'  => 'sometimes|boolean',
         ];
     }
 
     /**
-     * Set city id for validation
+     * Get custom attributes for validator errors.
      *
-     * @param int|null $location_city_id
-     * @return static
+     * @return array<string, string>
      */
-    public function setLocationCityId(int $location_city_id = null): static
+    public function attributes(): array
     {
-        $this->location_city_id = $location_city_id;
-
-        return $this;
+        return [
+            'city_id' => trans('location::base.model_name.city'),
+            'name'    => trans('location::base.model_name.district'),
+            'status'  => trans('location::base.model_name.district'),
+        ];
     }
 }

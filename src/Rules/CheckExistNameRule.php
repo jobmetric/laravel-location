@@ -5,6 +5,9 @@ namespace JobMetric\Location\Rules;
 use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Translation\PotentiallyTranslatedString;
+use JobMetric\Location\Models\City;
+use JobMetric\Location\Models\District;
+use JobMetric\Location\Models\Province;
 
 class CheckExistNameRule implements ValidationRule
 {
@@ -15,10 +18,9 @@ class CheckExistNameRule implements ValidationRule
      */
     public function __construct(
         private readonly string $model,
-        private int|null        $object_id = null,
-        private int|null        $parent_id = null,
-    )
-    {
+        private int|null $object_id = null,
+        private int|null $parent_id = null,
+    ) {
     }
 
     /**
@@ -35,16 +37,16 @@ class CheckExistNameRule implements ValidationRule
         }
 
         if ($this->parent_id) {
-            if ($this->model === 'JobMetric\Location\Models\LocationProvince') {
-                $query->where('location_country_id', $this->parent_id);
+            if ($this->model === Province::class) {
+                $query->where('country_id', $this->parent_id);
             }
 
-            if ($this->model === 'JobMetric\Location\Models\LocationCity') {
-                $query->where('location_province_id', $this->parent_id);
+            if ($this->model === City::class) {
+                $query->where('province_id', $this->parent_id);
             }
 
-            if ($this->model === 'JobMetric\Location\Models\LocationDistrict') {
-                $query->where('location_city_id', $this->parent_id);
+            if ($this->model === District::class) {
+                $query->where('city_id', $this->parent_id);
             }
         }
 

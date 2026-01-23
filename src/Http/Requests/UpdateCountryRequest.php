@@ -12,7 +12,7 @@ use JobMetric\Location\Rules\CheckExistNameRule;
  *
  * Validation request for updating an existing Country.
  *
- * @package JobMetric\Location\Http\Requests
+ * @package JobMetric\Location
  */
 class UpdateCountryRequest extends FormRequest
 {
@@ -55,21 +55,21 @@ class UpdateCountryRequest extends FormRequest
      */
     public static function rulesFor(array $input, array $context = []): array
     {
-        $countryId = (int)($context['country_id'] ?? $input['country_id'] ?? null);
+        $countryId = (int) ($context['country_id'] ?? $input['country_id'] ?? null);
 
         return [
-            'name' => [
+            'name'              => [
                 'sometimes',
                 'required',
                 'string',
                 'max:255',
                 new CheckExistNameRule(CountryModel::class, $countryId),
             ],
-            'flag' => 'sometimes|nullable|string|max:255',
-            'mobile_prefix' => 'sometimes|nullable|integer|min:1|max:999',
-            'validation' => 'sometimes|nullable|array',
+            'flag'              => 'sometimes|nullable|string|max:255',
+            'mobile_prefix'     => 'sometimes|nullable|integer|min:1|max:999',
+            'validation'        => 'sometimes|nullable|array',
             'address_on_letter' => 'sometimes|nullable|string',
-            'status' => 'sometimes|boolean',
+            'status'            => 'sometimes|boolean',
         ];
     }
 
@@ -80,7 +80,7 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $countryId = (int)($this->context['country_id'] ?? $this->input('country_id') ?? null);
+        $countryId = (int) ($this->context['country_id'] ?? $this->input('country_id') ?? null);
 
         return self::rulesFor($this->all(), [
             'country_id' => $countryId,
@@ -95,12 +95,12 @@ class UpdateCountryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name' => trans('location::base.model_name.country'),
-            'flag' => trans('location::base.model_name.country'),
-            'mobile_prefix' => trans('location::base.model_name.country'),
-            'validation' => trans('location::base.model_name.country'),
+            'name'              => trans('location::base.model_name.country'),
+            'flag'              => trans('location::base.model_name.country'),
+            'mobile_prefix'     => trans('location::base.model_name.country'),
+            'validation'        => trans('location::base.model_name.country'),
             'address_on_letter' => trans('location::base.model_name.country'),
-            'status' => trans('location::base.model_name.country'),
+            'status'            => trans('location::base.model_name.country'),
         ];
     }
 }
