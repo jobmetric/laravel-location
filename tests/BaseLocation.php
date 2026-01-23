@@ -4,7 +4,7 @@ namespace JobMetric\Location\Tests;
 
 use App\Models\User;
 use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Facades\LocationCountry;
+use JobMetric\Location\Facades\Country;
 use JobMetric\Location\Facades\LocationDistrict;
 use JobMetric\Location\Facades\LocationProvince;
 use Tests\BaseDatabaseTestCase as BaseTestCase;
@@ -18,7 +18,7 @@ class BaseLocation extends BaseTestCase
 
     public function createLocation(): array
     {
-        $locationCountry = LocationCountry::store([
+        $locationCountry = Country::store([
             'name' => 'Iran',
         ]);
 
@@ -50,7 +50,7 @@ class BaseLocation extends BaseTestCase
 
     public function addLocationCountry(string $name = null, bool $status = true): array
     {
-        return LocationCountry::store([
+        return Country::store([
             'name' => $name ?? 'Iran',
             'status' => $status,
         ]);
@@ -88,7 +88,7 @@ class BaseLocation extends BaseTestCase
 
     public function createAssetIran(): array
     {
-        $locationCountry = LocationCountry::store([
+        $locationCountry = Country::store([
             'name' => 'Iran',
         ]);
 
@@ -120,7 +120,7 @@ class BaseLocation extends BaseTestCase
 
     public function createAssetTurkey(): array
     {
-        $locationCountry = LocationCountry::store([
+        $locationCountry = Country::store([
             'name' => 'Turkey',
         ]);
 

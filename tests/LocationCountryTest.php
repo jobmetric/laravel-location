@@ -2,7 +2,7 @@
 
 namespace JobMetric\Location\Tests;
 
-use JobMetric\Location\Facades\LocationCountry;
+use JobMetric\Location\Facades\Country;
 use JobMetric\Location\Http\Resources\LocationCountryResource;
 
 class LocationCountryTest extends BaseLocation
@@ -32,7 +32,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertEquals(422, $locationCountry['status']);
 
         // Store another country by filling all fields
-        $locationCountry = LocationCountry::store([
+        $locationCountry = Country::store([
             'name' => 'Turkey',
             'flag' => 'tr',
             'mobile_prefix' => 90,
@@ -60,7 +60,7 @@ class LocationCountryTest extends BaseLocation
         $locationCountry = $this->addLocationCountry();
 
         // Update the country
-        $updateLocationCountry = LocationCountry::update($locationCountry['data']->id, [
+        $updateLocationCountry = Country::update($locationCountry['data']->id, [
             'name' => 'Iran',
         ]);
 
@@ -75,7 +75,7 @@ class LocationCountryTest extends BaseLocation
         $storeLocationCountry = $this->addLocationCountry('Turkey');
 
         // Update the country with a duplicate name
-        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
+        $updateLocationCountry = Country::update($storeLocationCountry['data']->id, [
             'name' => 'Iran'
         ]);
 
@@ -85,7 +85,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertEquals(422, $updateLocationCountry['status']);
 
         // Update the country with all fields
-        $updateLocationCountry = LocationCountry::update($storeLocationCountry['data']->id, [
+        $updateLocationCountry = Country::update($storeLocationCountry['data']->id, [
             'name' => 'Iraq',
             'flag' => 'iq',
             'mobile_prefix' => 964,
@@ -113,7 +113,7 @@ class LocationCountryTest extends BaseLocation
         $locationCountry = $this->addLocationCountry();
 
         // Delete the country
-        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+        $deleteLocationCountry = Country::delete($locationCountry['data']->id);
 
         $this->assertIsArray($deleteLocationCountry);
         $this->assertTrue($deleteLocationCountry['ok']);
@@ -125,7 +125,7 @@ class LocationCountryTest extends BaseLocation
         ]);
 
         // Delete the country again
-        $deleteLocationCountry = LocationCountry::delete($locationCountry['data']->id);
+        $deleteLocationCountry = Country::delete($locationCountry['data']->id);
 
         $this->assertIsArray($deleteLocationCountry);
         $this->assertFalse($deleteLocationCountry['ok']);
@@ -139,10 +139,10 @@ class LocationCountryTest extends BaseLocation
         $locationCountry = $this->addLocationCountry();
 
         // Delete the country
-        LocationCountry::delete($locationCountry['data']->id);
+        Country::delete($locationCountry['data']->id);
 
         // Restore the country
-        $restoreLocationCountry = LocationCountry::restore($locationCountry['data']->id);
+        $restoreLocationCountry = Country::restore($locationCountry['data']->id);
 
         $this->assertIsArray($restoreLocationCountry);
         $this->assertTrue($restoreLocationCountry['ok']);
@@ -154,7 +154,7 @@ class LocationCountryTest extends BaseLocation
         ]);
 
         // Restore the country again
-        $restoreLocationCountry = LocationCountry::restore($locationCountry['data']->id);
+        $restoreLocationCountry = Country::restore($locationCountry['data']->id);
 
         $this->assertIsArray($restoreLocationCountry);
         $this->assertFalse($restoreLocationCountry['ok']);
@@ -168,10 +168,10 @@ class LocationCountryTest extends BaseLocation
         $locationCountry = $this->addLocationCountry();
 
         // Delete the country
-        LocationCountry::delete($locationCountry['data']->id);
+        Country::delete($locationCountry['data']->id);
 
         // Force delete the country
-        $forceDeleteLocationCountry = LocationCountry::forceDelete($locationCountry['data']->id);
+        $forceDeleteLocationCountry = Country::forceDelete($locationCountry['data']->id);
 
         $this->assertIsArray($forceDeleteLocationCountry);
         $this->assertTrue($forceDeleteLocationCountry['ok']);
@@ -183,7 +183,7 @@ class LocationCountryTest extends BaseLocation
         ]);
 
         // Force delete the country again
-        $forceDeleteLocationCountry = LocationCountry::forceDelete($locationCountry['data']->id);
+        $forceDeleteLocationCountry = Country::forceDelete($locationCountry['data']->id);
 
         $this->assertIsArray($forceDeleteLocationCountry);
         $this->assertFalse($forceDeleteLocationCountry['ok']);
@@ -197,7 +197,7 @@ class LocationCountryTest extends BaseLocation
         $locationCountry = $this->addLocationCountry();
 
         // Get the country
-        $getLocationCountry = LocationCountry::get($locationCountry['data']->id);
+        $getLocationCountry = Country::get($locationCountry['data']->id);
 
         $this->assertIsArray($getLocationCountry);
         $this->assertTrue($getLocationCountry['ok']);
@@ -207,7 +207,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertEquals('Iran', $getLocationCountry['data']->name);
 
         // Get the country with a wrong id
-        $getLocationCountry = LocationCountry::get(1000);
+        $getLocationCountry = Country::get(1000);
 
         $this->assertIsArray($getLocationCountry);
         $this->assertFalse($getLocationCountry['ok']);
@@ -221,7 +221,7 @@ class LocationCountryTest extends BaseLocation
         $this->addLocationCountry();
 
         // Get the country
-        $getCountries = LocationCountry::all();
+        $getCountries = Country::all();
 
         $this->assertCount(1, $getCountries);
 
@@ -236,7 +236,7 @@ class LocationCountryTest extends BaseLocation
         $this->addLocationCountry();
 
         // Paginate the country
-        $paginateCountries = LocationCountry::paginate();
+        $paginateCountries = Country::paginate();
 
         $this->assertCount(1, $paginateCountries);
 

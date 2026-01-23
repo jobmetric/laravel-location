@@ -6,7 +6,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use JobMetric\Language\Facades\Language;
-use JobMetric\Location\Facades\LocationCountry;
+use JobMetric\Location\Facades\Country;
 use JobMetric\Location\Http\Requests\StoreCountryRequest;
 use JobMetric\Location\Http\Requests\UpdateCountryRequest;
 use JobMetric\Location\Http\Resources\LocationCountryResource;
@@ -47,7 +47,7 @@ class LocationCountryController extends Controller
     public function index(string $panel, string $section): View|JsonResponse
     {
         if (request()->ajax()) {
-            $query = LocationCountry::query();
+            $query = Country::query();
 
             return Datatable::of($query, resource_class: LocationCountryResource::class);
         }
@@ -127,7 +127,7 @@ class LocationCountryController extends Controller
     {
         $form_data = $request->all();
 
-        $location_country = LocationCountry::store($request->validated());
+        $location_country = Country::store($request->validated());
 
         if ($location_country['ok']) {
             $this->alert($location_country['message']);
@@ -211,7 +211,7 @@ class LocationCountryController extends Controller
     {
         $form_data = $request->all();
 
-        $location_country = LocationCountry::update($location_country->id, $request->validated());
+        $location_country = Country::update($location_country->id, $request->validated());
 
         if ($location_country['ok']) {
             $this->alert($location_country['message']);
@@ -252,7 +252,7 @@ class LocationCountryController extends Controller
     {
         try {
             foreach ($ids as $id) {
-                LocationCountry::delete($id);
+                Country::delete($id);
             }
 
             $alert = trans_choice('location::base.messages.deleted_items', count($ids), [
@@ -283,7 +283,7 @@ class LocationCountryController extends Controller
     {
         try {
             foreach ($ids as $id) {
-                LocationCountry::update($id, ['status' => $value]);
+                Country::update($id, ['status' => $value]);
             }
 
             if ($value) {

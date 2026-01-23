@@ -4,13 +4,22 @@ namespace JobMetric\Location\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\LocationCountry;
+use JobMetric\Location\Models\Country as CountryModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
+/**
+ * Class StoreCountryRequest
+ *
+ * Validation request for storing a new Country.
+ *
+ * @package JobMetric\Location\Http\Requests
+ */
 class StoreCountryRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
@@ -26,13 +35,33 @@ class StoreCountryRequest extends FormRequest
     {
         return [
             'name' => [
+                'required',
                 'string',
-                new CheckExistNameRule(LocationCountry::class)
+                'max:255',
+                new CheckExistNameRule(CountryModel::class),
             ],
-            'flag' => 'string|nullable',
-            'mobile_prefix' => 'integer|nullable',
-            'validation' => 'array|nullable',
-            'status' => 'boolean',
+            'flag' => 'nullable|string|max:255',
+            'mobile_prefix' => 'nullable|integer|min:1|max:999',
+            'validation' => 'nullable|array',
+            'address_on_letter' => 'nullable|string',
+            'status' => 'sometimes|boolean',
+        ];
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
+        return [
+            'name' => trans('location::base.model_name.country'),
+            'flag' => trans('location::base.model_name.country'),
+            'mobile_prefix' => trans('location::base.model_name.country'),
+            'validation' => trans('location::base.model_name.country'),
+            'address_on_letter' => trans('location::base.model_name.country'),
+            'status' => trans('location::base.model_name.country'),
         ];
     }
 }

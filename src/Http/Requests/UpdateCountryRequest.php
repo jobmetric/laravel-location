@@ -4,19 +4,73 @@ namespace JobMetric\Location\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\LocationCountry;
+use JobMetric\Location\Models\Country as CountryModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
+/**
+ * Class UpdateCountryRequest
+ *
+ * Validation request for updating an existing Country.
+ *
+ * @package JobMetric\Location\Http\Requests
+ */
 class UpdateCountryRequest extends FormRequest
 {
-    public int|null $location_country_id = null;
+    /**
+     * External context (injected via dto()).
+     *
+     * @var array<string,mixed>
+     */
+    protected array $context = [];
+
+    /**
+     * Set context for validation.
+     *
+     * @param array<string,mixed> $context
+     *
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        $this->context = $context;
+    }
 
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Build validation rules dynamically.
+     *
+     * @param array<string,mixed> $input
+     * @param array<string,mixed> $context
+     *
+     * @return array<string,mixed>
+     */
+    public static function rulesFor(array $input, array $context = []): array
+    {
+        $countryId = (int)($context['country_id'] ?? $input['country_id'] ?? null);
+
+        return [
+            'name' => [
+                'sometimes',
+                'required',
+                'string',
+                'max:255',
+                new CheckExistNameRule(CountryModel::class, $countryId),
+            ],
+            'flag' => 'sometimes|nullable|string|max:255',
+            'mobile_prefix' => 'sometimes|nullable|integer|min:1|max:999',
+            'validation' => 'sometimes|nullable|array',
+            'address_on_letter' => 'sometimes|nullable|string',
+            'status' => 'sometimes|boolean',
+        ];
     }
 
     /**
@@ -26,35 +80,27 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        if (is_null($this->location_country_id)) {
-            $location_country_id = $this->route()->parameter('location_country')?->id;
-        } else {
-            $location_country_id = $this->location_country_id;
-        }
+        $countryId = (int)($this->context['country_id'] ?? $this->input('country_id') ?? null);
 
-        return [
-            'name' => [
-                'string',
-                'sometimes',
-                new CheckExistNameRule(LocationCountry::class, $location_country_id)
-            ],
-            'flag' => 'string|nullable|sometimes',
-            'mobile_prefix' => 'integer|nullable|sometimes',
-            'validation' => 'array|nullable|sometimes',
-            'status' => 'boolean|sometimes',
-        ];
+        return self::rulesFor($this->all(), [
+            'country_id' => $countryId,
+        ]);
     }
 
     /**
-     * Set country id for validation
+     * Get custom attributes for validator errors.
      *
-     * @param int $location_country_id
-     * @return static
+     * @return array<string, string>
      */
-    public function setLocationCountryId(int $location_country_id): static
+    public function attributes(): array
     {
-        $this->location_country_id = $location_country_id;
-
-        return $this;
+        return [
+            'name' => trans('location::base.model_name.country'),
+            'flag' => trans('location::base.model_name.country'),
+            'mobile_prefix' => trans('location::base.model_name.country'),
+            'validation' => trans('location::base.model_name.country'),
+            'address_on_letter' => trans('location::base.model_name.country'),
+            'status' => trans('location::base.model_name.country'),
+        ];
     }
 }

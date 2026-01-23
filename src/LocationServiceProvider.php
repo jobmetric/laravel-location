@@ -29,7 +29,7 @@ class LocationServiceProvider extends PackageCoreServiceProvider
             ->hasRoute()
             ->hasMigration()
             ->hasTranslation()
-            ->registerClass('locationCountry', \JobMetric\Location\Services\CountryManager::class)
+            ->registerClass('location-country', \JobMetric\Location\Services\Country::class)
             ->registerClass('locationProvince', \JobMetric\Location\Services\ProvinceManager::class)
             ->registerClass('locationCity', \JobMetric\Location\Services\CityManager::class)
             ->registerClass('locationDistrict', \JobMetric\Location\Services\DistrictManager::class)
