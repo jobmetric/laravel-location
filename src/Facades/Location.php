@@ -9,8 +9,6 @@ use Illuminate\Support\Facades\Facade;
  *
  * @method static \JobMetric\PackageCore\Output\Response store(array $data)
  * @method static \JobMetric\PackageCore\Output\Response show(int $id, array $with = [])
- * @method static \JobMetric\PackageCore\Output\Response update(int $id, array $data, array $with = [])
- * @method static \JobMetric\PackageCore\Output\Response destroy(int $id, array $with = [])
  */
 class Location extends Facade
 {

@@ -2,14 +2,12 @@
 
 namespace JobMetric\Location\Services;
 
-use Illuminate\Database\Eloquent\Model;
-use JobMetric\Location\Events\Location\LocationDeleteEvent;
+use Illuminate\Support\Facades\DB;
 use JobMetric\Location\Events\Location\LocationStoreEvent;
-use JobMetric\Location\Events\Location\LocationUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreLocationRequest;
-use JobMetric\Location\Http\Requests\UpdateLocationRequest;
 use JobMetric\Location\Http\Resources\LocationLocationResource;
 use JobMetric\Location\Models\Location as LocationModel;
+use JobMetric\PackageCore\Output\Response;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
 
@@ -27,18 +25,18 @@ use Throwable;
 class Location extends AbstractCrudService
 {
     /**
-     * Disable soft-deletes (Location model doesn't use SoftDeletes).
+     * Disable update operations (Location records should never be updated).
      *
      * @var bool
      */
-    protected bool $softDelete = false;
+    protected bool $hasUpdate = false;
 
     /**
-     * Disable toggleStatus (Location doesn't have status field).
+     * Disable delete operations (Location records should never be deleted).
      *
      * @var bool
      */
-    protected bool $hasToggleStatus = false;
+    protected bool $hasDelete = false;
 
     /**
      * Human-readable entity name key used in response messages.
@@ -70,22 +68,66 @@ class Location extends AbstractCrudService
     ];
 
     /**
-     * Default sort applied by QueryBuilder.
-     *
-     * @var string[]
-     */
-    protected static array $defaultSort = ['-id'];
-
-    /**
      * Domain events mapping for CRUD lifecycle.
      *
      * @var class-string|null
      */
     protected static ?string $storeEventClass = LocationStoreEvent::class;
-    protected static ?string $updateEventClass = LocationUpdateEvent::class;
-    protected static ?string $deleteEventClass = LocationDeleteEvent::class;
-    protected static ?string $restoreEventClass = null;
-    protected static ?string $forceDeleteEventClass = null;
+
+    /**
+     * Override store() to ensure uniqueness: use firstOrCreate to prevent duplicates.
+     *
+     * Since Location records are never deleted, we must check for existing records
+     * with the same combination of country_id, province_id, city_id, district_id.
+     *
+     * @param array<string,mixed> $data Location data
+     * @param array<string> $with       Relations to eager load
+     *
+     * @return Response
+     * @throws Throwable
+     */
+    protected function doStore(array $data, array $with = []): Response
+    {
+        return DB::transaction(function () use ($data, $with) {
+            $this->changeFieldStore($data);
+
+            // Check if location already exists with the same combination
+            $location = LocationModel::firstOrCreate([
+                'country_id'  => $data['country_id'],
+                'province_id' => $data['province_id'] ?? null,
+                'city_id'     => $data['city_id'] ?? null,
+                'district_id' => $data['district_id'] ?? null,
+            ]);
+
+            // If location was just created, fire store event
+            if ($location->wasRecentlyCreated) {
+                $this->beforeCommon('store', $location, $data);
+                $this->beforeStore($location, $data);
+                $this->afterStore($location, $data);
+                $this->afterCommon('store', $location, $data);
+
+                $this->fireStoreEvent($location, $data);
+            }
+
+            $resourceInstance = $this->resource::make($location->load($with));
+
+            $additional = $this->additionalForMutation($location, $data, 'store');
+            if (! is_null($additional)) {
+                $resourceInstance = $resourceInstance->additional($additional);
+            }
+
+            if ($location->wasRecentlyCreated) {
+                return Response::make(true, trans('package-core::base.messages.created', [
+                    'entity' => trans($this->entityName),
+                ]), $resourceInstance, 201);
+            }
+
+            // Location already exists, return it (no event fired, no hooks called)
+            return Response::make(true, trans('location::base.messages.found', [
+                'name' => trans($this->entityName),
+            ]), $resourceInstance);
+        });
+    }
 
     /**
      * Mutate/validate payload before create.
@@ -100,26 +142,5 @@ class Location extends AbstractCrudService
     protected function changeFieldStore(array &$data): void
     {
         $data = dto($data, StoreLocationRequest::class);
-    }
-
-    /**
-     * Mutate/validate payload before update.
-     *
-     * Role: aligns input with update rules for the specific Location.
-     *
-     * @param Model $model
-     * @param array<string,mixed> $data
-     *
-     * @return void
-     * @throws Throwable
-     */
-    protected function changeFieldUpdate(Model $model, array &$data): void
-    {
-        /** @var LocationModel $location */
-        $location = $model;
-
-        $data = dto($data, UpdateLocationRequest::class, [
-            'location_id' => $location->id,
-        ]);
     }
 }

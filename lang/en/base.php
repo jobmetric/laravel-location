@@ -236,19 +236,9 @@ return [
             "description" => "This event is triggered when an Address is updated.",
         ],
 
-        "location_deleted" => [
-            "title" => "Location Deleted",
-            "description" => "This event is triggered when a Location is deleted.",
-        ],
-
         "location_stored" => [
             "title" => "Location Stored",
             "description" => "This event is triggered when a Location is stored.",
-        ],
-
-        "location_updated" => [
-            "title" => "Location Updated",
-            "description" => "This event is triggered when a Location is updated.",
         ],
     ],
 
