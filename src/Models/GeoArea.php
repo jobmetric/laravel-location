@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use JobMetric\Location\HasLocation;
 use JobMetric\PackageCore\Models\HasBooleanStatus;
 use JobMetric\Translation\HasTranslation;
 
@@ -29,7 +30,14 @@ use JobMetric\Translation\HasTranslation;
  */
 class GeoArea extends Model
 {
-    use HasFactory, SoftDeletes, HasBooleanStatus, HasTranslation;
+    use HasFactory, SoftDeletes, HasBooleanStatus, HasTranslation, HasLocation;
+
+    /**
+     * Location mode: multiple locations per geo area.
+     *
+     * @var string
+     */
+    protected string $locationMode = 'multiple';
 
     /**
      * The attributes that are mass assignable.

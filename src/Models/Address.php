@@ -9,9 +9,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use JobMetric\Location\HasLocation;
 
 /**
  * Class Address
@@ -38,18 +38,19 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property-read Address|null $child
  * @property-read Model|MorphTo $owner
  * @property-read AddressRelation[] $addressRelations
- * @property-read LocationRelation|null $locationRelation
- * @property-read Location|null $location
- * @property-read Country|null $country
- * @property-read Province|null $province
- * @property-read City|null $city
- * @property-read District|null $district
  * @property-read string $full_address
  * @property-read string $address_for_letter
  */
 class Address extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, HasLocation;
+
+    /**
+     * Location mode: single location per address.
+     *
+     * @var string
+     */
+    protected string $locationMode = 'single';
 
     /**
      * This table does not have Laravel's updated_at column.
@@ -148,66 +149,6 @@ class Address extends Model
     public function addressRelations(): HasMany
     {
         return $this->hasMany(AddressRelation::class, 'address_id');
-    }
-
-    /**
-     * Get location relation for this address (polymorphic).
-     *
-     * @return MorphOne
-     */
-    public function locationRelation(): MorphOne
-    {
-        return $this->morphOne(LocationRelation::class, 'locationable');
-    }
-
-    /**
-     * Get location through location relation.
-     *
-     * @return Location|null
-     */
-    public function getLocationAttribute(): ?Location
-    {
-        return $this->locationRelation?->location;
-    }
-
-    /**
-     * Get country through location.
-     *
-     * @return Country|null
-     */
-    public function getCountryAttribute(): ?Country
-    {
-        return $this->location?->country;
-    }
-
-    /**
-     * Get province through location.
-     *
-     * @return Province|null
-     */
-    public function getProvinceAttribute(): ?Province
-    {
-        return $this->location?->province;
-    }
-
-    /**
-     * Get city through location.
-     *
-     * @return City|null
-     */
-    public function getCityAttribute(): ?City
-    {
-        return $this->location?->city;
-    }
-
-    /**
-     * Get district through location.
-     *
-     * @return District|null
-     */
-    public function getDistrictAttribute(): ?District
-    {
-        return $this->location?->district;
     }
 
     /**
