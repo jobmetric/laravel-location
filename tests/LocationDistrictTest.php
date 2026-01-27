@@ -3,7 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationDistrict;
-use JobMetric\Location\Http\Resources\LocationDistrictResource;
+use JobMetric\Location\Http\Resources\DistrictResource;
 
 class LocationDistrictTest extends BaseLocation
 {
@@ -24,7 +24,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
         $this->assertEquals(201, $locationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $locationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $locationDistrict['data']);
         $this->assertIsInt($locationDistrict['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
@@ -50,7 +50,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
         $this->assertEquals(201, $locationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $locationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $locationDistrict['data']);
         $this->assertIsInt($locationDistrict['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
@@ -71,7 +71,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
         $this->assertEquals(201, $locationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $locationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $locationDistrict['data']);
         $this->assertIsInt($locationDistrict['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
@@ -117,7 +117,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
         $this->assertEquals(200, $locationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $locationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $locationDistrict['data']);
         $this->assertIsInt($locationDistrict['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
@@ -157,7 +157,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($locationDistrict);
         $this->assertTrue($locationDistrict['ok']);
         $this->assertEquals(200, $locationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $locationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $locationDistrict['data']);
         $this->assertIsInt($locationDistrict['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
@@ -190,7 +190,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($destroyLocationDistrict);
         $this->assertTrue($destroyLocationDistrict['ok']);
         $this->assertEquals(200, $destroyLocationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $destroyLocationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $destroyLocationDistrict['data']);
 
         $this->assertSoftDeleted(config('location.tables.district'), [
             'name' => 'District 1',
@@ -228,7 +228,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($restoreLocationDistrict);
         $this->assertTrue($restoreLocationDistrict['ok']);
         $this->assertEquals(200, $restoreLocationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $restoreLocationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $restoreLocationDistrict['data']);
 
         $this->assertDatabaseHas(config('location.tables.district'), [
             'id' => $locationDistrict['data']->id,
@@ -268,7 +268,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($forceDeleteLocationDistrict);
         $this->assertTrue($forceDeleteLocationDistrict['ok']);
         $this->assertEquals(200, $forceDeleteLocationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $forceDeleteLocationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $forceDeleteLocationDistrict['data']);
 
         $this->assertDatabaseMissing(config('location.tables.district'), [
             'name' => 'District 1',
@@ -303,7 +303,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertIsArray($getLocationDistrict);
         $this->assertTrue($getLocationDistrict['ok']);
         $this->assertEquals(200, $getLocationDistrict['status']);
-        $this->assertInstanceOf(LocationDistrictResource::class, $getLocationDistrict['data']);
+        $this->assertInstanceOf(DistrictResource::class, $getLocationDistrict['data']);
         $this->assertIsInt($getLocationDistrict['data']->id);
 
         // Get the district with a wrong id
@@ -336,7 +336,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertCount(2, $allLocationDistricts);
 
         $allLocationDistricts->each(function ($district) {
-            $this->assertInstanceOf(LocationDistrictResource::class, $district);
+            $this->assertInstanceOf(DistrictResource::class, $district);
         });
     }
 
@@ -361,7 +361,7 @@ class LocationDistrictTest extends BaseLocation
         $this->assertCount(2, $paginateDistricts);
 
         $paginateDistricts->each(function ($city) {
-            $this->assertInstanceOf(LocationDistrictResource::class, $city);
+            $this->assertInstanceOf(DistrictResource::class, $city);
         });
 
         $this->assertIsInt($paginateDistricts->total());

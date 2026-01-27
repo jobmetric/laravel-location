@@ -3,7 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationGeoArea;
-use JobMetric\Location\Http\Resources\LocationGeoAreaResource;
+use JobMetric\Location\Http\Resources\GeoAreaResource;
 
 class LocationGeoAreaTest extends BaseLocation
 {
@@ -19,7 +19,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(201, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -48,7 +48,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(201, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -76,7 +76,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(201, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -132,7 +132,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -161,7 +161,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -199,7 +199,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -250,7 +250,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertSoftDeleted(config('location.tables.geo_area'), [
@@ -303,7 +303,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.geo_area'), [
@@ -356,7 +356,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         $this->assertDatabaseMissing(config('location.tables.geo_area'), [
@@ -407,7 +407,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertIsArray($locationGeoArea);
         $this->assertTrue($locationGeoArea['ok']);
         $this->assertEquals(200, $locationGeoArea['status']);
-        $this->assertInstanceOf(LocationGeoAreaResource::class, $locationGeoArea['data']);
+        $this->assertInstanceOf(GeoAreaResource::class, $locationGeoArea['data']);
         $this->assertIsInt($locationGeoArea['data']->id);
 
         // Get a geo area with wrong id
@@ -443,7 +443,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertCount(1, $locationGeoAreas);
 
         $locationGeoAreas->each(function ($geoArea) {
-            $this->assertInstanceOf(LocationGeoAreaResource::class, $geoArea);
+            $this->assertInstanceOf(GeoAreaResource::class, $geoArea);
         });
     }
 
@@ -471,7 +471,7 @@ class LocationGeoAreaTest extends BaseLocation
         $this->assertCount(1, $locationGeoAreas);
 
         $locationGeoAreas->each(function ($geoArea) {
-            $this->assertInstanceOf(LocationGeoAreaResource::class, $geoArea);
+            $this->assertInstanceOf(GeoAreaResource::class, $geoArea);
         });
 
         $this->assertIsInt($locationGeoAreas->total());

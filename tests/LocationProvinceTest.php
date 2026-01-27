@@ -3,7 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationProvince;
-use JobMetric\Location\Http\Resources\LocationProvinceResource;
+use JobMetric\Location\Http\Resources\ProvinceResource;
 
 class LocationProvinceTest extends BaseLocation
 {
@@ -18,7 +18,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($locationProvince);
         $this->assertTrue($locationProvince['ok']);
         $this->assertEquals(201, $locationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $locationProvince['data']);
         $this->assertIsInt($locationProvince['data']->id);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $locationProvince['data']->id,
@@ -41,7 +41,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($locationProvince);
         $this->assertTrue($locationProvince['ok']);
         $this->assertEquals(201, $locationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $locationProvince['data']);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $locationProvince['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -58,7 +58,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($locationProvince);
         $this->assertTrue($locationProvince['ok']);
         $this->assertEquals(201, $locationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $locationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $locationProvince['data']);
         $this->assertIsInt($locationProvince['data']->id);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $locationProvince['data']->id,
@@ -93,7 +93,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($updateLocationProvince);
         $this->assertTrue($updateLocationProvince['ok']);
         $this->assertEquals(200, $updateLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $updateLocationProvince['data']);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $updateLocationProvince['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -125,7 +125,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($updateLocationProvince);
         $this->assertTrue($updateLocationProvince['ok']);
         $this->assertEquals(200, $updateLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $updateLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $updateLocationProvince['data']);
         $this->assertDatabaseHas(config('location.tables.province'), [
             'id' => $updateLocationProvince['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -148,7 +148,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($deleteLocationProvince);
         $this->assertTrue($deleteLocationProvince['ok']);
         $this->assertEquals(200, $deleteLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $deleteLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $deleteLocationProvince['data']);
 
         $this->assertSoftDeleted(config('location.tables.province'), [
             'name' => 'Tehran',
@@ -180,7 +180,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($restoreLocationProvince);
         $this->assertTrue($restoreLocationProvince['ok']);
         $this->assertEquals(200, $restoreLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $restoreLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $restoreLocationProvince['data']);
 
         $this->assertNotSoftDeleted(config('location.tables.province'), [
             'name' => 'Tehran',
@@ -211,7 +211,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($forceDeleteLocationProvince);
         $this->assertTrue($forceDeleteLocationProvince['ok']);
         $this->assertEquals(200, $forceDeleteLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $forceDeleteLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $forceDeleteLocationProvince['data']);
 
         $this->assertDatabaseMissing(config('location.tables.province'), [
             'name' => 'Tehran',
@@ -240,7 +240,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertIsArray($getLocationProvince);
         $this->assertTrue($getLocationProvince['ok']);
         $this->assertEquals(200, $getLocationProvince['status']);
-        $this->assertInstanceOf(LocationProvinceResource::class, $getLocationProvince['data']);
+        $this->assertInstanceOf(ProvinceResource::class, $getLocationProvince['data']);
         $this->assertEquals($locationProvince['data']->id, $getLocationProvince['data']->id);
         $this->assertEquals('Tehran', $getLocationProvince['data']->name);
 
@@ -267,7 +267,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertCount(1, $getLocationProvinces);
 
         $getLocationProvinces->each(function ($province) {
-            $this->assertInstanceOf(LocationProvinceResource::class, $province);
+            $this->assertInstanceOf(ProvinceResource::class, $province);
         });
     }
 
@@ -285,7 +285,7 @@ class LocationProvinceTest extends BaseLocation
         $this->assertCount(1, $paginateProvinces);
 
         $paginateProvinces->each(function ($province) {
-            $this->assertInstanceOf(LocationProvinceResource::class, $province);
+            $this->assertInstanceOf(ProvinceResource::class, $province);
         });
 
         $this->assertIsInt($paginateProvinces->total());

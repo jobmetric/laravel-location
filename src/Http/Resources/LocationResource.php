@@ -19,7 +19,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed district
  * @property mixed locationRelations
  */
-class LocationLocationResource extends JsonResource
+class LocationResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -37,16 +37,16 @@ class LocationLocationResource extends JsonResource
             'created_at' => $this->created_at,
 
             'country' => $this->whenLoaded('country', function () {
-                return LocationCountryResource::make($this->country);
+                return CountryResource::make($this->country);
             }),
             'province' => $this->whenLoaded('province', function () {
-                return LocationProvinceResource::make($this->province);
+                return ProvinceResource::make($this->province);
             }),
             'city' => $this->whenLoaded('city', function () {
-                return LocationCityResource::make($this->city);
+                return CityResource::make($this->city);
             }),
             'district' => $this->whenLoaded('district', function () {
-                return LocationDistrictResource::make($this->district);
+                return DistrictResource::make($this->district);
             }),
             'location_relations' => $this->whenLoaded('locationRelations', function () {
                 return $this->locationRelations;

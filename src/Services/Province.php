@@ -10,7 +10,7 @@ use JobMetric\Location\Events\Province\ProvinceStoreEvent;
 use JobMetric\Location\Events\Province\ProvinceUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreProvinceRequest;
 use JobMetric\Location\Http\Requests\UpdateProvinceRequest;
-use JobMetric\Location\Http\Resources\LocationProvinceResource;
+use JobMetric\Location\Http\Resources\ProvinceResource;
 use JobMetric\Location\Models\Province as ProvinceModel;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
@@ -55,7 +55,7 @@ class Province extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = ProvinceModel::class;
-    protected static string $resourceClass = LocationProvinceResource::class;
+    protected static string $resourceClass = ProvinceResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

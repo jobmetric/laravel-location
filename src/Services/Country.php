@@ -10,7 +10,7 @@ use JobMetric\Location\Events\Country\CountryStoreEvent;
 use JobMetric\Location\Events\Country\CountryUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreCountryRequest;
 use JobMetric\Location\Http\Requests\UpdateCountryRequest;
-use JobMetric\Location\Http\Resources\LocationCountryResource;
+use JobMetric\Location\Http\Resources\CountryResource;
 use JobMetric\Location\Models\Country as CountryModel;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
@@ -55,7 +55,7 @@ class Country extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = CountryModel::class;
-    protected static string $resourceClass = LocationCountryResource::class;
+    protected static string $resourceClass = CountryResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

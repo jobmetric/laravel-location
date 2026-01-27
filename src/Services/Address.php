@@ -10,7 +10,7 @@ use JobMetric\Location\Events\Address\AddressUpdateEvent;
 use JobMetric\Location\HasAddress;
 use JobMetric\Location\Http\Requests\StoreAddressRequest;
 use JobMetric\Location\Http\Requests\UpdateAddressRequest;
-use JobMetric\Location\Http\Resources\LocationAddressResource;
+use JobMetric\Location\Http\Resources\AddressResource;
 use JobMetric\Location\Models\Address as AddressModel;
 use JobMetric\PackageCore\Output\Response;
 use JobMetric\PackageCore\Services\AbstractCrudService;
@@ -72,7 +72,7 @@ class Address extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = AddressModel::class;
-    protected static string $resourceClass = LocationAddressResource::class;
+    protected static string $resourceClass = AddressResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

@@ -4,7 +4,7 @@ namespace JobMetric\Location\Tests;
 
 use App\Models\User;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use JobMetric\Location\Http\Resources\LocationAddressResource;
+use JobMetric\Location\Http\Resources\AddressResource;
 use Throwable;
 
 class LocationAddressTraitTest extends BaseLocation
@@ -156,7 +156,7 @@ class LocationAddressTraitTest extends BaseLocation
         $this->assertCount(1, $addresses);
 
         $addresses->each(function ($address) {
-            $this->assertInstanceOf(LocationAddressResource::class, $address);
+            $this->assertInstanceOf(AddressResource::class, $address);
         });
     }
 

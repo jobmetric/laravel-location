@@ -13,11 +13,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed validation
  * @property mixed status
  *
- * @property mixed country
+ * @property mixed provinces
  * @property mixed cities
  * @property mixed districts
  */
-class LocationProvinceResource extends JsonResource
+class CountryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -29,16 +29,19 @@ class LocationProvinceResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'flag' => $this->flag,
+            'mobile_prefix' => $this->mobile_prefix,
+            'validation' => $this->validation,
             'status' => $this->status,
 
-            'country' => $this->whenLoaded('country', function () {
-                return LocationCountryResource::make($this->country);
+            'provinces' => $this->whenLoaded('provinces', function () {
+                return ProvinceResource::collection($this->provinces);
             }),
             'cities' => $this->whenLoaded('cities', function () {
-                return LocationCityResource::collection($this->cities);
+                return CityResource::collection($this->cities);
             }),
             'districts' => $this->whenLoaded('districts', function () {
-                return LocationDistrictResource::collection($this->districts);
+                return DistrictResource::collection($this->districts);
             }),
         ];
     }

@@ -9,7 +9,7 @@ use JobMetric\Language\Facades\Language;
 use JobMetric\Location\Facades\Country;
 use JobMetric\Location\Http\Requests\StoreCountryRequest;
 use JobMetric\Location\Http\Requests\UpdateCountryRequest;
-use JobMetric\Location\Http\Resources\LocationCountryResource;
+use JobMetric\Location\Http\Resources\CountryResource;
 use JobMetric\Location\Models\LocationCountry as LocationCountryModel;
 use JobMetric\Panelio\Facades\Breadcrumb;
 use JobMetric\Panelio\Facades\Button;
@@ -49,7 +49,7 @@ class LocationCountryController extends Controller
         if (request()->ajax()) {
             $query = Country::query();
 
-            return Datatable::of($query, resource_class: LocationCountryResource::class);
+            return Datatable::of($query, resource_class: CountryResource::class);
         }
 
         // Set data location country

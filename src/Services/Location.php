@@ -5,7 +5,7 @@ namespace JobMetric\Location\Services;
 use Illuminate\Support\Facades\DB;
 use JobMetric\Location\Events\Location\LocationStoreEvent;
 use JobMetric\Location\Http\Requests\StoreLocationRequest;
-use JobMetric\Location\Http\Resources\LocationLocationResource;
+use JobMetric\Location\Http\Resources\LocationResource;
 use JobMetric\Location\Models\Location as LocationModel;
 use JobMetric\PackageCore\Output\Response;
 use JobMetric\PackageCore\Services\AbstractCrudService;
@@ -51,7 +51,7 @@ class Location extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = LocationModel::class;
-    protected static string $resourceClass = LocationLocationResource::class;
+    protected static string $resourceClass = LocationResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

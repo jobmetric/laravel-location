@@ -10,7 +10,7 @@ use JobMetric\Location\Events\City\CityStoreEvent;
 use JobMetric\Location\Events\City\CityUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreCityRequest;
 use JobMetric\Location\Http\Requests\UpdateCityRequest;
-use JobMetric\Location\Http\Resources\LocationCityResource;
+use JobMetric\Location\Http\Resources\CityResource;
 use JobMetric\Location\Models\City as CityModel;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
@@ -55,7 +55,7 @@ class City extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = CityModel::class;
-    protected static string $resourceClass = LocationCityResource::class;
+    protected static string $resourceClass = CityResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

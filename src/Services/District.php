@@ -10,7 +10,7 @@ use JobMetric\Location\Events\District\DistrictStoreEvent;
 use JobMetric\Location\Events\District\DistrictUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreDistrictRequest;
 use JobMetric\Location\Http\Requests\UpdateDistrictRequest;
-use JobMetric\Location\Http\Resources\LocationDistrictResource;
+use JobMetric\Location\Http\Resources\DistrictResource;
 use JobMetric\Location\Models\District as DistrictModel;
 use JobMetric\PackageCore\Services\AbstractCrudService;
 use Throwable;
@@ -55,7 +55,7 @@ class District extends AbstractCrudService
      * @var class-string
      */
     protected static string $modelClass = DistrictModel::class;
-    protected static string $resourceClass = LocationDistrictResource::class;
+    protected static string $resourceClass = DistrictResource::class;
 
     /**
      * Allowed fields for selection/filter/sort in QueryBuilder.

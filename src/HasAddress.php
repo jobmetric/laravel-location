@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use JobMetric\Location\Facades\Address as AddressFacade;
-use JobMetric\Location\Http\Resources\LocationAddressResource;
+use JobMetric\Location\Http\Resources\AddressResource;
 use JobMetric\Location\Models\Address;
 use JobMetric\Location\Models\City;
 use JobMetric\Location\Models\Country;
@@ -159,7 +159,7 @@ trait HasAddress
      */
     public function getAddress(): AnonymousResourceCollection
     {
-        return LocationAddressResource::collection($this->addresses()->get());
+        return AddressResource::collection($this->addresses()->get());
     }
 
     /**

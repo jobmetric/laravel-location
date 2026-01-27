@@ -3,7 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\LocationCity;
-use JobMetric\Location\Http\Resources\LocationCityResource;
+use JobMetric\Location\Http\Resources\CityResource;
 
 class LocationCityTest extends BaseLocation
 {
@@ -21,7 +21,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
         $this->assertEquals(201, $locationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $locationCity['data']);
         $this->assertIsInt($locationCity['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.city'), [
@@ -46,7 +46,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
         $this->assertEquals(201, $locationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $locationCity['data']);
         $this->assertIsInt($locationCity['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.city'), [
@@ -66,7 +66,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($locationCity);
         $this->assertTrue($locationCity['ok']);
         $this->assertEquals(201, $locationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $locationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $locationCity['data']);
         $this->assertIsInt($locationCity['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.city'), [
@@ -107,7 +107,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($updateLocationCity);
         $this->assertTrue($updateLocationCity['ok']);
         $this->assertEquals(200, $updateLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $updateLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $updateLocationCity['data']);
 
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $updateLocationCity['data']->id,
@@ -143,7 +143,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($updateLocationCity);
         $this->assertTrue($updateLocationCity['ok']);
         $this->assertEquals(200, $updateLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $updateLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $updateLocationCity['data']);
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $updateLocationCity['data']->id,
             'location_country_id' => $locationCountry['data']->id,
@@ -170,7 +170,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($deleteLocationCity);
         $this->assertTrue($deleteLocationCity['ok']);
         $this->assertEquals(200, $deleteLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $deleteLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $deleteLocationCity['data']);
 
         $this->assertSoftDeleted(config('location.tables.city'), [
             'name' => 'Tehran',
@@ -205,7 +205,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($restoreLocationCity);
         $this->assertTrue($restoreLocationCity['ok']);
         $this->assertEquals(200, $restoreLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $restoreLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $restoreLocationCity['data']);
 
         $this->assertDatabaseHas(config('location.tables.city'), [
             'id' => $locationCity['data']->id,
@@ -242,7 +242,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($forceDeleteLocationCity);
         $this->assertTrue($forceDeleteLocationCity['ok']);
         $this->assertEquals(200, $forceDeleteLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $forceDeleteLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $forceDeleteLocationCity['data']);
 
         $this->assertDatabaseMissing(config('location.tables.city'), [
             'name' => 'Tehran',
@@ -274,7 +274,7 @@ class LocationCityTest extends BaseLocation
         $this->assertIsArray($getLocationCity);
         $this->assertTrue($getLocationCity['ok']);
         $this->assertEquals(200, $getLocationCity['status']);
-        $this->assertInstanceOf(LocationCityResource::class, $getLocationCity['data']);
+        $this->assertInstanceOf(CityResource::class, $getLocationCity['data']);
         $this->assertIsInt($getLocationCity['data']->id);
         $this->assertEquals('Tehran', $getLocationCity['data']->name);
         $this->assertTrue($getLocationCity['data']->status);
@@ -305,7 +305,7 @@ class LocationCityTest extends BaseLocation
         $this->assertCount(1, $getLocationCity);
 
         $getLocationCity->each(function ($city) {
-            $this->assertInstanceOf(LocationCityResource::class, $city);
+            $this->assertInstanceOf(CityResource::class, $city);
         });
     }
 
@@ -326,7 +326,7 @@ class LocationCityTest extends BaseLocation
         $this->assertCount(1, $paginateCities);
 
         $paginateCities->each(function ($city) {
-            $this->assertInstanceOf(LocationCityResource::class, $city);
+            $this->assertInstanceOf(CityResource::class, $city);
         });
 
         $this->assertIsInt($paginateCities->total());

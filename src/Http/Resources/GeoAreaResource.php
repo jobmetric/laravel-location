@@ -10,10 +10,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed title
  * @property mixed description
  * @property mixed status
- *
- * @property mixed geoAreaZones
  */
-class LocationGeoAreaResource extends JsonResource
+class GeoAreaResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -27,10 +25,6 @@ class LocationGeoAreaResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'status' => $this->status,
-
-            'geo_area_zones' => $this->whenLoaded('geoAreaZones', function () {
-                return LocationGeoAreaZoneResource::collection($this->geoAreaZones);
-            }),
         ];
     }
 }

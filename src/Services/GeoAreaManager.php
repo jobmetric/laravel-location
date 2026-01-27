@@ -13,7 +13,7 @@ use JobMetric\Location\Events\GeoArea\GeoAreaStoreEvent;
 use JobMetric\Location\Events\GeoArea\GeoAreaUpdateEvent;
 use JobMetric\Location\Http\Requests\StoreGeoAreaRequest;
 use JobMetric\Location\Http\Requests\UpdateGeoAreaRequest;
-use JobMetric\Location\Http\Resources\LocationGeoAreaResource;
+use JobMetric\Location\Http\Resources\GeoAreaResource;
 use JobMetric\Location\Models\LocationGeoArea;
 use Spatie\QueryBuilder\QueryBuilder;
 use Throwable;
@@ -87,7 +87,7 @@ class GeoAreaManager
      */
     public function paginate(array $filter = [], int $page_limit = 15, array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return LocationGeoAreaResource::collection(
+        return GeoAreaResource::collection(
             $this->query($filter, $with, $mode)->paginate($page_limit)
         );
     }
@@ -103,7 +103,7 @@ class GeoAreaManager
      */
     public function all(array $filter = [], array $with = [], string $mode = null): AnonymousResourceCollection
     {
-        return LocationGeoAreaResource::collection(
+        return GeoAreaResource::collection(
             $this->query($filter, $with, $mode)->get()
         );
     }
@@ -197,7 +197,7 @@ class GeoAreaManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.created', ['name' => trans('location::base.model_name.geo_area')]),
-                'data' => LocationGeoAreaResource::make($geo_area),
+                'data' => GeoAreaResource::make($geo_area),
                 'status' => 201
             ];
         });
@@ -276,7 +276,7 @@ class GeoAreaManager
             return [
                 'ok' => true,
                 'message' => trans('location::base.messages.updated', ['name' => trans('location::base.model_name.geo_area')]),
-                'data' => LocationGeoAreaResource::make($location_geo_area),
+                'data' => GeoAreaResource::make($location_geo_area),
                 'status' => 200
             ];
         });
@@ -310,7 +310,7 @@ class GeoAreaManager
 
             event(new GeoAreaDeleteEvent($location_geo_area));
 
-            $data = LocationGeoAreaResource::make($location_geo_area);
+            $data = GeoAreaResource::make($location_geo_area);
 
             $location_geo_area->delete();
 
@@ -351,7 +351,7 @@ class GeoAreaManager
 
             event(new GeoAreaRestoreEvent($location_geo_area));
 
-            $data = LocationGeoAreaResource::make($location_geo_area);
+            $data = GeoAreaResource::make($location_geo_area);
 
             $location_geo_area->restore();
 
@@ -392,7 +392,7 @@ class GeoAreaManager
 
             event(new GeoAreaForceDeleteEvent($location_geo_area));
 
-            $data = LocationGeoAreaResource::make($location_geo_area);
+            $data = GeoAreaResource::make($location_geo_area);
 
             $location_geo_area->forceDelete();
 

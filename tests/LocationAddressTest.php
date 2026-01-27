@@ -4,7 +4,7 @@ namespace JobMetric\Location\Tests;
 
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use JobMetric\Location\Facades\LocationAddress;
-use JobMetric\Location\Http\Resources\LocationAddressResource;
+use JobMetric\Location\Http\Resources\AddressResource;
 
 class LocationAddressTest extends BaseLocation
 {
@@ -29,7 +29,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(201, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
         $this->assertIsInt($address['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.address'), [
@@ -83,7 +83,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(200, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
         $this->assertIsInt($address['data']->id);
 
         $this->assertDatabaseHas(config('location.tables.address'), [
@@ -126,7 +126,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(200, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
 
         $this->assertSoftDeleted(config('location.tables.address'), [
             'id' => $address['data']->id
@@ -165,7 +165,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(200, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
 
         $this->assertDatabaseHas(config('location.tables.address'), [
             'id' => $address['data']->id,
@@ -216,7 +216,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(200, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
 
         $this->assertDatabaseMissing(config('location.tables.address'), [
             'id' => $address['data']->id
@@ -253,7 +253,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
         $this->assertEquals(200, $address['status']);
-        $this->assertInstanceOf(LocationAddressResource::class, $address['data']);
+        $this->assertInstanceOf(AddressResource::class, $address['data']);
         $this->assertIsInt($address['data']->id);
 
         // get wrong id
@@ -288,7 +288,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertCount(1, $addresses);
 
         $addresses->each(function ($address) {
-            $this->assertInstanceOf(LocationAddressResource::class, $address);
+            $this->assertInstanceOf(AddressResource::class, $address);
         });
     }
 
@@ -316,7 +316,7 @@ class LocationAddressTest extends BaseLocation
         $this->assertCount(1, $addresses);
 
         $addresses->each(function ($address) {
-            $this->assertInstanceOf(LocationAddressResource::class, $address);
+            $this->assertInstanceOf(AddressResource::class, $address);
         });
     }
 }

@@ -14,10 +14,10 @@ use Illuminate\Http\Resources\Json\JsonResource;
  * @property mixed status
  *
  * @property mixed country
- * @property mixed province
- * @property mixed city
+ * @property mixed cities
+ * @property mixed districts
  */
-class LocationDistrictResource extends JsonResource
+class ProvinceResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -32,13 +32,13 @@ class LocationDistrictResource extends JsonResource
             'status' => $this->status,
 
             'country' => $this->whenLoaded('country', function () {
-                return LocationCountryResource::make($this->country);
+                return CountryResource::make($this->country);
             }),
-            'province' => $this->whenLoaded('province', function () {
-                return LocationProvinceResource::make($this->province);
+            'cities' => $this->whenLoaded('cities', function () {
+                return CityResource::collection($this->cities);
             }),
-            'city' => $this->whenLoaded('city', function () {
-                return LocationCityResource::make($this->city);
+            'districts' => $this->whenLoaded('districts', function () {
+                return DistrictResource::collection($this->districts);
             }),
         ];
     }

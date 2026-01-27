@@ -3,7 +3,7 @@
 namespace JobMetric\Location\Tests;
 
 use JobMetric\Location\Facades\Country;
-use JobMetric\Location\Http\Resources\LocationCountryResource;
+use JobMetric\Location\Http\Resources\CountryResource;
 
 class LocationCountryTest extends BaseLocation
 {
@@ -15,7 +15,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($locationCountry);
         $this->assertTrue($locationCountry['ok']);
         $this->assertEquals(201, $locationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $locationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $locationCountry['data']);
         $this->assertIsInt($locationCountry['data']->id);
         $this->assertEquals('Iran', $locationCountry['data']->name);
         $this->assertNull($locationCountry['data']->flag);
@@ -67,7 +67,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($updateLocationCountry);
         $this->assertTrue($updateLocationCountry['ok']);
         $this->assertEquals(200, $updateLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $updateLocationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $updateLocationCountry['data']);
         $this->assertEquals($locationCountry['data']->id, $updateLocationCountry['data']->id);
         $this->assertEquals('Iran', $updateLocationCountry['data']->name);
 
@@ -118,7 +118,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($deleteLocationCountry);
         $this->assertTrue($deleteLocationCountry['ok']);
         $this->assertEquals(200, $deleteLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $deleteLocationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $deleteLocationCountry['data']);
 
         $this->assertSoftDeleted('location_countries', [
             'name' => 'Iran',
@@ -147,7 +147,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($restoreLocationCountry);
         $this->assertTrue($restoreLocationCountry['ok']);
         $this->assertEquals(200, $restoreLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $restoreLocationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $restoreLocationCountry['data']);
 
         $this->assertNotSoftDeleted('location_countries', [
             'name' => 'Iran',
@@ -176,7 +176,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($forceDeleteLocationCountry);
         $this->assertTrue($forceDeleteLocationCountry['ok']);
         $this->assertEquals(200, $forceDeleteLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $forceDeleteLocationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $forceDeleteLocationCountry['data']);
 
         $this->assertDatabaseMissing('location_countries', [
             'name' => 'Iran',
@@ -202,7 +202,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertIsArray($getLocationCountry);
         $this->assertTrue($getLocationCountry['ok']);
         $this->assertEquals(200, $getLocationCountry['status']);
-        $this->assertInstanceOf(LocationCountryResource::class, $getLocationCountry['data']);
+        $this->assertInstanceOf(CountryResource::class, $getLocationCountry['data']);
         $this->assertEquals($locationCountry['data']->id, $getLocationCountry['data']->id);
         $this->assertEquals('Iran', $getLocationCountry['data']->name);
 
@@ -226,7 +226,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertCount(1, $getCountries);
 
         $getCountries->each(function ($country) {
-            $this->assertInstanceOf(LocationCountryResource::class, $country);
+            $this->assertInstanceOf(CountryResource::class, $country);
         });
     }
 
@@ -241,7 +241,7 @@ class LocationCountryTest extends BaseLocation
         $this->assertCount(1, $paginateCountries);
 
         $paginateCountries->each(function ($country) {
-            $this->assertInstanceOf(LocationCountryResource::class, $country);
+            $this->assertInstanceOf(CountryResource::class, $country);
         });
 
         $this->assertIsInt($paginateCountries->total());
