@@ -73,13 +73,6 @@ class District extends AbstractCrudService
     ];
 
     /**
-     * Default sort applied by QueryBuilder.
-     *
-     * @var string[]
-     */
-    protected static array $defaultSort = ['-id'];
-
-    /**
      * Domain events mapping for CRUD lifecycle.
      *
      * @var class-string|null
