@@ -13,18 +13,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $this->assertIsArray($address);
         $this->assertTrue($address['ok']);
@@ -54,18 +57,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $address = LocationAddress::update($address['data']->id, [
             'country_id' => $location['locationCountry']['data']->id,
@@ -108,18 +114,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $address = LocationAddress::delete($address['data']->id);
 
@@ -145,18 +154,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         LocationAddress::delete($address['data']->id);
 
@@ -196,18 +208,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         LocationAddress::delete($address['data']->id);
 
@@ -235,18 +250,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        $address = LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        $address = LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $address = LocationAddress::get($address['data']->id);
 
@@ -269,18 +287,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $addresses = LocationAddress::all();
 
@@ -297,18 +318,21 @@ class LocationAddressTest extends BaseLocation
         $user = $this->addUser();
         $location = $this->createLocation();
 
-        LocationAddress::store($user, [
-            'country_id' => $location['locationCountry']['data']->id,
-            'province_id' => $location['locationProvince']['data']->id,
-            'city_id' => $location['locationCity']['data']->id,
-            'district_id' => $location['locationDistrict']['data']->id,
-            'address' => 'address information',
-            'pluck' => '20',
-            'unit' => '10',
-            'postcode' => '1234567890',
-            'lat' => '1.234567890',
-            'lng' => '1.234567890'
-        ]);
+        LocationAddress::store(array_merge(
+            ['owner_type' => get_class($user), 'owner_id' => $user->id],
+            [
+                'country_id' => $location['locationCountry']['data']->id,
+                'province_id' => $location['locationProvince']['data']->id,
+                'city_id' => $location['locationCity']['data']->id,
+                'district_id' => $location['locationDistrict']['data']->id,
+                'address' => 'address information',
+                'pluck' => '20',
+                'unit' => '10',
+                'postcode' => '1234567890',
+                'lat' => '1.234567890',
+                'lng' => '1.234567890'
+            ]
+        ));
 
         $addresses = LocationAddress::paginate();
 

@@ -55,6 +55,17 @@ class StoreAddressRequest extends FormRequest
             'address'            => [
                 'required',
                 'array',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $allowed = ['blvd', 'street', 'alley', 'number', 'floor', 'unit'];
+                    $keys = is_array($value) ? array_keys($value) : [];
+                    $invalid = array_diff($keys, $allowed);
+                    if ($invalid !== []) {
+                        $fail(trans('location::base.validation.address_keys_only', [
+                            'allowed' => implode(', ', $allowed),
+                            'invalid' => implode(', ', $invalid),
+                        ]));
+                    }
+                },
             ],
             'address.blvd'       => 'nullable|string|max:255',
             'address.street'     => 'nullable|string|max:255',
@@ -65,7 +76,24 @@ class StoreAddressRequest extends FormRequest
             'postcode'           => 'nullable|string|max:20',
             'lat'                => 'nullable|string|max:20',
             'lng'                => 'nullable|string|max:20',
-            'info'               => 'nullable|array',
+            'info'               => [
+                'nullable',
+                'array',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! is_array($value) || $value === []) {
+                        return;
+                    }
+                    $allowed = ['mobile_prefix', 'mobile', 'name', 'landline', 'notes'];
+                    $keys = array_keys($value);
+                    $invalid = array_diff($keys, $allowed);
+                    if ($invalid !== []) {
+                        $fail(trans('location::base.validation.info_keys_only', [
+                            'allowed' => implode(', ', $allowed),
+                            'invalid' => implode(', ', $invalid),
+                        ]));
+                    }
+                },
+            ],
             'info.mobile_prefix' => 'nullable|string|max:20',
             'info.mobile'        => 'nullable|string|max:50',
             'info.name'          => 'nullable|string|max:255',

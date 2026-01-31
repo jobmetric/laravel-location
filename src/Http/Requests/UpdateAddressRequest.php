@@ -62,13 +62,13 @@ class UpdateAddressRequest extends FormRequest
             ],
             'province_id'        => [
                 'sometimes',
-                'required',
+                'required_with:country_id',
                 'integer',
                 'exists:' . config('location.tables.province') . ',id',
             ],
             'city_id'            => [
                 'sometimes',
-                'required',
+                'required_with:country_id',
                 'integer',
                 'exists:' . config('location.tables.city') . ',id',
             ],
@@ -82,6 +82,17 @@ class UpdateAddressRequest extends FormRequest
                 'sometimes',
                 'required',
                 'array',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    $allowed = ['blvd', 'street', 'alley', 'number', 'floor', 'unit'];
+                    $keys = is_array($value) ? array_keys($value) : [];
+                    $invalid = array_diff($keys, $allowed);
+                    if ($invalid !== []) {
+                        $fail(trans('location::base.validation.address_keys_only', [
+                            'allowed' => implode(', ', $allowed),
+                            'invalid' => implode(', ', $invalid),
+                        ]));
+                    }
+                },
             ],
             'address.blvd'       => 'sometimes|nullable|string|max:255',
             'address.street'     => 'sometimes|nullable|string|max:255',
@@ -92,7 +103,25 @@ class UpdateAddressRequest extends FormRequest
             'postcode'           => 'sometimes|nullable|string|max:20',
             'lat'                => 'sometimes|nullable|string|max:20',
             'lng'                => 'sometimes|nullable|string|max:20',
-            'info'               => 'sometimes|nullable|array',
+            'info'               => [
+                'sometimes',
+                'nullable',
+                'array',
+                function (string $attribute, mixed $value, \Closure $fail): void {
+                    if (! is_array($value) || $value === []) {
+                        return;
+                    }
+                    $allowed = ['mobile_prefix', 'mobile', 'name', 'landline', 'notes'];
+                    $keys = array_keys($value);
+                    $invalid = array_diff($keys, $allowed);
+                    if ($invalid !== []) {
+                        $fail(trans('location::base.validation.info_keys_only', [
+                            'allowed' => implode(', ', $allowed),
+                            'invalid' => implode(', ', $invalid),
+                        ]));
+                    }
+                },
+            ],
             'info.mobile_prefix' => 'sometimes|nullable|string|max:20',
             'info.mobile'        => 'sometimes|nullable|string|max:50',
             'info.name'          => 'sometimes|nullable|string|max:255',

@@ -96,7 +96,11 @@ trait HasAddress
      */
     public function storeAddress(array $data): array
     {
-        $response = AddressFacade::store($this, $data);
+        $payload = array_merge([
+            'owner_type' => get_class($this),
+            'owner_id'   => $this->getKey(),
+        ], $data);
+        $response = AddressFacade::store($payload);
 
         return [
             'ok'      => $response->isOk(),

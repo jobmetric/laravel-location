@@ -70,7 +70,55 @@ class AddressResource extends JsonResource
                 return AddressResource::make($this->child);
             }),
 
+            'history' => $this->when($this->parent_id !== null, function () {
+                return $this->getHistoryChain();
+            }),
+
             'owner' => $this?->owner_resource,
         ];
+    }
+
+    /**
+     * Get the complete history chain of address versions.
+     * Returns all parent addresses recursively, from oldest to newest.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    protected function getHistoryChain(): array
+    {
+        $history = [];
+        
+        // Load parent if not already loaded
+        if ($this->parent_id && ! $this->relationLoaded('parent')) {
+            $this->load('parent');
+        }
+        
+        $current = $this->parent;
+
+        while ($current) {
+            $history[] = [
+                'id' => $current->id,
+                'parent_id' => $current->parent_id,
+                'address' => $current->address,
+                'postcode' => $current->postcode,
+                'lat' => $current->lat,
+                'lng' => $current->lng,
+                'info' => $current->info,
+                'full_address' => $current->full_address,
+                'address_for_letter' => $current->address_for_letter,
+                'created_at' => $current->created_at?->toDateTimeString(),
+                'deleted_at' => $current->deleted_at?->toDateTimeString(),
+            ];
+
+            // Load parent if not already loaded
+            if ($current->parent_id && ! $current->relationLoaded('parent')) {
+                $current->load('parent');
+            }
+
+            $current = $current->parent;
+        }
+
+        // Reverse to show oldest first
+        return array_reverse($history);
     }
 }

@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @mixin \JobMetric\Location\Services\Address
  *
- * @method static \JobMetric\PackageCore\Output\Response store(Model $model, array $data)
+ * @method static \JobMetric\PackageCore\Output\Response store(array $data, array $with = [])
  * @method static \JobMetric\PackageCore\Output\Response show(int $id, array $with = [])
  * @method static \JobMetric\PackageCore\Output\Response update(int $id, array $data, array $with = [])
  * @method static \JobMetric\PackageCore\Output\Response destroy(int $id, array $with = [])

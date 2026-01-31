@@ -16,6 +16,11 @@ return [
         "check_exist_name" => "The :attribute has already been taken.",
         "object_not_found" => "The :name not found.",
         "model_not_use_trait" => "The :model does not use the trait.",
+        "duplicate_address" => "This address has already been registered.",
+        "address_already_exists" => "Duplicate address cannot be registered again.",
+        "address_keys_only" => "The address field may only contain the allowed keys: :allowed. Invalid keys: :invalid.",
+        "info_keys_only" => "The info field may only contain the allowed keys: :allowed. Invalid keys: :invalid.",
+        "province_and_city_required" => "Province (province_id) and city (city_id) are required.",
     ],
 
     "messages" => [
