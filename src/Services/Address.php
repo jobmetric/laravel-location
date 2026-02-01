@@ -119,6 +119,7 @@ class Address extends AbstractCrudService
                         trans('location::base.validation.province_and_city_required'),
                     ]);
                 }
+
                 // Find or create Location (ensures uniqueness)
                 $location = LocationModel::firstOrCreate([
                     'country_id'  => $data['country_id'],
@@ -216,6 +217,7 @@ class Address extends AbstractCrudService
                         trans('location::base.validation.province_and_city_required'),
                     ]);
                 }
+
                 // Find or create new Location
                 $location = LocationModel::firstOrCreate([
                     'country_id'  => $data['country_id'],
@@ -223,9 +225,6 @@ class Address extends AbstractCrudService
                     'city_id'     => $data['city_id'],
                     'district_id' => $data['district_id'] ?? $oldLocation?->district_id,
                 ]);
-
-                // Delete old location relation
-                $oldAddress->locationRelation?->delete();
 
                 // Create new location relation
                 $newAddress->locationRelation()->create([
@@ -313,19 +312,27 @@ class Address extends AbstractCrudService
         $effectiveLng = $data['lng'] ?? $oldAddress->lng;
         $effectiveInfo = $data['info'] ?? $oldAddress->info;
 
-        if ($this->arrayDiff($effectiveAddress, $oldAddress->address ?? [])) {
+        $effectiveAddress = is_array($effectiveAddress) ? $effectiveAddress : [];
+        $oldAddressValue = is_array($oldAddress->address) ? $oldAddress->address : [];
+        if (array_diff_assoc($effectiveAddress, $oldAddressValue) || array_diff_assoc($oldAddressValue, $effectiveAddress)) {
             return true;
         }
+
         if ((string) $effectivePostcode !== (string) ($oldAddress->postcode ?? '')) {
             return true;
         }
+
         if ((string) ($effectiveLat ?? '') !== (string) ($oldAddress->lat ?? '')) {
             return true;
         }
+
         if ((string) ($effectiveLng ?? '') !== (string) ($oldAddress->lng ?? '')) {
             return true;
         }
-        if ($this->arrayDiff($effectiveInfo ?? [], $oldAddress->info ?? [])) {
+
+        $effectiveInfo = is_array($effectiveInfo) ? $effectiveInfo : [];
+        $oldInfoValue = is_array($oldAddress->info) ? $oldAddress->info : [];
+        if (array_diff_assoc($effectiveInfo, $oldInfoValue) || array_diff_assoc($oldInfoValue, $effectiveInfo)) {
             return true;
         }
 
@@ -336,35 +343,18 @@ class Address extends AbstractCrudService
             $newCityId = isset($data['city_id']) ? (int) $data['city_id'] : null;
             $newDistrictId = isset($data['district_id']) ? (int) $data['district_id'] : null;
 
+            // old had no location, new has location
             if (! $oldLocation) {
-                return true; // old had no location, new has location
+                return true;
             }
+
+            // Compare old vs new location ids
             if ((int) $oldLocation->country_id !== $newCountryId || (int) ($oldLocation->province_id ?? 0) !== ($newProvinceId ?? 0) || (int) ($oldLocation->city_id ?? 0) !== ($newCityId ?? 0) || (int) ($oldLocation->district_id ?? 0) !== ($newDistrictId ?? 0)) {
                 return true;
             }
         }
 
         return false;
-    }
-
-    /**
-     * Compare two arrays (order-independent for associative); true if different.
-     *
-     * @param array<string,mixed>|mixed $a
-     * @param array<string,mixed>|mixed $b
-     *
-     * @return bool True when arrays differ
-     */
-    protected function arrayDiff(mixed $a, mixed $b): bool
-    {
-        if (! is_array($a)) {
-            $a = $a === null ? [] : (array) $a;
-        }
-        if (! is_array($b)) {
-            $b = $b === null ? [] : (array) $b;
-        }
-
-        return json_encode($a) !== json_encode($b);
     }
 
     /**
