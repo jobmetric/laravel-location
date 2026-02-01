@@ -4,7 +4,7 @@ namespace JobMetric\Location\Services;
 
 use Illuminate\Support\Facades\DB;
 use JobMetric\Location\Events\Location\LocationStoreEvent;
-use JobMetric\Location\Http\Requests\StoreLocationRequest;
+use JobMetric\Location\Http\Requests\Location\StoreLocationRequest;
 use JobMetric\Location\Http\Resources\LocationResource;
 use JobMetric\Location\Models\Location as LocationModel;
 use JobMetric\PackageCore\Output\Response;

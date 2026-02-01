@@ -1,6 +1,6 @@
 <?php
 
-namespace JobMetric\Location\Http\Requests;
+namespace JobMetric\Location\Http\Requests\Country;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -56,12 +56,12 @@ class StoreCountryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name'              => trans('location::base.model_name.country'),
-            'flag'              => trans('location::base.model_name.country'),
-            'mobile_prefix'     => trans('location::base.model_name.country'),
-            'validation'        => trans('location::base.model_name.country'),
-            'address_on_letter' => trans('location::base.model_name.country'),
-            'status'            => trans('location::base.model_name.country'),
+            'name'              => trans('location::base.fields.name'),
+            'flag'              => trans('location::base.fields.flag'),
+            'mobile_prefix'     => trans('location::base.fields.mobile_prefix'),
+            'validation'        => trans('location::base.fields.validation'),
+            'address_on_letter' => trans('location::base.fields.address_on_letter'),
+            'status'            => trans('location::base.fields.status'),
         ];
     }
 }

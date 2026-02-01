@@ -1,20 +1,20 @@
 <?php
 
-namespace JobMetric\Location\Http\Requests;
+namespace JobMetric\Location\Http\Requests\District;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
-use JobMetric\Location\Models\Country as CountryModel;
+use JobMetric\Location\Models\District as DistrictModel;
 use JobMetric\Location\Rules\CheckExistNameRule;
 
 /**
- * Class UpdateCountryRequest
+ * Class UpdateDistrictRequest
  *
- * Validation request for updating an existing Country.
+ * Validation request for updating an existing District.
  *
  * @package JobMetric\Location
  */
-class UpdateCountryRequest extends FormRequest
+class UpdateDistrictRequest extends FormRequest
 {
     /**
      * External context (injected via dto()).
@@ -55,21 +55,24 @@ class UpdateCountryRequest extends FormRequest
      */
     public static function rulesFor(array $input, array $context = []): array
     {
-        $countryId = (int) ($context['country_id'] ?? $input['country_id'] ?? null);
+        $districtId = (int) ($context['district_id'] ?? $input['district_id'] ?? null);
+        $cityId = (int) ($context['city_id'] ?? $input['city_id'] ?? null);
 
         return [
-            'name'              => [
+            'city_id' => [
+                'sometimes',
+                'required',
+                'integer',
+                'exists:' . config('location.tables.city') . ',id',
+            ],
+            'name'    => [
                 'sometimes',
                 'required',
                 'string',
                 'max:255',
-                new CheckExistNameRule(CountryModel::class, $countryId),
+                new CheckExistNameRule(DistrictModel::class, $districtId, $cityId),
             ],
-            'flag'              => 'sometimes|nullable|string|max:255',
-            'mobile_prefix'     => 'sometimes|nullable|integer|min:1|max:999',
-            'validation'        => 'sometimes|nullable|array',
-            'address_on_letter' => 'sometimes|nullable|string',
-            'status'            => 'sometimes|boolean',
+            'status'  => 'sometimes|boolean',
         ];
     }
 
@@ -80,10 +83,12 @@ class UpdateCountryRequest extends FormRequest
      */
     public function rules(): array
     {
-        $countryId = (int) ($this->context['country_id'] ?? $this->input('country_id') ?? null);
+        $districtId = (int) ($this->context['district_id'] ?? $this->input('district_id') ?? null);
+        $cityId = (int) ($this->context['city_id'] ?? $this->input('city_id') ?? null);
 
         return self::rulesFor($this->all(), [
-            'country_id' => $countryId,
+            'district_id' => $districtId,
+            'city_id'     => $cityId,
         ]);
     }
 
@@ -95,12 +100,9 @@ class UpdateCountryRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name'              => trans('location::base.model_name.country'),
-            'flag'              => trans('location::base.model_name.country'),
-            'mobile_prefix'     => trans('location::base.model_name.country'),
-            'validation'        => trans('location::base.model_name.country'),
-            'address_on_letter' => trans('location::base.model_name.country'),
-            'status'            => trans('location::base.model_name.country'),
+            'city_id' => trans('location::base.fields.city_id'),
+            'name'    => trans('location::base.fields.name'),
+            'status'  => trans('location::base.fields.status'),
         ];
     }
 }

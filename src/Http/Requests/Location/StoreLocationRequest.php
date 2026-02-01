@@ -1,6 +1,6 @@
 <?php
 
-namespace JobMetric\Location\Http\Requests;
+namespace JobMetric\Location\Http\Requests\Location;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -63,10 +63,10 @@ class StoreLocationRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'country_id'  => trans('location::base.model_name.country'),
-            'province_id' => trans('location::base.model_name.province'),
-            'city_id'     => trans('location::base.model_name.city'),
-            'district_id' => trans('location::base.model_name.district'),
+            'country_id'  => trans('location::base.fields.country_id'),
+            'province_id' => trans('location::base.fields.province_id'),
+            'city_id'     => trans('location::base.fields.city_id'),
+            'district_id' => trans('location::base.fields.district_id'),
         ];
     }
 }
