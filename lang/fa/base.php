@@ -21,6 +21,8 @@ return [
         "address_keys_only" => "فیلد آدرس فقط می‌تواند شامل کلیدهای مجاز باشد: :allowed. کلیدهای نامعتبر: :invalid.",
         "info_keys_only" => "فیلد info فقط می‌تواند شامل کلیدهای مجاز باشد: :allowed. کلیدهای نامعتبر: :invalid.",
         "province_and_city_required" => "ارسال استان (province_id) و شهر (city_id) الزامی است.",
+        "duplicate_location" => "لوکیشن‌های تکراری در لیست وجود دارد.",
+        "address_owner_required" => "مالک آدرس (owner_type و owner_id) الزامی است.",
     ],
 
     "messages" => [
@@ -45,6 +47,23 @@ return [
         "location" => "موقعیت",
         "geo_area" => "منطقه جغرافیایی",
         "address" => "آدرس",
+    ],
+
+    "fields" => [
+        "translation" => "ترجمه",
+        "name" => "نام",
+        "description" => "توضیحات",
+        "status" => "وضعیت",
+        "country_id" => "کشور",
+        "province_id" => "استان",
+        "city_id" => "شهر",
+        "district_id" => "منطقه",
+        "locations" => "لوکیشن‌ها",
+        "address" => "آدرس",
+        "postcode" => "کد پستی",
+        "lat" => "عرض جغرافیایی",
+        "lng" => "طول جغرافیایی",
+        "info" => "اطلاعات",
     ],
 
     "location_country" => [

@@ -21,6 +21,8 @@ return [
         "address_keys_only" => "The address field may only contain the allowed keys: :allowed. Invalid keys: :invalid.",
         "info_keys_only" => "The info field may only contain the allowed keys: :allowed. Invalid keys: :invalid.",
         "province_and_city_required" => "Province (province_id) and city (city_id) are required.",
+        "duplicate_location" => "Duplicate locations found in the list.",
+        "address_owner_required" => "Address owner (owner_type and owner_id) is required.",
     ],
 
     "messages" => [
@@ -40,6 +42,23 @@ return [
         "location" => "Location",
         "geo_area" => "Geo Area",
         "address" => "Address",
+    ],
+
+    "fields" => [
+        "translation" => "Translation",
+        "name" => "Name",
+        "description" => "Description",
+        "status" => "Status",
+        "country_id" => "Country",
+        "province_id" => "Province",
+        "city_id" => "City",
+        "district_id" => "District",
+        "locations" => "Locations",
+        "address" => "Address",
+        "postcode" => "Postcode",
+        "lat" => "Latitude",
+        "lng" => "Longitude",
+        "info" => "Info",
     ],
 
     "location_country" => [
