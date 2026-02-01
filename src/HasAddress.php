@@ -2,197 +2,291 @@
 
 namespace JobMetric\Location;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use JobMetric\Location\Facades\Address as AddressFacade;
 use JobMetric\Location\Http\Resources\AddressResource;
 use JobMetric\Location\Models\Address;
-use JobMetric\Location\Models\City;
-use JobMetric\Location\Models\Country;
-use JobMetric\Location\Models\District;
-use JobMetric\Location\Models\Province;
+use JobMetric\Location\Models\AddressRelation;
 use Throwable;
 
 /**
  * Trait HasAddress
  *
+ * Provides address management functionality to Eloquent models via address_relations pivot table.
+ * A model can have multiple addresses attached with optional collection categorization.
+ *
+ * @property-read Collection<int, AddressRelation> $addressRelations
+ *
+ * @method MorphMany morphMany(string $class, string $string)
+ *
  * @package JobMetric\Location
- *
- * @property Address addresses
- * @property Country addressLocationCountry
- * @property Province addressLocationProvince
- * @property City addressLocationCity
- * @property District addressLocationDistrict
- *
- * @method morphMany(string $class, string $string)
- * @method belongsTo(string $class, string $string)
  */
 trait HasAddress
 {
     /**
-     * Address relationship
+     * Address relations - pivot table connecting addresses to this model.
      *
      * @return MorphMany
-     * @throws Throwable
      */
-    public function addresses(): MorphMany
+    public function addressRelations(): MorphMany
     {
-        return $this->morphMany(Address::class, 'owner');
+        return $this->morphMany(AddressRelation::class, 'addressable');
     }
 
     /**
-     * Location Country relationship
+     * Get all addresses for this model (through address_relations).
      *
-     * @return BelongsTo
-     * @throws Throwable
+     * @param string|null $collection Filter by collection name (null = all)
+     *
+     * @return \Illuminate\Support\Collection
      */
-    public function addressLocationCountry(): BelongsTo
+    public function addresses(?string $collection = null): \Illuminate\Support\Collection
     {
-        return $this->belongsTo(Country::class, 'id');
+        $query = $this->addressRelations();
+
+        if (! is_null($collection)) {
+            $query->where('collection', $collection);
+        }
+
+        return $query->with('address')->get()->pluck('address');
     }
 
     /**
-     * Location Province relationship
+     * Check if this model has a specific address attached.
      *
-     * @return BelongsTo
-     * @throws Throwable
+     * @param int $address_id
+     * @param string|null $collection
+     *
+     * @return bool
      */
-    public function addressLocationProvince(): BelongsTo
+    public function hasAddress(int $address_id, ?string $collection = null): bool
     {
-        return $this->belongsTo(Province::class, 'id');
+        $query = $this->addressRelations()->where('address_id', $address_id);
+
+        if (! is_null($collection)) {
+            $query->where('collection', $collection);
+        }
+
+        return $query->exists();
     }
 
     /**
-     * Location City relationship
+     * Get all addresses as resource collection.
      *
-     * @return BelongsTo
-     * @throws Throwable
+     * @param string|null $collection
+     *
+     * @return AnonymousResourceCollection
      */
-    public function addressLocationCity(): BelongsTo
+    public function getAddresses(?string $collection = null): AnonymousResourceCollection
     {
-        return $this->belongsTo(City::class, 'id');
+        return AddressResource::collection($this->addresses($collection));
     }
 
     /**
-     * Location District relationship
+     * Get a specific address by ID (if attached to this model).
      *
-     * @return BelongsTo
+     * @param int $address_id
+     * @param string|null $collection
      *
-     * @throws Throwable
+     * @return AddressResource|null
      */
-    public function addressLocationDistrict(): BelongsTo
+    public function getAddressById(int $address_id, ?string $collection = null): ?AddressResource
     {
-        return $this->belongsTo(District::class, 'id');
+        if (! $this->hasAddress($address_id, $collection)) {
+            return null;
+        }
+
+        $address = Address::find($address_id);
+
+        return $address ? AddressResource::make($address) : null;
     }
 
     /**
-     * Store address
+     * Store a new address and attach it to this model.
      *
-     * @param array $data
+     * @param array $data             Address data
+     * @param string|null $collection Collection name (billing, shipping, etc.)
      *
-     * @return array
+     * @return static
      * @throws Throwable
      */
-    public function storeAddress(array $data): array
+    public function storeAddress(array $data, ?string $collection = null): static
     {
         $payload = array_merge([
             'owner_type' => get_class($this),
             'owner_id'   => $this->getKey(),
         ], $data);
+
         $response = AddressFacade::store($payload);
 
-        return [
-            'ok'      => $response->isOk(),
-            'message' => $response->getMessage(),
-            'data'    => $response->getData(),
-            'errors'  => $response->getErrors(),
-            'status'  => $response->getStatus(),
-        ];
+        if ($response->ok && $response->data) {
+            $this->attachAddress($response->data->id, $collection);
+        }
+
+        return $this;
     }
 
     /**
-     * Update address
+     * Attach an existing address to this model.
      *
-     * @param int $location_address_id
+     * @param int $address_id
+     * @param string|null $collection
+     *
+     * @return static
+     */
+    public function attachAddress(int $address_id, ?string $collection = null): static
+    {
+        if (! $this->hasAddress($address_id, $collection)) {
+            $this->addressRelations()->create([
+                'address_id' => $address_id,
+                'collection' => $collection,
+            ]);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Detach an address from this model (does not delete the address).
+     *
+     * @param int $address_id
+     * @param string|null $collection
+     *
+     * @return static
+     */
+    public function detachAddress(int $address_id, ?string $collection = null): static
+    {
+        $query = $this->addressRelations()->where('address_id', $address_id);
+
+        if (! is_null($collection)) {
+            $query->where('collection', $collection);
+        }
+
+        $query->delete();
+
+        return $this;
+    }
+
+    /**
+     * Detach all addresses from this model.
+     *
+     * @param string|null $collection If provided, only detach from this collection
+     *
+     * @return static
+     */
+    public function detachAllAddresses(?string $collection = null): static
+    {
+        $query = $this->addressRelations();
+
+        if (! is_null($collection)) {
+            $query->where('collection', $collection);
+        }
+
+        $query->delete();
+
+        return $this;
+    }
+
+    /**
+     * Update an existing address (if attached to this model).
+     *
+     * @param int $address_id
      * @param array $data
      *
-     * @return array
+     * @return static
      * @throws Throwable
      */
-    public function updateAddress(int $address_id, array $data): array
+    public function updateAddress(int $address_id, array $data): static
     {
-        $flag = false;
-
-        $addresses = $this->addresses()->get();
-
-        foreach ($addresses as $address) {
-            if ($address->id === $address_id) {
-                $flag = true;
-                break;
-            }
+        if ($this->hasAddress($address_id)) {
+            AddressFacade::update($address_id, $data);
         }
 
-        if ($flag) {
-            $response = AddressFacade::update($address_id, $data);
-
-            return [
-                'ok'      => $response->isOk(),
-                'message' => $response->getMessage(),
-                'data'    => $response->getData(),
-                'errors'  => $response->getErrors(),
-                'status'  => $response->getStatus(),
-            ];
-        }
-        else {
-            return [
-                'ok'      => false,
-                'message' => trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')]),
-                'error'   => [
-                    'address_id' => trans('location::base.validation.object_not_found', ['name' => trans('location::base.model_name.address')]),
-                ],
-                'status'  => 422,
-            ];
-        }
+        return $this;
     }
 
     /**
-     * Get all addresses
+     * Delete an address (if attached to this model).
+     * This soft-deletes the address and removes the relation.
      *
+     * @param int $address_id
+     *
+     * @return static
      * @throws Throwable
+     */
+    public function deleteAddress(int $address_id): static
+    {
+        if ($this->hasAddress($address_id)) {
+            AddressFacade::destroy($address_id);
+            $this->detachAddress($address_id);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Sync addresses for a collection - detach all and attach the given ones.
+     *
+     * @param array $address_ids
+     * @param string|null $collection
+     *
+     * @return static
+     */
+    public function syncAddresses(array $address_ids, ?string $collection = null): static
+    {
+        $this->detachAllAddresses($collection);
+
+        foreach ($address_ids as $address_id) {
+            $this->attachAddress($address_id, $collection);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get address by collection (first match).
+     *
+     * @param string $collection
+     *
+     * @return Address|null
+     */
+    public function getAddressByCollection(string $collection): ?Address
+    {
+        $relation = $this->addressRelations()->where('collection', $collection)->with('address')->first();
+
+        return $relation?->address;
+    }
+
+    /**
+     * Alias for getAddresses() for backward compatibility.
+     *
+     * @return AnonymousResourceCollection
+     * @deprecated Use getAddresses() instead
      */
     public function getAddress(): AnonymousResourceCollection
     {
-        return AddressResource::collection($this->addresses()->get());
+        return $this->getAddresses();
     }
 
     /**
-     * Forget address
+     * Alias for deleteAddress() for backward compatibility.
      *
-     * @param int $location_address_id
+     * @param int $address_id
      *
      * @return bool
      * @throws Throwable
+     * @deprecated Use deleteAddress() or detachAddress() instead
      */
     public function forgetAddress(int $address_id): bool
     {
-        $flag = false;
-
-        $addresses = $this->addresses()->get();
-
-        foreach ($addresses as $address) {
-            if ($address->id === $address_id) {
-                $flag = true;
-                break;
-            }
+        if (! $this->hasAddress($address_id)) {
+            return false;
         }
 
-        if ($flag) {
-            Address::query()->where('id', $address_id)->delete();
+        $this->deleteAddress($address_id);
 
-            return true;
-        }
-
-        return false;
+        return true;
     }
 }
