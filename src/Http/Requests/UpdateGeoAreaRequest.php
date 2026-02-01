@@ -2,19 +2,101 @@
 
 namespace JobMetric\Location\Http\Requests;
 
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * Class UpdateGeoAreaRequest
+ *
+ * Validation request for updating an existing GeoArea.
+ *
+ * @package JobMetric\Location
+ */
 class UpdateGeoAreaRequest extends FormRequest
 {
-    public int|null $location_geo_area_id = null;
+    /**
+     * External context (injected via dto()).
+     *
+     * @var array<string,mixed>
+     */
+    protected array $context = [];
+
+    /**
+     * Set context for validation.
+     *
+     * @param array<string,mixed> $context
+     *
+     * @return void
+     */
+    public function setContext(array $context): void
+    {
+        $this->context = $context;
+    }
 
     /**
      * Determine if the user is authorized to make this request.
+     *
+     * @return bool
      */
     public function authorize(): bool
     {
         return true;
+    }
+
+    /**
+     * Build validation rules dynamically.
+     *
+     * @param array<string,mixed> $input
+     * @param array<string,mixed> $context
+     *
+     * @return array<string,mixed>
+     */
+    public static function rulesFor(array $input, array $context = []): array
+    {
+        return [
+            'translation'               => 'sometimes|array',
+            'translation.*'             => 'array',
+            'translation.*.name'        => 'required|string|max:255',
+            'translation.*.description' => 'nullable|string',
+
+            'status' => 'sometimes|boolean',
+
+            'locations'               => [
+                'sometimes',
+                'nullable',
+                'array',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    if (! is_array($value)) {
+                        return;
+                    }
+
+                    // Check for duplicate locations
+                    $locationKeys = [];
+                    foreach ($value as $index => $location) {
+                        $key = implode('-', [
+                            $location['country_id'] ?? 0,
+                            $location['province_id'] ?? 0,
+                            $location['city_id'] ?? 0,
+                            $location['district_id'] ?? 0,
+                        ]);
+
+                        if (in_array($key, $locationKeys, true)) {
+                            $fail(trans('location::base.validation.duplicate_location'));
+
+                            return;
+                        }
+
+                        $locationKeys[] = $key;
+                    }
+                },
+            ],
+            'locations.*'             => 'array',
+            'locations.*.country_id'  => 'required|integer|exists:' . config('location.tables.country') . ',id',
+            'locations.*.province_id' => 'nullable|integer|exists:' . config('location.tables.province') . ',id',
+            'locations.*.city_id'     => 'nullable|integer|exists:' . config('location.tables.city') . ',id',
+            'locations.*.district_id' => 'nullable|integer|exists:' . config('location.tables.district') . ',id',
+        ];
     }
 
     /**
@@ -24,49 +106,30 @@ class UpdateGeoAreaRequest extends FormRequest
      */
     public function rules(): array
     {
-        if (is_null($this->location_geo_area_id)) {
-            $location_geo_area_id = $this->route()->parameter('location_geo_area')?->id;
-        } else {
-            $location_geo_area_id = $this->location_geo_area_id;
-        }
+        $geoAreaId = (int) ($this->context['geo_area_id'] ?? $this->input('geo_area_id') ?? null);
 
+        return self::rulesFor($this->all(), [
+            'geo_area_id' => $geoAreaId,
+        ]);
+    }
+
+    /**
+     * Get custom attributes for validator errors.
+     *
+     * @return array<string, string>
+     */
+    public function attributes(): array
+    {
         return [
-            'title' => 'string|unique:' . config('location.tables.geo_area') . ',title,' . $location_geo_area_id . '|sometimes',
-            'description' => 'string|nullable|sometimes',
-            'status' => 'boolean|sometimes',
-
-            'geo_area_zones' => 'array|nullable|sometimes',
-            'geo_area_zones.*' => 'array',
-            'geo_area_zones.*.location_country_id' => 'integer|exists:' . config('location.tables.country') . ',id',
-            'geo_area_zones.*.location_province_id' => 'integer|exists:' . config('location.tables.province') . ',id|nullable',
-            'geo_area_zones.*.location_city_id' => 'integer|exists:' . config('location.tables.city') . ',id|nullable',
-            'geo_area_zones.*.location_district_id' => 'integer|exists:' . config('location.tables.district') . ',id|nullable',
+            'translation'               => trans('location::base.fields.translation'),
+            'translation.*.name'        => trans('location::base.fields.name'),
+            'translation.*.description' => trans('location::base.fields.description'),
+            'status'                    => trans('location::base.fields.status'),
+            'locations'                 => trans('location::base.fields.locations'),
+            'locations.*.country_id'    => trans('location::base.fields.country_id'),
+            'locations.*.province_id'   => trans('location::base.fields.province_id'),
+            'locations.*.city_id'       => trans('location::base.fields.city_id'),
+            'locations.*.district_id'   => trans('location::base.fields.district_id'),
         ];
-    }
-
-    /**
-     * Set province id for validation
-     *
-     * @param int|null $location_province_id
-     * @return static
-     */
-    public function setLocationProvinceId(int $location_province_id = null): static
-    {
-        $this->location_province_id = $location_province_id;
-
-        return $this;
-    }
-
-    /**
-     * Set city id for validation
-     *
-     * @param int $location_geo_area_id
-     * @return static
-     */
-    public function setLocationGeoAreaId(int $location_geo_area_id): static
-    {
-        $this->location_geo_area_id = $location_geo_area_id;
-
-        return $this;
     }
 }
