@@ -2,7 +2,7 @@
 
 namespace JobMetric\Location;
 
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Collection;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use JobMetric\Location\Facades\Address as AddressFacade;
@@ -39,10 +39,11 @@ trait HasAddress
      * Get all addresses for this model (through address_relations).
      *
      * @param string|null $collection Filter by collection name (null = all)
+     * @param bool $withTrashed Include soft-deleted addresses
      *
-     * @return \Illuminate\Support\Collection
+     * @return Collection
      */
-    public function addresses(?string $collection = null): \Illuminate\Support\Collection
+    public function addresses(?string $collection = null, bool $withTrashed = false): Collection
     {
         $query = $this->addressRelations();
 
@@ -50,7 +51,13 @@ trait HasAddress
             $query->where('collection', $collection);
         }
 
-        return $query->with('address')->get()->pluck('address');
+        if ($withTrashed) {
+            $query->with(['address' => fn($q) => $q->withTrashed()]);
+        } else {
+            $query->with('address');
+        }
+
+        return $query->get()->pluck('address')->filter();
     }
 
     /**
@@ -76,12 +83,13 @@ trait HasAddress
      * Get all addresses as resource collection.
      *
      * @param string|null $collection
+     * @param bool $withTrashed Include soft-deleted addresses
      *
      * @return AnonymousResourceCollection
      */
-    public function getAddresses(?string $collection = null): AnonymousResourceCollection
+    public function getAddresses(?string $collection = null, bool $withTrashed = false): AnonymousResourceCollection
     {
-        return AddressResource::collection($this->addresses($collection));
+        return AddressResource::collection($this->addresses($collection, $withTrashed));
     }
 
     /**
@@ -89,16 +97,23 @@ trait HasAddress
      *
      * @param int $address_id
      * @param string|null $collection
+     * @param bool $withTrashed Include soft-deleted address
      *
      * @return AddressResource|null
      */
-    public function getAddressById(int $address_id, ?string $collection = null): ?AddressResource
+    public function getAddressById(int $address_id, ?string $collection = null, bool $withTrashed = false): ?AddressResource
     {
         if (! $this->hasAddress($address_id, $collection)) {
             return null;
         }
 
-        $address = Address::find($address_id);
+        $query = Address::query();
+
+        if ($withTrashed) {
+            $query->withTrashed();
+        }
+
+        $address = $query->find($address_id);
 
         return $address ? AddressResource::make($address) : null;
     }
@@ -130,6 +145,7 @@ trait HasAddress
 
     /**
      * Attach an existing address to this model.
+     * Only non-deleted addresses can be attached.
      *
      * @param int $address_id
      * @param string|null $collection
@@ -138,7 +154,10 @@ trait HasAddress
      */
     public function attachAddress(int $address_id, ?string $collection = null): static
     {
-        if (! $this->hasAddress($address_id, $collection)) {
+        // Only attach if address exists and is NOT soft-deleted
+        $address = Address::find($address_id);
+
+        if ($address && ! $this->hasAddress($address_id, $collection)) {
             $this->addressRelations()->create([
                 'address_id' => $address_id,
                 'collection' => $collection,
@@ -249,12 +268,21 @@ trait HasAddress
      * Get address by collection (first match).
      *
      * @param string $collection
+     * @param bool $withTrashed Include soft-deleted address
      *
      * @return Address|null
      */
-    public function getAddressByCollection(string $collection): ?Address
+    public function getAddressByCollection(string $collection, bool $withTrashed = false): ?Address
     {
-        $relation = $this->addressRelations()->where('collection', $collection)->with('address')->first();
+        $query = $this->addressRelations()->where('collection', $collection);
+
+        if ($withTrashed) {
+            $query->with(['address' => fn($q) => $q->withTrashed()]);
+        } else {
+            $query->with('address');
+        }
+
+        $relation = $query->first();
 
         return $relation?->address;
     }
