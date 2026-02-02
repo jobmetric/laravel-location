@@ -11,11 +11,11 @@
         "country",
         "province",
         "city",
-        "quartier",
-        "lat lng",
+        "district",
+        "geo area",
         "address"
     ],
-    "homepage": "https://doc.jobmetric.net/package/laravel-location",
+    "homepage": "https://jobmetric.github.io/packages/laravel-location",
     "authors": [
         {
             "name": "Majid Mohammadian",
@@ -36,9 +36,6 @@
         "phpunit/phpunit": "^10.1"
     },
     "autoload": {
-        "files": [
-            "src/helpers.php"
-        ],
         "psr-4": {
             "JobMetric\\Location\\": "src/",
             "JobMetric\\Location\\Factories\\": "database/factories/"
@@ -60,7 +57,7 @@
                 "City": "JobMetric\\Location\\Facades\\City",
                 "District": "JobMetric\\Location\\Facades\\District",
                 "Location": "JobMetric\\Location\\Facades\\Location",
-                "LocationGeoArea": "JobMetric\\Location\\Facades\\LocationGeoArea",
+                "GeoArea": "JobMetric\\Location\\Facades\\GeoArea",
                 "Address": "JobMetric\\Location\\Facades\\Address"
             }
         }
