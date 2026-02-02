@@ -41,6 +41,13 @@ class Location extends Model
     use HasFactory;
 
     /**
+     * This table does not have Laravel's updated_at column.
+     *
+     * @var string|null
+     */
+    const UPDATED_AT = null;
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var array<int, string>
