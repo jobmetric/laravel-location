@@ -112,6 +112,9 @@ class Address extends AbstractCrudService
             $address->lng = $data['lng'] ?? null;
             $address->info = $data['info'] ?? [];
 
+            // Save first so polymorphic relations can be created safely.
+            $address->save();
+
             // Create location relation if location data provided
             if (isset($data['country_id'])) {
                 if (! isset($data['province_id']) || ! isset($data['city_id'])) {
@@ -133,8 +136,6 @@ class Address extends AbstractCrudService
                     'location_id' => $location->id,
                 ]);
             }
-
-            $address->save();
 
             // Fire event
             $this->fireStoreEvent($address, $data);
