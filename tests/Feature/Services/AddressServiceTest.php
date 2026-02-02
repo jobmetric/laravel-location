@@ -3,9 +3,9 @@
 namespace JobMetric\Location\Tests\Feature\Services;
 
 use Illuminate\Validation\ValidationException;
+use JobMetric\Location\Facades\Address as AddressFacade;
 use JobMetric\Location\Models\Address as AddressModel;
 use JobMetric\Location\Models\LocationRelation;
-use JobMetric\Location\Services\Address as AddressService;
 use JobMetric\Location\Tests\Stubs\Models\TestUser;
 use Throwable;
 
@@ -18,9 +18,7 @@ class AddressServiceTest extends ServiceTestCase
      */
     public function test_store_without_owner_returns_422_response(): void
     {
-        $service = app(AddressService::class);
-
-        $res = $service->store([
+        $res = AddressFacade::store([
             'country_id'  => 1,
             'province_id' => 1,
             'city_id'     => 1,
@@ -40,12 +38,12 @@ class AddressServiceTest extends ServiceTestCase
     {
         $this->expectException(ValidationException::class);
 
-        $service = app(AddressService::class);
-        $owner = TestUser::query()->create(['name' => 'Owner']);
-
+        $owner = TestUser::query()->create([
+            'name' => 'Owner'
+        ]);
         $graph = $this->makeLocationGraph();
 
-        $service->store([
+        AddressFacade::store([
             'owner_type'  => TestUser::class,
             'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
@@ -53,7 +51,7 @@ class AddressServiceTest extends ServiceTestCase
             'city_id'     => $graph['city']->id,
             'district_id' => $graph['district']->id,
             'address'     => [
-                'street'      => 'Valiasr',
+                'street'      => 'jordan',
                 'INVALID_KEY' => 'boom',
             ],
         ]);
@@ -64,11 +62,12 @@ class AddressServiceTest extends ServiceTestCase
      */
     public function test_store_creates_address_and_location_relation(): void
     {
-        $service = app(AddressService::class);
-        $owner = TestUser::query()->create(['name' => 'Owner']);
+        $owner = TestUser::query()->create([
+            'name' => 'Owner'
+        ]);
         $graph = $this->makeLocationGraph();
 
-        $res = $service->store([
+        $res = AddressFacade::store([
             'owner_type'  => TestUser::class,
             'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
@@ -76,7 +75,7 @@ class AddressServiceTest extends ServiceTestCase
             'city_id'     => $graph['city']->id,
             'district_id' => $graph['district']->id,
             'address'     => [
-                'street' => 'Valiasr',
+                'street' => 'jordan',
                 'number' => '10',
             ],
             'postcode'    => '1234567890',
@@ -113,18 +112,17 @@ class AddressServiceTest extends ServiceTestCase
      */
     public function test_update_versions_address_when_fields_change_and_preserves_location_relation(): void
     {
-        $service = app(AddressService::class);
         $owner = TestUser::query()->create(['name' => 'Owner']);
         $graph = $this->makeLocationGraph();
 
-        $service->store([
+        AddressFacade::store([
             'owner_type'  => TestUser::class,
             'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
             'province_id' => $graph['province']->id,
             'city_id'     => $graph['city']->id,
             'district_id' => $graph['district']->id,
-            'address'     => ['street' => 'Valiasr'],
+            'address'     => ['street' => 'jordan'],
             'postcode'    => '111',
         ]);
 
@@ -134,7 +132,7 @@ class AddressServiceTest extends ServiceTestCase
             ->where('locationable_id', $old->id)
             ->firstOrFail();
 
-        $res = $service->update($old->id, [
+        $res = AddressFacade::update($old->id, [
             'postcode' => '222',
         ]);
 
@@ -159,24 +157,25 @@ class AddressServiceTest extends ServiceTestCase
      */
     public function test_destroy_soft_deletes_address(): void
     {
-        $service = app(AddressService::class);
-        $owner = TestUser::query()->create(['name' => 'Owner']);
+        $owner = TestUser::query()->create([
+            'name' => 'Owner'
+        ]);
         $graph = $this->makeLocationGraph();
 
-        $service->store([
+        AddressFacade::store([
             'owner_type'  => TestUser::class,
             'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
             'province_id' => $graph['province']->id,
             'city_id'     => $graph['city']->id,
             'district_id' => $graph['district']->id,
-            'address'     => ['street' => 'Valiasr'],
+            'address'     => ['street' => 'jordan'],
             'postcode'    => '111',
         ]);
 
         $address = AddressModel::query()->latest('id')->firstOrFail();
 
-        $res = $service->destroy($address->id);
+        $res = AddressFacade::destroy($address->id);
         $this->assertTrue($res->ok);
 
         $this->assertSoftDeleted(config('location.tables.address'), [
@@ -184,4 +183,3 @@ class AddressServiceTest extends ServiceTestCase
         ]);
     }
 }
-

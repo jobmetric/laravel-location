@@ -8,8 +8,7 @@ use JobMetric\Location\HasGeoArea;
 
 class TestUser extends Model
 {
-    use HasAddress;
-    use HasGeoArea;
+    use HasAddress, HasGeoArea;
 
     protected $table = 'test_users';
 

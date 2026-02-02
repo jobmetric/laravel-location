@@ -3,9 +3,9 @@
 namespace JobMetric\Location\Tests\Feature\Services;
 
 use Illuminate\Validation\ValidationException;
+use JobMetric\Location\Facades\GeoArea as GeoAreaFacade;
 use JobMetric\Location\Models\GeoArea as GeoAreaModel;
 use JobMetric\Location\Models\LocationRelation;
-use JobMetric\Location\Services\GeoArea as GeoAreaService;
 use Throwable;
 
 class GeoAreaServiceTest extends ServiceTestCase
@@ -15,10 +15,9 @@ class GeoAreaServiceTest extends ServiceTestCase
      */
     public function test_store_creates_geo_area_with_locations(): void
     {
-        $service = app(GeoAreaService::class);
         $graph = $this->makeLocationGraph();
 
-        $res = $service->store([
+        $res = GeoAreaFacade::store([
             'translation' => [
                 'en' => [
                     'name'        => 'Test Area',
@@ -60,7 +59,6 @@ class GeoAreaServiceTest extends ServiceTestCase
     {
         $this->expectException(ValidationException::class);
 
-        $service = app(GeoAreaService::class);
         $graph = $this->makeLocationGraph();
 
         $location = [
@@ -70,7 +68,7 @@ class GeoAreaServiceTest extends ServiceTestCase
             'district_id' => $graph['district']->id,
         ];
 
-        $service->store([
+        GeoAreaFacade::store([
             'translation' => [
                 'en' => [
                     'name'        => 'Test Area',
@@ -86,13 +84,15 @@ class GeoAreaServiceTest extends ServiceTestCase
      */
     public function test_update_syncs_locations(): void
     {
-        $service = app(GeoAreaService::class);
         $g1 = $this->makeLocationGraph();
         $g2 = $this->makeLocationGraph();
 
-        $service->store([
+        GeoAreaFacade::store([
             'translation' => [
-                'en' => ['name' => 'Area', 'description' => 'Desc'],
+                'en' => [
+                    'name' => 'Area',
+                    'description' => 'Desc'
+                ],
             ],
             'locations'   => [
                 [
@@ -112,9 +112,12 @@ class GeoAreaServiceTest extends ServiceTestCase
             ->count();
         $this->assertEquals(1, $before);
 
-        $res = $service->update($geoArea->id, [
+        $res = GeoAreaFacade::update($geoArea->id, [
             'translation' => [
-                'en' => ['name' => 'Area2', 'description' => 'Desc2'],
+                'en' => [
+                    'name' => 'Area2',
+                    'description' => 'Desc2'
+                ],
             ],
             'locations'   => [
                 [
@@ -140,12 +143,14 @@ class GeoAreaServiceTest extends ServiceTestCase
      */
     public function test_destroy_restore_and_force_delete_cycle(): void
     {
-        $service = app(GeoAreaService::class);
         $graph = $this->makeLocationGraph();
 
-        $service->store([
+        GeoAreaFacade::store([
             'translation' => [
-                'en' => ['name' => 'Area', 'description' => 'Desc'],
+                'en' => [
+                    'name' => 'Area',
+                    'description' => 'Desc'
+                ],
             ],
             'locations'   => [
                 [
@@ -156,19 +161,18 @@ class GeoAreaServiceTest extends ServiceTestCase
 
         $geoArea = GeoAreaModel::query()->latest('id')->firstOrFail();
 
-        $destroy = $service->destroy($geoArea->id);
+        $destroy = GeoAreaFacade::destroy($geoArea->id);
         $this->assertTrue($destroy->ok);
         $this->assertSoftDeleted(config('location.tables.geo_area'), ['id' => $geoArea->id]);
 
-        $restore = $service->restore($geoArea->id);
+        $restore = GeoAreaFacade::restore($geoArea->id);
         $this->assertTrue($restore->ok);
 
-        $destroyAgain = $service->destroy($geoArea->id);
+        $destroyAgain = GeoAreaFacade::destroy($geoArea->id);
         $this->assertTrue($destroyAgain->ok);
 
-        $force = $service->forceDelete($geoArea->id);
+        $force = GeoAreaFacade::forceDelete($geoArea->id);
         $this->assertTrue($force->ok);
         $this->assertDatabaseMissing(config('location.tables.geo_area'), ['id' => $geoArea->id]);
     }
 }
-

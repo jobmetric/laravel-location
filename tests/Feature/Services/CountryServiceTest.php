@@ -3,8 +3,8 @@
 namespace JobMetric\Location\Tests\Feature\Services;
 
 use Illuminate\Validation\ValidationException;
+use JobMetric\Location\Facades\Country as CountryFacade;
 use JobMetric\Location\Models\Country as CountryModel;
-use JobMetric\Location\Services\Country as CountryService;
 use Throwable;
 
 class CountryServiceTest extends ServiceTestCase
@@ -14,9 +14,7 @@ class CountryServiceTest extends ServiceTestCase
      */
     public function test_store_creates_country(): void
     {
-        $service = app(CountryService::class);
-
-        $res = $service->store([
+        $res = CountryFacade::store([
             'name'   => 'Iran',
             'status' => true,
         ]);
@@ -36,10 +34,8 @@ class CountryServiceTest extends ServiceTestCase
     {
         $this->expectException(ValidationException::class);
 
-        $service = app(CountryService::class);
-
-        $service->store(['name' => 'Iran']);
-        $service->store(['name' => 'Iran']);
+        CountryFacade::store(['name' => 'Iran']);
+        CountryFacade::store(['name' => 'Iran']);
     }
 
     /**
@@ -47,11 +43,9 @@ class CountryServiceTest extends ServiceTestCase
      */
     public function test_update_changes_name(): void
     {
-        $service = app(CountryService::class);
-
         $country = CountryModel::factory()->setName('OldName')->create();
 
-        $res = $service->update($country->id, [
+        $res = CountryFacade::update($country->id, [
             'name' => 'NewName',
         ]);
 
@@ -67,12 +61,10 @@ class CountryServiceTest extends ServiceTestCase
      */
     public function test_toggle_status_inverts_boolean_status(): void
     {
-        $service = app(CountryService::class);
-
         $country = CountryModel::factory()->setStatus(true)->create();
         $this->assertTrue((bool) $country->status);
 
-        $res = $service->toggleStatus($country->id);
+        $res = CountryFacade::toggleStatus($country->id);
         $this->assertTrue($res->ok);
 
         $country->refresh();
@@ -84,15 +76,13 @@ class CountryServiceTest extends ServiceTestCase
      */
     public function test_destroy_restore_and_force_delete_cycle(): void
     {
-        $service = app(CountryService::class);
-
         $country = CountryModel::factory()->create();
 
-        $destroy = $service->destroy($country->id);
+        $destroy = CountryFacade::destroy($country->id);
         $this->assertTrue($destroy->ok);
         $this->assertSoftDeleted(config('location.tables.country'), ['id' => $country->id]);
 
-        $restore = $service->restore($country->id);
+        $restore = CountryFacade::restore($country->id);
         $this->assertTrue($restore->ok);
         $this->assertDatabaseHas(config('location.tables.country'), [
             'id'         => $country->id,
@@ -100,12 +90,11 @@ class CountryServiceTest extends ServiceTestCase
         ]);
 
         // forceDelete is typically intended for trashed records.
-        $destroyAgain = $service->destroy($country->id);
+        $destroyAgain = CountryFacade::destroy($country->id);
         $this->assertTrue($destroyAgain->ok);
 
-        $force = $service->forceDelete($country->id);
+        $force = CountryFacade::forceDelete($country->id);
         $this->assertTrue($force->ok);
         $this->assertDatabaseMissing(config('location.tables.country'), ['id' => $country->id]);
     }
 }
-
