@@ -7,6 +7,7 @@ use JobMetric\EventSystem\EventSystemServiceProvider;
 use JobMetric\Flow\FlowServiceProvider;
 use JobMetric\Language\LanguageServiceProvider;
 use JobMetric\Language\Models\Language;
+use JobMetric\Location\LocationServiceProvider;
 use JobMetric\Translation\TranslationServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
@@ -21,6 +22,7 @@ class TestCase extends BaseTestCase
             LanguageServiceProvider::class,
             TranslationServiceProvider::class,
             FlowServiceProvider::class,
+            LocationServiceProvider::class,
         ];
     }
 
