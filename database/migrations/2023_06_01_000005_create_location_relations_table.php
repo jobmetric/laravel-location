@@ -22,7 +22,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->morphs('locationable');
+            $table->morphs('locationable', 'LR_LOCATIONABLE_IDX');
             /**
              * Polymorphic relation to any model that can have a location.
              *
@@ -35,7 +35,7 @@ return new class extends Migration
                 'location_id',
                 'locationable_type',
                 'locationable_id',
-            ]);
+            ], 'LR_LOC_LOCATIONABLE_UNIQUE');
         });
     }
 

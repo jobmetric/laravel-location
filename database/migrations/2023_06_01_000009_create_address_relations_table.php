@@ -22,7 +22,8 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->morphs('addressable');
+            // Use a short index name to satisfy MySQL identifier length limits.
+            $table->morphs('addressable', 'LAR_ADDRESSABLE_IDX');
             /**
              * Polymorphic relation to any model that can use an address.
              *
@@ -45,7 +46,7 @@ return new class extends Migration
                 'addressable_type',
                 'addressable_id',
                 'collection',
-            ]);
+            ], 'LAR_ADDRESS_UQ');
         });
     }
 

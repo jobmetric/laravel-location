@@ -22,7 +22,7 @@ return new class extends Migration
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
 
-            $table->morphs('geographical');
+            $table->morphs('geographical', 'LGAR_GEOGRAPHICAL_IDX');
             /**
              * Polymorphic relation to any model that can be associated with a geo area.
              *
@@ -35,7 +35,7 @@ return new class extends Migration
                 'geo_area_id',
                 'geographical_type',
                 'geographical_id',
-            ]);
+            ], 'LGAR_GEOGRAPHICAL_UQ');
         });
     }
 
