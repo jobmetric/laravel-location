@@ -26,6 +26,8 @@
     ],
     "require": {
         "php": ">=8.0.1",
+        "ext-libxml": "*",
+        "ext-simplexml": "*",
         "laravel/framework": ">=9.19",
         "spatie/laravel-query-builder": "^6.3",
         "jobmetric/laravel-package-core": "^1.37",
