@@ -2,7 +2,6 @@
 
 namespace JobMetric\Location;
 
-use JobMetric\Location\Commands\GenerateCountriesData;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
 use JobMetric\PackageCore\PackageCore;
@@ -23,7 +22,8 @@ class LocationServiceProvider extends PackageCoreServiceProvider
             ->hasConfig()
             ->hasMigration()
             ->hasTranslation()
-            ->registerCommand(GenerateCountriesData::class)
+            ->registerCommand(\JobMetric\Location\Commands\GenerateCountriesData::class)
+            ->registerCommand(\JobMetric\Location\Commands\ImportLocationData::class)
             ->registerClass('location-country', \JobMetric\Location\Services\Country::class)
             ->registerClass('location-province', \JobMetric\Location\Services\Province::class)
             ->registerClass('location-city', \JobMetric\Location\Services\City::class)
