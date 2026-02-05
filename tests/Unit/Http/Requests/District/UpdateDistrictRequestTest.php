@@ -20,6 +20,19 @@ class UpdateDistrictRequestTest extends RequestTestCase
         $this->assertFalse($validator->fails());
     }
 
+    public function test_keywords_must_be_array_of_strings(): void
+    {
+        $data = ['keywords' => [123]];
+        $request = $this->makeRequest(UpdateDistrictRequest::class, $data, [
+            'district_id' => 1,
+            'city_id'     => 1,
+        ]);
+
+        $validator = $this->validate($request, $data);
+        $this->assertTrue($validator->fails());
+        $this->assertArrayHasKey('keywords.0', $validator->errors()->toArray());
+    }
+
     public function test_duplicate_name_in_same_city_fails(): void
     {
         $graph = $this->makeLocationGraph();

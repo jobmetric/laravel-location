@@ -47,6 +47,8 @@ return [
     "fields" => [
         "translation" => "Translation",
         "name" => "Name",
+        "subtitle" => "Subtitle",
+        "keywords" => "Keywords",
         "description" => "Description",
         "status" => "Status",
         "flag" => "Flag",

@@ -22,6 +22,15 @@ class DistrictFactory extends Factory
         return [
             'city_id' => null,
             'name'    => $this->faker->streetName(),
+            'subtitle' => $this->faker->optional(0.4)->sentence(3),
+            'keywords' => $this->faker->optional(0.4)->randomElements([
+                'central',
+                'downtown',
+                'west',
+                'east',
+                'north',
+                'south',
+            ], $this->faker->numberBetween(1, 3)),
             'status'  => $this->faker->boolean(90),
         ];
     }

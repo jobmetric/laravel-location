@@ -409,9 +409,21 @@ class ImportLocationData extends Command
         /** @var District|null $district */
         $district = District::withTrashed()->where('city_id', $cityId)->where('name', $name)->first();
 
+        $subtitle = Arr::get($row, 'subtitle');
+        $subtitle = is_string($subtitle) ? trim($subtitle) : null;
+        $subtitle = ($subtitle === '') ? null : $subtitle;
+
+        // Support both keys:
+        // - subtitle => subtitle
+        // - search_keywords (dataset) => keywords (DB)
+        $rawKeywords = Arr::get($row, 'keywords', Arr::get($row, 'search_keywords'));
+        $keywords = $this->normalizeKeywords($rawKeywords);
+
         $data = [
             'city_id' => $cityId,
             'name'    => $name,
+            'subtitle' => $subtitle,
+            'keywords' => $keywords,
             'status'  => Arr::get($row, 'status', true),
         ];
 
@@ -440,6 +452,69 @@ class ImportLocationData extends Command
         }
 
         return [$district, 'none'];
+    }
+
+    /**
+     * Normalize keywords for storage.
+     *
+     * Datasets may provide `search_keywords` as a comma-separated string (often using Persian comma "،").
+     * We store keywords as an array of trimmed strings.
+     *
+     * @param mixed $raw
+     * @return array<int,string>|null
+     */
+    protected function normalizeKeywords(mixed $raw): ?array
+    {
+        $items = [];
+
+        $push = static function (string $value) use (&$items): void {
+            $v = trim($value);
+            if ($v !== '') {
+                $items[] = $v;
+            }
+        };
+
+        $splitAndPush = static function (string $value) use ($push): void {
+            $v = trim($value);
+            if ($v === '') {
+                return;
+            }
+
+            // Split on English/Persian comma and semicolon.
+            $parts = preg_split('/[,\x{060C}\x{061B};]+/u', $v) ?: [];
+            foreach ($parts as $p) {
+                $push((string) $p);
+            }
+        };
+
+        if (is_string($raw)) {
+            $splitAndPush($raw);
+        }
+        elseif (is_array($raw)) {
+            foreach ($raw as $v) {
+                if (is_string($v)) {
+                    $splitAndPush($v);
+                }
+            }
+        }
+
+        if (count($items) === 0) {
+            return null;
+        }
+
+        // De-duplicate while keeping order.
+        $seen = [];
+        $unique = [];
+        foreach ($items as $v) {
+            $k = mb_strtolower($v);
+            if (isset($seen[$k])) {
+                continue;
+            }
+            $seen[$k] = true;
+            $unique[] = $v;
+        }
+
+        return $unique;
     }
 
     protected function getDataPath(): string

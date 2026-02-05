@@ -26,6 +26,8 @@ class DistrictServiceTest extends ServiceTestCase
         $res = DistrictFacade::store([
             'city_id' => $city->id,
             'name'    => 'District 1',
+            'subtitle' => 'Central',
+            'keywords' => ['central', 'downtown'],
             'status'  => true,
         ]);
 
@@ -33,6 +35,12 @@ class DistrictServiceTest extends ServiceTestCase
         $this->assertDatabaseHas(config('location.tables.district'), [
             'city_id' => $city->id,
             'name'    => 'District 1',
+        ]);
+
+        $this->assertDatabaseHas(config('location.tables.district'), [
+            'city_id'   => $city->id,
+            'name'      => 'District 1',
+            'subtitle'  => 'Central',
         ]);
     }
 

@@ -8,9 +8,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property mixed id
  * @property mixed name
- * @property mixed flag
- * @property mixed mobile_prefix
- * @property mixed validation
+ * @property mixed subtitle
+ * @property mixed keywords
  * @property mixed status
  *
  * @property mixed country
@@ -29,6 +28,8 @@ class DistrictResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'subtitle' => $this->subtitle,
+            'keywords' => $this->keywords,
             'status' => $this->status,
 
             'country' => $this->whenLoaded('country', function () {

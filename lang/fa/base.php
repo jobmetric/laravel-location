@@ -52,6 +52,8 @@ return [
     "fields" => [
         "translation" => "ترجمه",
         "name" => "نام",
+        "subtitle" => "زیرعنوان",
+        "keywords" => "کلمات کلیدی",
         "description" => "توضیحات",
         "status" => "وضعیت",
         "flag" => "پرچم",

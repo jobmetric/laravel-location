@@ -47,6 +47,9 @@ class StoreDistrictRequest extends FormRequest
                 'max:255',
                 new CheckExistNameRule(DistrictModel::class, null, $cityId),
             ],
+            'subtitle' => 'sometimes|nullable|string|max:255',
+            'keywords' => 'sometimes|nullable|array',
+            'keywords.*' => 'string|max:100',
             'status'  => 'sometimes|boolean',
         ];
     }
@@ -61,6 +64,8 @@ class StoreDistrictRequest extends FormRequest
         return [
             'city_id' => trans('location::base.fields.city_id'),
             'name'    => trans('location::base.fields.name'),
+            'subtitle' => trans('location::base.fields.subtitle'),
+            'keywords' => trans('location::base.fields.keywords'),
             'status'  => trans('location::base.fields.status'),
         ];
     }

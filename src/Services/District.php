@@ -66,6 +66,8 @@ class District extends AbstractCrudService
         'id',
         'city_id',
         'name',
+        'subtitle',
+        'keywords',
         'status',
         'deleted_at',
         'created_at',
