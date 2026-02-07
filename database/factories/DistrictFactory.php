@@ -64,6 +64,34 @@ class DistrictFactory extends Factory
     }
 
     /**
+     * set subtitle
+     *
+     * @param string|null $subtitle
+     *
+     * @return static
+     */
+    public function setSubtitle(?string $subtitle): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'subtitle' => $subtitle,
+        ]);
+    }
+
+    /**
+     * set keywords
+     *
+     * @param array<int,string>|null $keywords
+     *
+     * @return static
+     */
+    public function setKeywords(?array $keywords): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'keywords' => $keywords,
+        ]);
+    }
+
+    /**
      * set status
      *
      * @param bool $status
