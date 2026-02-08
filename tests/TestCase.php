@@ -4,7 +4,6 @@ namespace JobMetric\Location\Tests;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use JobMetric\EventSystem\EventSystemServiceProvider;
-use JobMetric\Flow\FlowServiceProvider;
 use JobMetric\Language\LanguageServiceProvider;
 use JobMetric\Language\Models\Language;
 use JobMetric\Location\LocationServiceProvider;
@@ -21,7 +20,6 @@ class TestCase extends BaseTestCase
             EventSystemServiceProvider::class,
             LanguageServiceProvider::class,
             TranslationServiceProvider::class,
-            FlowServiceProvider::class,
             LocationServiceProvider::class,
         ];
     }
