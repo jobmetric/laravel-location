@@ -45,6 +45,8 @@ return [
     ],
 
     "fields" => [
+        "owner_type" => "Owner Type",
+        "owner_id" => "Owner ID",
         "translation" => "Translation",
         "name" => "Name",
         "subtitle" => "Subtitle",

@@ -75,6 +75,20 @@ class Address extends AbstractCrudService
     protected static ?string $deleteEventClass = AddressDeleteEvent::class;
 
     /**
+     * Store delegates to doStore so address + location relation and 422 for missing owner are handled.
+     *
+     * @param array<string,mixed> $data
+     * @param array<string> $with
+     *
+     * @return Response
+     * @throws Throwable
+     */
+    public function store(array $data, array $with = []): Response
+    {
+        return $this->doStore($data, $with);
+    }
+
+    /**
      * Store a new address. Signature matches base store(array $data, array $with = []) for controller compatibility.
      *
      * @param array<string,mixed> $data Must contain owner_type and owner_id plus address fields.
@@ -83,7 +97,7 @@ class Address extends AbstractCrudService
      * @return Response
      * @throws Throwable
      */
-    public function doStore(array $data, array $with = []): Response
+    protected function doStore(array $data, array $with = []): Response
     {
         if (empty($data['owner_type']) || ! isset($data['owner_id'])) {
             return Response::make(false, trans('package-core::base.validation.errors'), null, 422, [
@@ -147,6 +161,21 @@ class Address extends AbstractCrudService
     }
 
     /**
+     * Update delegates to doUpdate so versioning (soft delete + new row) is applied.
+     *
+     * @param int $id
+     * @param array<string,mixed> $data
+     * @param array<string> $with
+     *
+     * @return Response
+     * @throws Throwable
+     */
+    public function update(int $id, array $data, array $with = []): Response
+    {
+        return $this->doUpdate($id, $data, $with);
+    }
+
+    /**
      * Update an address using versioning pattern.
      *
      * Only when at least one field (including location) has changed compared to the saved record:
@@ -163,7 +192,7 @@ class Address extends AbstractCrudService
      * @return Response
      * @throws Throwable
      */
-    public function doUpdate(int $id, array $data, array $with = []): Response
+    protected function doUpdate(int $id, array $data, array $with = []): Response
     {
         return DB::transaction(function () use ($id, $data, $with) {
             /** @var AddressModel|null $oldAddress */

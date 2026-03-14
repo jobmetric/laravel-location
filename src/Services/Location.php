@@ -75,10 +75,21 @@ class Location extends AbstractCrudService
     protected static ?string $storeEventClass = LocationStoreEvent::class;
 
     /**
-     * Override store() to ensure uniqueness: use firstOrCreate to prevent duplicates.
+     * Store ensures uniqueness via firstOrCreate; duplicate payload returns existing.
      *
-     * Since Location records are never deleted, we must check for existing records
-     * with the same combination of country_id, province_id, city_id, district_id.
+     * @param array<string,mixed> $data
+     * @param array<string> $with
+     *
+     * @return Response
+     * @throws Throwable
+     */
+    public function store(array $data, array $with = []): Response
+    {
+        return $this->doStore($data, $with);
+    }
+
+    /**
+     * Internal store using firstOrCreate to prevent duplicate locations.
      *
      * @param array<string,mixed> $data Location data
      * @param array<string> $with       Relations to eager load

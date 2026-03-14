@@ -3,14 +3,18 @@
 namespace JobMetric\Location\Tests\Unit\Http\Requests\Address;
 
 use JobMetric\Location\Http\Requests\Address\StoreAddressRequest;
+use JobMetric\Location\Tests\Stubs\Models\TestUser;
 use JobMetric\Location\Tests\Unit\Http\Requests\RequestTestCase;
 
 class StoreAddressRequestTest extends RequestTestCase
 {
     public function test_valid_payload_passes(): void
     {
+        $owner = TestUser::query()->create(['name' => 'Owner']);
         $graph = $this->makeLocationGraph();
         $data = [
+            'owner_type'  => TestUser::class,
+            'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
             'province_id' => $graph['province']->id,
             'city_id'     => $graph['city']->id,
@@ -36,8 +40,11 @@ class StoreAddressRequestTest extends RequestTestCase
 
     public function test_invalid_address_keys_fails(): void
     {
+        $owner = TestUser::query()->create(['name' => 'Owner']);
         $graph = $this->makeLocationGraph();
         $data = [
+            'owner_type'  => TestUser::class,
+            'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
             'province_id' => $graph['province']->id,
             'city_id'     => $graph['city']->id,
@@ -56,8 +63,11 @@ class StoreAddressRequestTest extends RequestTestCase
 
     public function test_invalid_info_keys_fails(): void
     {
+        $owner = TestUser::query()->create(['name' => 'Owner']);
         $graph = $this->makeLocationGraph();
         $data = [
+            'owner_type'  => TestUser::class,
+            'owner_id'    => $owner->id,
             'country_id'  => $graph['country']->id,
             'province_id' => $graph['province']->id,
             'city_id'     => $graph['city']->id,

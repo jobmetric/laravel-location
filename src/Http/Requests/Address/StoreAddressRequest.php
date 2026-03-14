@@ -33,6 +33,8 @@ class StoreAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'owner_type'         => ['required', 'string', 'max:255'],
+            'owner_id'           => ['required', 'integer'],
             'country_id'         => [
                 'required',
                 'integer',
@@ -111,6 +113,8 @@ class StoreAddressRequest extends FormRequest
     public function attributes(): array
     {
         return [
+            'owner_type'  => trans('location::base.fields.owner_type'),
+            'owner_id'    => trans('location::base.fields.owner_id'),
             'country_id'  => trans('location::base.fields.country_id'),
             'province_id' => trans('location::base.fields.province_id'),
             'city_id'     => trans('location::base.fields.city_id'),

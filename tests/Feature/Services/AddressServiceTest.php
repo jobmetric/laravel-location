@@ -12,16 +12,18 @@ use Throwable;
 class AddressServiceTest extends ServiceTestCase
 {
     /**
-     * Address service requires owner_type/owner_id.
+     * Address service requires owner_type/owner_id; returns 422 when missing.
      *
      * @throws Throwable
      */
     public function test_store_without_owner_returns_422_response(): void
     {
+        $graph = $this->makeLocationGraph();
+
         $res = AddressFacade::store([
-            'country_id'  => 1,
-            'province_id' => 1,
-            'city_id'     => 1,
+            'country_id'  => $graph['country']->id,
+            'province_id' => $graph['province']->id,
+            'city_id'     => $graph['city']->id,
             'address'     => ['street' => 'X'],
         ]);
 
