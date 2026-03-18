@@ -1,0 +1,40 @@
+name: Feature Request
+description: Suggest a new feature for Laravel Location
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for suggesting a new feature! Please provide the following details to help us understand your request.
+  - type: textarea
+    id: feature-description
+    attributes:
+      label: Feature Description
+      description: A clear and concise description of the feature you want to add.
+      placeholder: Add support for postal code validation based on country and city
+    validations:
+      required: true
+  - type: textarea
+    id: problem-need
+    attributes:
+      label: Problem/Need
+      description: What problem does this feature solve or what need does it address?
+      placeholder: This feature would help validate postal codes according to each country's format
+    validations:
+      required: true
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution
+      description: How do you think this feature should work?
+      placeholder: |
+        Add postal code validation rules in country configuration
+        Example usage:
+        $country = Country::store([
+            'name' => 'Iran',
+            'postal_code_validation' => '/^\d{10}$/',
+        ]);
+    validations:
+      required: true
+
