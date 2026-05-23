@@ -32,7 +32,7 @@ return new class extends Migration
              * e.g. User, Store, Company
              */
 
-            $table->json('address')->index();
+            $table->json('address');
             /**
              * Address details stored as JSON.
              *
